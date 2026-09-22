@@ -295,9 +295,14 @@
 
   /* ---------- IMPRESSÃO (relatório Cross) ---------- */
   @media print{
-    body *{ visibility:hidden; }
-    #panel-relatorio-cross, #panel-relatorio-cross *{ visibility:visible; }
-    #panel-relatorio-cross{ position:absolute; left:0; top:0; width:100%; margin:0; border:none; }
+    body[data-print-target="cross"] *{ visibility:hidden; }
+    body[data-print-target="cross"] #panel-relatorio-cross, body[data-print-target="cross"] #panel-relatorio-cross *{ visibility:visible; }
+    body[data-print-target="cross"] #panel-relatorio-cross{ position:absolute; left:0; top:0; width:100%; margin:0; border:none; }
+
+    body[data-print-target="plan"] *{ visibility:hidden; }
+    body[data-print-target="plan"] #plan-print-area, body[data-print-target="plan"] #plan-print-area *{ visibility:visible; }
+    body[data-print-target="plan"] #plan-print-area{ position:absolute; left:0; top:0; width:100%; margin:0; border:none; }
+
     .no-print{ display:none !important; }
   }
 
@@ -339,6 +344,17 @@
     text-transform:uppercase; letter-spacing:.04em; flex-shrink:0;
   }
 
+  /* ---------- CARGAS NO PISO: AGRUPAMENTO VISUAL POR STATUS ---------- */
+  tr.piso-group-header td{
+    background:var(--panel-header); border-bottom:2px solid var(--band);
+    padding:8px 10px; font-family:'Oswald',sans-serif; font-weight:700;
+    font-size:.78rem; letter-spacing:.05em; text-transform:uppercase;
+  }
+  tr.piso-group-header.grp-pend td{ color:var(--warn-text); border-bottom-color:var(--warn-text); }
+  tr.piso-group-header.grp-ok td{ color:var(--ok-text); border-bottom-color:var(--ok-text); }
+  tr.piso-row-pend{ box-shadow: inset 3px 0 0 var(--warn-text); }
+  tr.piso-row-ok{ box-shadow: inset 3px 0 0 var(--ok-text); }
+
   /* ---------- PLANEJAMENTO ---------- */
   .plan-form{ padding:16px 20px; display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; border-bottom:1px solid var(--line); }
   .plan-form .field{ margin:0; min-width:220px; flex:1; }
@@ -349,21 +365,46 @@
     background:var(--warn-bg); color:var(--warn-text); padding:8px 12px; border-radius:4px;
     font-size:.82rem; font-weight:600; margin:8px 0;
   }
-  .plan-station{
-    border:1px solid var(--line); border-radius:6px; margin:14px 20px 0; overflow:hidden;
-  }
-  .plan-station-header{
-    background:var(--panel-header); padding:10px 14px; display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px;
-  }
-  .plan-station-header b{ font-family:'Oswald',sans-serif; color:var(--band); font-size:.95rem; }
-  .plan-station-header span{ font-size:.78rem; color:var(--text-dim); }
-  .plan-loja-row{
-    display:flex; justify-content:space-between; padding:7px 14px; font-size:.85rem; border-top:1px solid var(--line);
-  }
-  .plan-loja-row span:first-child{ color:var(--text-dim); }
-  .plan-result-box{ padding-bottom:18px; }
   .plan-config-table td, .plan-config-table th{ padding:6px 8px; }
-  .plan-config-table input{ width:70px; }
+  .plan-config-table input[type=number]{ width:70px; }
+  .plan-config-table input[type=text]{ width:160px; }
+
+  /* grade de estações: 5 blocos por linha (5 de um lado, 5 do outro) */
+  .plan-grid{
+    display:grid; grid-template-columns:repeat(5, 1fr); gap:14px; padding:16px 20px;
+  }
+  @media (max-width:1200px){ .plan-grid{ grid-template-columns:repeat(3, 1fr); } }
+  @media (max-width:800px){ .plan-grid{ grid-template-columns:repeat(2, 1fr); } }
+  @media (max-width:520px){ .plan-grid{ grid-template-columns:1fr; } }
+
+  .plan-station-card{
+    border:1px solid var(--line); border-radius:6px; overflow:hidden;
+    background:var(--row-alt); display:flex; flex-direction:column;
+  }
+  .plan-station-card.is-empty{ opacity:.4; }
+  .plan-station-card-header{
+    background:var(--panel-header); padding:10px 12px; border-bottom:1px solid var(--line);
+  }
+  .plan-station-card-header .st-num{ font-family:'Oswald',sans-serif; color:var(--band); font-size:.95rem; font-weight:700; }
+  .plan-station-card-header .st-resp{ font-size:.75rem; color:var(--text-dim); margin-top:2px; }
+  .plan-station-card-header .st-resp b{ color:var(--text); font-weight:600; }
+  .plan-mini-table{ width:100%; border-collapse:collapse; font-size:.78rem; }
+  .plan-mini-table thead th{
+    background:transparent; color:var(--text-dim); border-bottom:1px solid var(--line);
+    padding:6px 8px; font-size:.62rem;
+  }
+  .plan-mini-table tbody td{ padding:6px 8px; border-bottom:1px solid var(--line); }
+  .plan-mini-table tbody tr:nth-child(even){ background:rgba(255,255,255,.02); }
+  .plan-mini-table td.pm-vol, .plan-mini-table td.pm-sku{
+    font-family:'Oswald',sans-serif; font-weight:700; color:var(--band); text-align:right; font-size:.9rem;
+  }
+  .plan-mini-table thead th.pm-vol, .plan-mini-table thead th.pm-sku{ text-align:right; }
+  .plan-mini-table tfoot td{
+    background:var(--panel-header); border-top:2px solid var(--band); padding:8px;
+    font-family:'Oswald',sans-serif; font-weight:700; font-size:.8rem;
+  }
+  .plan-mini-table tfoot td.pm-vol, .plan-mini-table tfoot td.pm-sku{ color:var(--band); text-align:right; font-size:1rem; }
+  .plan-station-empty-msg{ padding:14px; text-align:center; color:var(--text-dim); font-style:italic; font-size:.78rem; }
 </style>
 </head>
 <body>
@@ -639,12 +680,12 @@
       <div class="panel-header">
         <div class="title-block">
           <h2>ESTAÇÕES — CONFIGURAÇÃO</h2>
-          <span class="sub">Defina qual faixa de lojas cada estação atende</span>
+          <span class="sub">Defina a faixa de lojas e o(s) associado(s) responsável(is) por cada estação</span>
         </div>
       </div>
       <div class="table-scroll">
         <table class="plan-config-table">
-          <thead><tr><th>Estação</th><th>Loja de</th><th>até</th></tr></thead>
+          <thead><tr><th>Estação</th><th>Loja de</th><th>até</th><th>Associado(s)</th></tr></thead>
           <tbody id="tbody-plan-config"></tbody>
         </table>
       </div>
@@ -670,12 +711,22 @@
           <label for="plan-qtd-estacoes">Usar estações de 1 até</label>
           <select id="plan-qtd-estacoes" onchange="renderPlanejamento()"></select>
         </div>
+        <div class="field">
+          <label for="plan-loja-filter">Filtrar loja</label>
+          <input type="text" id="plan-loja-filter" placeholder="Ex.: 11 ou 211" oninput="renderPlanejamento()">
+        </div>
         <div class="field small" id="plan-config-toggle-wrap" style="display:none;">
           <label>&nbsp;</label>
           <button class="btn btn-ghost btn-sm" style="width:100%;" onclick="togglePlanConfig()">Configurar estações</button>
         </div>
+        <div class="field small no-print" id="plan-print-wrap" style="display:none;">
+          <label>&nbsp;</label>
+          <button class="btn btn-ghost btn-sm" style="width:100%;" onclick="imprimirPlanejamento()">Imprimir grade</button>
+        </div>
       </div>
+      <div id="plan-print-area">
       <div class="plan-result-box" id="plan-resultado"></div>
+      </div>
     </section>
 
   </div>
@@ -745,7 +796,7 @@
 
 <script>
 /* ===================== CONFIG ===================== */
-const SITE_URL = 'https://carloshenriolistic-prof.github.io/Cargas-no-Piso/';
+const SITE_URL = 'https://carlos-devhenri.github.io/carlos-devhenri/';
 const ROLE_PASSWORDS = {
   'AdministradorCD30SECOS': 'admin',
   'EncarCD30SECOS': 'encarregado',
@@ -997,6 +1048,37 @@ function nowTime(){
 }
 
 /* ===================== RENDER: PAINEL 1 - CARGAS NO PISO ===================== */
+function buildPisoGroupHeaderRow(label, kind){
+  const tr = document.createElement('tr');
+  tr.className = 'piso-group-header ' + (kind === 'ok' ? 'grp-ok' : 'grp-pend');
+  tr.innerHTML = `<td colspan="12">${label}</td>`;
+  return tr;
+}
+
+function buildPisoRow(row, i, canEditAll, canMarkStatus){
+  const tr = document.createElement('tr');
+  tr.className = row.status === 'CARGA ETIQUETADA' ? 'piso-row-ok' : 'piso-row-pend';
+  tr.innerHTML = `
+    <td><input type="text" value="${escapeHtml(row.produtivo)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'produtivo',this.value)"></td>
+    <td><input type="text" value="${escapeHtml(row.doca)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'doca',this.value)"></td>
+    <td><input type="text" value="${escapeHtml(row.carga)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'carga',this.value)"></td>
+    <td><input type="text" value="${escapeHtml(row.fornecedor)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'fornecedor',this.value)"></td>
+    <td><input type="text" value="${escapeHtml(row.liberacao)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'liberacao',this.value)"></td>
+    <td><input type="number" value="${row.d1}" ${canEditAll?'':'disabled'} style="width:56px" onchange="updatePiso(${i},'d1',Number(this.value))"></td>
+    <td><input type="number" value="${row.volume}" ${canEditAll?'':'disabled'} style="width:76px" onchange="updatePiso(${i},'volume',Number(this.value))"></td>
+    <td><input type="number" value="${row.sku}" ${canEditAll?'':'disabled'} style="width:56px" onchange="updatePiso(${i},'sku',Number(this.value))"></td>
+    <td><input type="text" value="${escapeHtml(row.departamento)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'departamento',this.value)"></td>
+    <td>
+      <select class="status-select ${statusSlug(row.status)}" ${canMarkStatus?'':'disabled'} onchange="updatePiso(${i},'status',this.value)">
+        ${STATUS_LIST.map(s => `<option value="${s}" ${row.status===s?'selected':''}>${STATUS_LABELS[s]}</option>`).join('')}
+      </select>
+    </td>
+    <td><input type="text" value="${escapeHtml(row.obs)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'obs',this.value)"></td>
+    <td>${canEditAll ? `<button class="btn btn-danger" onclick="removePisoRow(${i})">Remover</button>` : ''}</td>
+  `;
+  return tr;
+}
+
 function renderPiso(){
   const { role } = currentUser;
   const canEditAll = role === 'admin';
@@ -1007,30 +1089,22 @@ function renderPiso(){
 
   if(pisoData.length === 0){
     tbody.innerHTML = '<tr class="empty-row"><td colspan="12">Nenhuma carga no piso.</td></tr>';
-  }
+  } else {
+    // filtro visual: separa quem ainda não está "CARGA ETIQUETADA" de quem já está,
+    // pra dar pra ver de longe o que falta etiquetar assim que a planilha é colada
+    const naoEtq = [];
+    const etq = [];
+    pisoData.forEach((row, i) => (row.status === 'CARGA ETIQUETADA' ? etq : naoEtq).push({row, i}));
 
-  pisoData.forEach((row, i) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><input type="text" value="${escapeHtml(row.produtivo)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'produtivo',this.value)"></td>
-      <td><input type="text" value="${escapeHtml(row.doca)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'doca',this.value)"></td>
-      <td><input type="text" value="${escapeHtml(row.carga)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'carga',this.value)"></td>
-      <td><input type="text" value="${escapeHtml(row.fornecedor)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'fornecedor',this.value)"></td>
-      <td><input type="text" value="${escapeHtml(row.liberacao)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'liberacao',this.value)"></td>
-      <td><input type="number" value="${row.d1}" ${canEditAll?'':'disabled'} style="width:56px" onchange="updatePiso(${i},'d1',Number(this.value))"></td>
-      <td><input type="number" value="${row.volume}" ${canEditAll?'':'disabled'} style="width:76px" onchange="updatePiso(${i},'volume',Number(this.value))"></td>
-      <td><input type="number" value="${row.sku}" ${canEditAll?'':'disabled'} style="width:56px" onchange="updatePiso(${i},'sku',Number(this.value))"></td>
-      <td><input type="text" value="${escapeHtml(row.departamento)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'departamento',this.value)"></td>
-      <td>
-        <select class="status-select ${statusSlug(row.status)}" ${canMarkStatus?'':'disabled'} onchange="updatePiso(${i},'status',this.value)">
-          ${STATUS_LIST.map(s => `<option value="${s}" ${row.status===s?'selected':''}>${STATUS_LABELS[s]}</option>`).join('')}
-        </select>
-      </td>
-      <td><input type="text" value="${escapeHtml(row.obs)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'obs',this.value)"></td>
-      <td>${canEditAll ? `<button class="btn btn-danger" onclick="removePisoRow(${i})">Remover</button>` : ''}</td>
-    `;
-    tbody.appendChild(tr);
-  });
+    if(naoEtq.length){
+      tbody.appendChild(buildPisoGroupHeaderRow(`NÃO ETIQUETADAS — ${naoEtq.length}`, 'pend'));
+      naoEtq.forEach(({row,i}) => tbody.appendChild(buildPisoRow(row, i, canEditAll, canMarkStatus)));
+    }
+    if(etq.length){
+      tbody.appendChild(buildPisoGroupHeaderRow(`ETIQUETADAS — ${etq.length}`, 'ok'));
+      etq.forEach(({row,i}) => tbody.appendChild(buildPisoRow(row, i, canEditAll, canMarkStatus)));
+    }
+  }
 
   const totalCargas = pisoData.length;
   const etqRows = pisoData.filter(r => r.status === 'CARGA ETIQUETADA');
@@ -1574,6 +1648,7 @@ function renderCrossAll(){
 }
 
 function imprimirRelatorioCross(){
+  document.body.setAttribute('data-print-target', 'cross');
   window.print();
 }
 
@@ -1605,13 +1680,13 @@ function importCrossFromPaste(){
 
 /* ===================== PLANEJAMENTO (estações x lojas) ===================== */
 
-/* configuração padrão das 20 estações — cada uma com a faixa de lojas que atende.
-   Totalmente editável pelo administrador na tela de configuração. */
+/* configuração padrão das 20 estações — cada uma com a faixa de lojas que atende
+   e o nome do(s) associado(s) responsável(is) (em branco por padrão). */
 function gerarPlanStationsPadrao(){
   const arr = [];
   for(let i = 0; i < 20; i++){
-    if(i === 0){ arr.push({ de:1, ate:20 }); }
-    else{ const de = 21 + (i-1)*10; arr.push({ de, ate: de+9 }); }
+    if(i === 0){ arr.push({ de:1, ate:20, responsavel:'' }); }
+    else{ const de = 21 + (i-1)*10; arr.push({ de, ate: de+9, responsavel:'' }); }
   }
   return arr;
 }
@@ -1654,12 +1729,13 @@ function renderPlanConfig(){
       <td>Estação ${i+1}</td>
       <td><input type="number" min="0" value="${st.de}" onchange="updatePlanStationField(${i},'de',this.value)"></td>
       <td><input type="number" min="0" value="${st.ate}" onchange="updatePlanStationField(${i},'ate',this.value)"></td>
+      <td><input type="text" placeholder="Nome do(s) associado(s)" value="${escapeHtml(st.responsavel||'')}" onchange="updatePlanStationField(${i},'responsavel',this.value)"></td>
     `;
     tbody.appendChild(tr);
   });
 }
 function updatePlanStationField(i, field, value){
-  planStations[i][field] = Number(value) || 0;
+  planStations[i][field] = field === 'responsavel' ? value : (Number(value) || 0);
 }
 function savePlanStationsConfig(){
   savePlanConfig();
@@ -1707,27 +1783,36 @@ function renderPlanejamento(){
     document.getElementById('panel-plan-config').style.display = 'none';
   }
 
+  const canPrint = ['admin','encarregado','conferente'].includes(currentUser.role);
+  const printWrap = document.getElementById('plan-print-wrap');
+
   const box = document.getElementById('plan-resultado');
   if(!box) return;
 
   const cargaInput = document.getElementById('plan-carga-input').value;
+  const lojaFiltro = (document.getElementById('plan-loja-filter').value || '').trim().replace(/\D/g,'');
+
   if(!cargaInput.trim()){
     box.innerHTML = '<p class="hint" style="margin:0; padding:16px 20px;">Digite o número de uma carga (ou várias, separadas por vírgula) pra ver o planejamento por estação.</p>';
+    if(printWrap) printWrap.style.display = 'none';
     return;
   }
 
   const resultado = computePlanejamento(cargaInput);
   if(!resultado.encontrada){
     box.innerHTML = `<p class="hint" style="margin:0; padding:16px 20px; color:var(--danger);">Carga ${escapeHtml(resultado.cargas.join(', '))} não encontrada no relatório Cross importado.</p>`;
+    if(printWrap) printWrap.style.display = 'none';
     return;
   }
+
+  if(printWrap) printWrap.style.display = canPrint ? 'block' : 'none';
 
   let html = `<div style="padding:16px 20px 0;">
     <p class="plan-header-result">Carga${resultado.cargas.length>1?'s':''}: <b>${escapeHtml(resultado.cargas.join(', '))}</b> — Fornecedor: <b>${escapeHtml(resultado.fornecedores.join(' / ') || '—')}</b></p>`;
   if(resultado.temAgrupado){
     html += `<div class="plan-warning">⚠️ Essa carga tem itens ainda "Agrupados" (não totalmente montados) — os números abaixo consideram só o que já está Montado.</div>`;
   }
-  html += `</div>`;
+  html += `</div><div class="plan-grid">`;
 
   const qtdEstacoesAtivas = Number(document.getElementById('plan-qtd-estacoes').value) || 20;
   let algumaEstacaoComDados = false;
@@ -1735,28 +1820,59 @@ function renderPlanejamento(){
   for(let i = 0; i < qtdEstacoesAtivas; i++){
     const st = planStations[i];
     if(!st) continue;
-    let volTotal = 0, itensTotal = 0;
-    let linhasHtml = '';
+
+    let lojasDaEstacao = [];
     for(let loja = st.de; loja <= st.ate; loja++){
       const d = resultado.porLoja[loja];
       if(!d) continue;
-      volTotal += d.volume;
-      itensTotal += d.itens;
-      linhasHtml += `<div class="plan-loja-row"><span>Loja ${String(loja).padStart(2,'0')}</span><span>${fmtInt(d.volume)} vol · ${d.itens} ${d.itens===1?'item':'itens'}</span></div>`;
+      if(lojaFiltro && !String(loja).padStart(2,'0').includes(lojaFiltro)) continue;
+      lojasDaEstacao.push({ loja, ...d });
     }
-    if(!linhasHtml) continue; // essa estação não recebe nada dessa(s) carga(s)
+    if(!lojasDaEstacao.length) continue; // essa estação não recebe nada dessa(s) carga(s) (ou foi filtrada)
     algumaEstacaoComDados = true;
-    html += `<div class="plan-station">
-      <div class="plan-station-header"><b>Estação ${i+1}</b><span>Volume total: ${fmtInt(volTotal)} · SKU total: ${itensTotal} ${itensTotal===1?'item':'itens'}</span></div>
-      ${linhasHtml}
+
+    const volTotal = lojasDaEstacao.reduce((s,l)=>s+l.volume,0);
+    const itensTotal = lojasDaEstacao.reduce((s,l)=>s+l.itens,0);
+
+    const linhasHtml = lojasDaEstacao.map(l => `
+      <tr>
+        <td>Loja ${String(l.loja).padStart(2,'0')}</td>
+        <td class="pm-vol">${fmtInt(l.volume)}</td>
+        <td class="pm-sku">${l.itens}</td>
+      </tr>
+    `).join('');
+
+    html += `<div class="plan-station-card">
+      <div class="plan-station-card-header">
+        <div class="st-num">Estação ${i+1}</div>
+        <div class="st-resp">Associado: <b>${st.responsavel ? escapeHtml(st.responsavel) : '—'}</b></div>
+      </div>
+      <table class="plan-mini-table">
+        <thead><tr><th>Destino</th><th class="pm-vol">Volume</th><th class="pm-sku">SKU</th></tr></thead>
+        <tbody>${linhasHtml}</tbody>
+        <tfoot>
+          <tr>
+            <td>TOTAL · ${lojasDaEstacao.length} loja${lojasDaEstacao.length===1?'':'s'}</td>
+            <td class="pm-vol">${fmtInt(volTotal)}</td>
+            <td class="pm-sku">${itensTotal}</td>
+          </tr>
+        </tfoot>
+      </table>
     </div>`;
   }
 
+  html += `</div>`;
+
   if(!algumaEstacaoComDados){
-    html += `<p class="hint" style="margin:14px 20px 0;">Nenhuma loja dessa carga caiu dentro das estações configuradas. Confira a configuração das estações.</p>`;
+    html += `<p class="hint" style="margin:14px 20px 0;">Nenhuma loja dessa carga caiu dentro das estações configuradas${lojaFiltro ? ' com esse filtro' : ''}. Confira a configuração das estações.</p>`;
   }
 
   box.innerHTML = html;
+}
+
+function imprimirPlanejamento(){
+  document.body.setAttribute('data-print-target', 'plan');
+  window.print();
 }
 
 /* ===================== CÓDIGO (QR) PRO SITE ===================== */
