@@ -295,6 +295,9 @@
   @media (max-width:720px){ .tabnav{padding:0 16px;} }
   .dist-tabnav{ display:flex; gap:6px; border-bottom:1px solid var(--line); margin-bottom:18px; flex-wrap:wrap; }
   .dist-tabnav .tab-btn{ padding:11px 16px 9px; }
+  .resumo-turno-block{ padding:18px 20px; border-bottom:1px solid var(--line); }
+  .resumo-turno-block:last-child{ border-bottom:none; }
+  .resumo-turno-block h3{ color:var(--band); font-size:1rem; margin:0 0 10px; }
 
   /* ---------- IMPRESSÃO (relatório Cross) ---------- */
   @media print{
@@ -719,34 +722,15 @@
       </div>
     </section>
 
-    <!-- PANEL: RESUMO DA DISTRIBUIÇÃO (todos os turnos com carga distribuída) -->
+    <!-- PANEL: RESUMO DA DISTRIBUIÇÃO (uma grade por turno, só os que já têm carga distribuída) -->
     <section class="panel" id="panel-dist-resumo">
       <div class="panel-header">
         <div class="title-block">
           <h2>RESUMO</h2>
-          <span class="sub">Turnos que já têm alguma carga distribuída</span>
+          <span class="sub">Turnos que já têm alguma carga distribuída — cada um com sua própria grade e total</span>
         </div>
       </div>
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Turno</th><th>Produtivos</th><th>Cargas distribuídas</th><th>Volume</th><th>SKU</th><th>H/H</th><th>Estocado full</th><th>Estocado mix</th>
-            </tr>
-          </thead>
-          <tbody id="tbody-dist-resumo"></tbody>
-          <tfoot>
-            <tr>
-              <td>TOTAL GERAL</td>
-              <td id="ft-resumo-produtivos">0</td>
-              <td id="ft-resumo-cargas">0</td>
-              <td id="ft-resumo-vol">0</td>
-              <td id="ft-resumo-sku">0</td>
-              <td colspan="3"></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+      <div id="resumo-turnos-container"></div>
     </section>
 
   </div>
@@ -1609,19 +1593,19 @@ function renderDist(){
   renderResumoDist();
 }
 
-/* Resumo: lista só os turnos que já têm pelo menos uma carga marcada como distribuída */
+/* Resumo: uma grade igual à da Distribuição pra cada turno que já tem carga distribuída —
+   sem misturar os turnos; cada bloco soma o volume, o SKU e os produtivos só daquele turno. */
 function renderResumoDist(){
-  const tbody = document.getElementById('tbody-dist-resumo');
-  if(!tbody) return;
-  tbody.innerHTML = '';
+  const container = document.getElementById('resumo-turnos-container');
+  if(!container) return;
+  container.innerHTML = '';
 
   const turnosAtivos = TURNOS.filter(t => distData.some(r => turnoDaCarga(r) === t));
 
   if(turnosAtivos.length === 0){
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Nenhum turno com carga distribuída ainda.</td></tr>';
+    container.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:22px; font-style:italic;">Nenhum turno com carga distribuída ainda.</div>';
+    return;
   }
-
-  let totProdutivos = 0, totCargas = 0, totVol = 0, totSku = 0;
 
   turnosAtivos.forEach(turno => {
     const linhas = distData.filter(r => turnoDaCarga(r) === turno);
@@ -1630,31 +1614,47 @@ function renderResumoDist(){
     const skuTotal = linhas.reduce((s,r)=>s+Number(r.sku||0),0);
     const volTotal = volLinhas + Number(extras.estocadoFull||0) + Number(extras.estocadoMix||0);
     const qtdProdutivos = Number(extras.qtdProdutivos||0);
-    const hh = qtdProdutivos > 0 ? (volTotal / qtdProdutivos / 7).toFixed(1) : '—';
 
-    totProdutivos += qtdProdutivos;
-    totCargas += linhas.length;
-    totVol += volTotal;
-    totSku += skuTotal;
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><b>${turno}</b></td>
-      <td>${qtdProdutivos}</td>
-      <td>${linhas.length}</td>
-      <td>${fmtInt(volTotal)}</td>
-      <td>${skuTotal}</td>
-      <td>${hh}</td>
-      <td>${fmtInt(extras.estocadoFull||0)}</td>
-      <td>${fmtInt(extras.estocadoMix||0)}</td>
+    const bloco = document.createElement('div');
+    bloco.className = 'resumo-turno-block';
+    bloco.innerHTML = `
+      <h3 class="label-font">DISTRIBUIÇÃO ${turno}</h3>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Etiquetagem</th><th>Doca</th><th>Carga</th><th>Descrição</th><th>Liberação</th>
+              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${linhas.map(row => `
+              <tr>
+                <td>${escapeHtml(row.etiquetagem)}</td>
+                <td>${escapeHtml(row.doca)}</td>
+                <td>${escapeHtml(row.carga)}</td>
+                <td>${escapeHtml(row.descricao)}</td>
+                <td>${escapeHtml(row.liberacao)}</td>
+                <td>${row.d1}</td>
+                <td>${fmtInt(row.volume)}</td>
+                <td>${row.sku}</td>
+                <td>${escapeHtml(row.horaDist)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="6">TOTAL ${turno}</td>
+              <td>${fmtInt(volTotal)}</td>
+              <td>${skuTotal}</td>
+              <td>Produtivos: ${qtdProdutivos}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     `;
-    tbody.appendChild(tr);
+    container.appendChild(bloco);
   });
-
-  document.getElementById('ft-resumo-produtivos').textContent = totProdutivos;
-  document.getElementById('ft-resumo-cargas').textContent = totCargas;
-  document.getElementById('ft-resumo-vol').textContent = fmtInt(totVol);
-  document.getElementById('ft-resumo-sku').textContent = totSku;
 }
 
 function updateExtra(turno, field, value){
