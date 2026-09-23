@@ -293,6 +293,8 @@
   .tab-btn.active{ color:var(--band); border-bottom-color:var(--band); }
   .tab-btn:hover{ color:var(--text); }
   @media (max-width:720px){ .tabnav{padding:0 16px;} }
+  .dist-tabnav{ display:flex; gap:6px; border-bottom:1px solid var(--line); margin-bottom:18px; flex-wrap:wrap; }
+  .dist-tabnav .tab-btn{ padding:11px 16px 9px; }
 
   /* ---------- IMPRESSÃO (relatório Cross) ---------- */
   @media print{
@@ -568,34 +570,43 @@
           <h2>FILA DE DISTRIBUIÇÃO</h2>
           <span class="sub">Cargas etiquetadas, prontas para distribuir</span>
         </div>
-        <div class="stat-row">
+        <div class="stat-row" style="align-items:center;">
+          <div class="stat"><div class="n" id="badge-turno-ativo">—</div><div class="l">Turno ativo</div></div>
           <div class="stat"><div class="n" id="st-fila-count">0</div><div class="l">Aguardando</div></div>
         </div>
       </div>
+      <span class="hint" style="display:block; padding:0 20px 14px;">Cargas marcadas aqui entram na Distribuição do turno ativo (aba selecionada abaixo).</span>
       <div class="fila-grid" id="fila-grid"></div>
     </section>
 
-    <!-- PANEL 3: DISTRIBUIÇÃO T2 -->
-    <section class="panel" id="panel-dist">
+    <!-- PANEL 3: DISTRIBUIÇÃO T1 / T2 / T3 -->
+    <div class="dist-tabnav">
+      <button class="tab-btn" id="dist-tab-btn-T1" onclick="switchDistTab('T1')">Distribuição T1</button>
+      <button class="tab-btn" id="dist-tab-btn-T2" onclick="switchDistTab('T2')">Distribuição T2</button>
+      <button class="tab-btn" id="dist-tab-btn-T3" onclick="switchDistTab('T3')">Distribuição T3</button>
+      <button class="tab-btn" id="dist-tab-btn-resumo" onclick="switchDistTab('resumo')">Resumo</button>
+    </div>
+
+    <section class="panel" id="panel-dist-T1">
       <div class="panel-header">
         <div class="title-block">
-          <h2 contenteditable="false" id="titulo-dist">DISTRIBUIÇÃO T2</h2>
-          <span class="sub" id="data-dist"></span>
+          <h2>DISTRIBUIÇÃO T1</h2>
+          <span class="sub" id="data-dist-T1"></span>
         </div>
       </div>
       <div class="summary-cards">
         <div class="card">
-          <input type="number" id="sm-produtivos" class="summary-input" min="0" value="0" oninput="updateExtra('qtdProdutivos', this.value)">
+          <input type="number" id="sm-produtivos-T1" class="summary-input" min="0" value="0" oninput="updateExtra('T1','qtdProdutivos', this.value)">
           <div class="l">Qtd. produtivos (manual)</div>
         </div>
-        <div class="card"><div class="n" id="sm-cargas">0</div><div class="l">Qtd. cargas distribuídas</div></div>
-        <div class="card"><div class="n" id="sm-hh">0</div><div class="l">H/H (volume ÷ 7h ÷ produtivos)</div></div>
+        <div class="card"><div class="n" id="sm-cargas-T1">0</div><div class="l">Qtd. cargas distribuídas</div></div>
+        <div class="card"><div class="n" id="sm-hh-T1">0</div><div class="l">H/H (volume ÷ 7h ÷ produtivos)</div></div>
         <div class="card">
-          <input type="number" id="sm-full" class="summary-input" min="0" value="0" oninput="updateExtra('estocadoFull', this.value)">
+          <input type="number" id="sm-full-T1" class="summary-input" min="0" value="0" oninput="updateExtra('T1','estocadoFull', this.value)">
           <div class="l">Estocado full (manual)</div>
         </div>
         <div class="card">
-          <input type="number" id="sm-mix" class="summary-input" min="0" value="0" oninput="updateExtra('estocadoMix', this.value)">
+          <input type="number" id="sm-mix-T1" class="summary-input" min="0" value="0" oninput="updateExtra('T1','estocadoMix', this.value)">
           <div class="l">Estocado mix / fracionado (manual)</div>
         </div>
       </div>
@@ -604,16 +615,134 @@
           <thead>
             <tr>
               <th>Etiquetagem</th><th>Doca</th><th>Carga</th><th>Descrição</th><th>Liberação</th>
-              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th><th></th>
+              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th><th>Turno</th><th></th>
             </tr>
           </thead>
-          <tbody id="tbody-dist"></tbody>
+          <tbody id="tbody-dist-T1"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="6">DISTRIBUIÇÃO TOTAL T1</td>
+              <td id="ft-dist-vol-T1">0</td>
+              <td id="ft-dist-sku-T1">0</td>
+              <td colspan="3"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-dist-T2">
+      <div class="panel-header">
+        <div class="title-block">
+          <h2>DISTRIBUIÇÃO T2</h2>
+          <span class="sub" id="data-dist-T2"></span>
+        </div>
+      </div>
+      <div class="summary-cards">
+        <div class="card">
+          <input type="number" id="sm-produtivos-T2" class="summary-input" min="0" value="0" oninput="updateExtra('T2','qtdProdutivos', this.value)">
+          <div class="l">Qtd. produtivos (manual)</div>
+        </div>
+        <div class="card"><div class="n" id="sm-cargas-T2">0</div><div class="l">Qtd. cargas distribuídas</div></div>
+        <div class="card"><div class="n" id="sm-hh-T2">0</div><div class="l">H/H (volume ÷ 7h ÷ produtivos)</div></div>
+        <div class="card">
+          <input type="number" id="sm-full-T2" class="summary-input" min="0" value="0" oninput="updateExtra('T2','estocadoFull', this.value)">
+          <div class="l">Estocado full (manual)</div>
+        </div>
+        <div class="card">
+          <input type="number" id="sm-mix-T2" class="summary-input" min="0" value="0" oninput="updateExtra('T2','estocadoMix', this.value)">
+          <div class="l">Estocado mix / fracionado (manual)</div>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Etiquetagem</th><th>Doca</th><th>Carga</th><th>Descrição</th><th>Liberação</th>
+              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th><th>Turno</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-dist-T2"></tbody>
           <tfoot>
             <tr>
               <td colspan="6">DISTRIBUIÇÃO TOTAL T2</td>
-              <td id="ft-dist-vol">0</td>
-              <td id="ft-dist-sku">0</td>
-              <td colspan="2"></td>
+              <td id="ft-dist-vol-T2">0</td>
+              <td id="ft-dist-sku-T2">0</td>
+              <td colspan="3"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-dist-T3">
+      <div class="panel-header">
+        <div class="title-block">
+          <h2>DISTRIBUIÇÃO T3</h2>
+          <span class="sub" id="data-dist-T3"></span>
+        </div>
+      </div>
+      <div class="summary-cards">
+        <div class="card">
+          <input type="number" id="sm-produtivos-T3" class="summary-input" min="0" value="0" oninput="updateExtra('T3','qtdProdutivos', this.value)">
+          <div class="l">Qtd. produtivos (manual)</div>
+        </div>
+        <div class="card"><div class="n" id="sm-cargas-T3">0</div><div class="l">Qtd. cargas distribuídas</div></div>
+        <div class="card"><div class="n" id="sm-hh-T3">0</div><div class="l">H/H (volume ÷ 7h ÷ produtivos)</div></div>
+        <div class="card">
+          <input type="number" id="sm-full-T3" class="summary-input" min="0" value="0" oninput="updateExtra('T3','estocadoFull', this.value)">
+          <div class="l">Estocado full (manual)</div>
+        </div>
+        <div class="card">
+          <input type="number" id="sm-mix-T3" class="summary-input" min="0" value="0" oninput="updateExtra('T3','estocadoMix', this.value)">
+          <div class="l">Estocado mix / fracionado (manual)</div>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Etiquetagem</th><th>Doca</th><th>Carga</th><th>Descrição</th><th>Liberação</th>
+              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th><th>Turno</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-dist-T3"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="6">DISTRIBUIÇÃO TOTAL T3</td>
+              <td id="ft-dist-vol-T3">0</td>
+              <td id="ft-dist-sku-T3">0</td>
+              <td colspan="3"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <!-- PANEL: RESUMO DA DISTRIBUIÇÃO (todos os turnos com carga distribuída) -->
+    <section class="panel" id="panel-dist-resumo">
+      <div class="panel-header">
+        <div class="title-block">
+          <h2>RESUMO</h2>
+          <span class="sub">Turnos que já têm alguma carga distribuída</span>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Turno</th><th>Produtivos</th><th>Cargas distribuídas</th><th>Volume</th><th>SKU</th><th>H/H</th><th>Estocado full</th><th>Estocado mix</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-dist-resumo"></tbody>
+          <tfoot>
+            <tr>
+              <td>TOTAL GERAL</td>
+              <td id="ft-resumo-produtivos">0</td>
+              <td id="ft-resumo-cargas">0</td>
+              <td id="ft-resumo-vol">0</td>
+              <td id="ft-resumo-sku">0</td>
+              <td colspan="3"></td>
             </tr>
           </tfoot>
         </table>
@@ -916,14 +1045,17 @@ function statusSlug(status){
 /* reconhece o status mesmo vindo de uma planilha colada (texto livre) */
 function mapStatusToken(t){
   const up = String(t||'').toUpperCase();
+  // "ETIQUETA" (sem o "DA" no final) em vez de "ETIQUETADA": a foto/OCR corta o final da
+  // palavra com uma frequência incômoda numa tabela densa — melhor reconhecer o status com
+  // a palavra "cortada" do que deixar a linha inteira cair como NÃO ANALISADO por causa disso
   if(up.includes('AGUARDANDO') && up.includes('IMPRESS')) return 'AGUARDANDO IMPRESSÃO';
   if(up.includes('PROCESSO')) return 'EM PROCESSO DE ETIQUETAGEM';
   if(up.includes('PARCIALMENTE') && up.includes('DISTRIB')) return 'PARCIALMENTE DISTRIBUIDA';
-  if(up.includes('PARCIALMENTE') && up.includes('ETIQUETADA')) return 'PARCIALMENTE ETIQUETADA';
+  if(up.includes('PARCIALMENTE') && up.includes('ETIQUETA')) return 'PARCIALMENTE ETIQUETADA';
   if(up.includes('CONFER')) return 'EM CONFERÊNCIA';
-  if(up.includes('CARGA') && up.includes('ETIQUETADA')) return 'CARGA ETIQUETADA';
+  if(up.includes('CARGA') && up.includes('ETIQUETA')) return 'CARGA ETIQUETADA';
   if(up.includes('PENDENTE')) return 'PENDENTE DE ETIQUETAGEM';
-  if(up.includes('ETIQUETADA')) return 'CARGA ETIQUETADA';
+  if(up.includes('ETIQUETA')) return 'CARGA ETIQUETADA';
   return 'PENDENTE DE ETIQUETAGEM';
 }
 
@@ -942,8 +1074,49 @@ let pisoData = [
   {produtivo:'', doca:'117', carga:'446702', fornecedor:'1º MK ID:7802', liberacao:'10/09/2026', d1:0, volume:38, sku:1, departamento:'', status:'PENDENTE DE ETIQUETAGEM', obs:'CROSS & ESTOCADO - Retrabalho'}
 ];
 
-let distData = []; // cargas já distribuídas (painel 3)
-let distExtras = { qtdProdutivos: 0, estocadoFull: 0, estocadoMix: 0 }; // valores manuais, avulsos da grade
+let distData = []; // cargas já distribuídas (painéis T1/T2/T3)
+const TURNOS = ['T1','T2','T3'];
+
+/* Detecta o turno atual pelo horário do dispositivo:
+   T1: 05:40–13:59 · T2: 14:00–21:59 · T3: 22:00–05:39 (vira a virada da noite) */
+function turnoPorHorario(date){
+  date = date || new Date();
+  const min = date.getHours()*60 + date.getMinutes();
+  if(min >= 340 && min <= 839) return 'T1';  // 05:40 a 13:59
+  if(min >= 840 && min <= 1319) return 'T2'; // 14:00 a 21:59
+  return 'T3';                                // 22:00 a 05:39
+}
+
+let turnoAtivo = turnoPorHorario(); // turno pra onde vão as próximas cargas marcadas na fila (local, por sessão)
+let distTabAtiva = turnoAtivo;      // qual aba da Distribuição está sendo exibida agora (local, por sessão)
+function distExtrasVazio(){ return { qtdProdutivos:0, estocadoFull:0, estocadoMix:0 }; }
+// normaliza o objeto "extras": migra o formato antigo (um único bloco, sem turno — que
+// era, na prática, sempre do T2) pro formato novo, com um bloco por turno.
+function normalizeDistExtras(e){
+  if(!e) return { T1: distExtrasVazio(), T2: distExtrasVazio(), T3: distExtrasVazio() };
+  if(e.T1 || e.T2 || e.T3){
+    return {
+      T1: e.T1 || distExtrasVazio(),
+      T2: e.T2 || distExtrasVazio(),
+      T3: e.T3 || distExtrasVazio()
+    };
+  }
+  return {
+    T1: distExtrasVazio(),
+    T2: { qtdProdutivos: e.qtdProdutivos||0, estocadoFull: e.estocadoFull||0, estocadoMix: e.estocadoMix||0 },
+    T3: distExtrasVazio()
+  };
+}
+let distExtras = normalizeDistExtras(null); // valores manuais, avulsos da grade — um bloco por turno
+function turnoDaCarga(row){ return row.turno || 'T2'; } // dados antigos, sem turno gravado, eram sempre T2
+
+// troca a aba visível da Distribuição; escolher T1/T2/T3 também passa a ser o turno
+// ativo (pra onde vão as próximas cargas marcadas na Fila). "resumo" só muda a exibição.
+function switchDistTab(nome){
+  distTabAtiva = nome;
+  if(TURNOS.includes(nome)) turnoAtivo = nome;
+  renderDist();
+}
 
 let crossRawData = []; // linhas cruas do relatório Cross importado (todas as cargas, status Montada e Agrupada)
 let crossMarcadas = {}; // { carga: true } cargas que o conferente marcou pra entrar no relatório impresso
@@ -1049,6 +1222,8 @@ async function doLogin(){
   }
   errBox.textContent = '';
   currentUser = { nome, role, celular, id: slugifyName(nome) };
+  turnoAtivo = turnoPorHorario();
+  distTabAtiva = turnoAtivo;
 
   if('Notification' in window && Notification.permission === 'default'){
     Notification.requestPermission();
@@ -1060,7 +1235,6 @@ async function doLogin(){
   document.getElementById('who-role').textContent = ROLE_LABELS[role];
 
   document.getElementById('titulo-piso').setAttribute('contenteditable', role==='admin' ? 'true' : 'false');
-  document.getElementById('titulo-dist').setAttribute('contenteditable', role==='admin' ? 'true' : 'false');
   const podeUsarFoto = ['admin','encarregado','conferente'].includes(role);
   document.getElementById('piso-actions').style.display = (role==='admin' || podeUsarFoto) ? 'flex' : 'none';
   document.getElementById('btn-add-piso').style.display = role==='admin' ? 'inline-block' : 'none';
@@ -1105,13 +1279,16 @@ function applySectorVisibility(){
   // todo mundo que loga vê os três painéis, o que muda é só o que cada perfil pode editar.
   document.getElementById('panel-piso').style.display = 'block';
   document.getElementById('panel-fila').style.display = 'block';
-  document.getElementById('panel-dist').style.display = 'block';
+  document.getElementById('panel-dist-T1').style.display = 'block';
+  document.getElementById('panel-dist-T2').style.display = 'block';
+  document.getElementById('panel-dist-T3').style.display = 'block';
+  document.getElementById('panel-dist-resumo').style.display = 'block';
 }
 
 function loadDemo(){
   if(currentUser.role !== 'admin') return;
   distData = JSON.parse(JSON.stringify(DEMO_DIST));
-  distExtras = { ...DEMO_EXTRAS };
+  distExtras = normalizeDistExtras(DEMO_EXTRAS);
   saveDist();
   renderDist();
 }
@@ -1216,7 +1393,9 @@ function cargaJaDistribuida(cargaNum){
 
 function updatePiso(i, field, value){
   if(field === 'carga' && cargaJaDistribuida(value)){
-    showToast(`⚠️ A carga ${value} já está na Distribuição T2 — não foi adicionada ao piso.`, true);
+    const existente = distData.find(r => String(r.carga).trim() === String(value).trim());
+    const turnoExistente = existente ? turnoDaCarga(existente) : '';
+    showToast(`⚠️ A carga ${value} já está na Distribuição${turnoExistente ? ' '+turnoExistente : ''} — não foi adicionada ao piso.`, true);
     renderAll(); // reverte o campo pro valor anterior
     return;
   }
@@ -1303,7 +1482,8 @@ function distribuirCarga(idx){
     volume: row.volume,
     sku: row.sku,
     horaDist: nowTime(),
-    distribuidoPor: currentUser.nome
+    distribuidoPor: currentUser.nome,
+    turno: turnoAtivo
   });
   pisoData.splice(idx,1);
   savePiso();
@@ -1338,69 +1518,148 @@ function handleDistRowClick(ev, i){
   devolverAoPiso(i);
 }
 
-/* ===================== RENDER: PAINEL 3 - DISTRIBUIÇÃO T2 ===================== */
+/* ===================== RENDER: PAINÉIS DE DISTRIBUIÇÃO (T1 / T2 / T3) + RESUMO ===================== */
 function renderDist(){
   const { role } = currentUser;
   const canEditHora = role === 'admin' || role === 'encarregado' || role === 'conferente';
   const canEditManual = role !== 'geral'; // qualquer perfil, menos quem entra com a senha geral
   const canDevolver = role === 'admin' || role === 'encarregado' || role === 'conferente';
-  const canDelete = role === 'admin' || role === 'encarregado' || role === 'conferente';
+  const canDelete = canDevolver;
+  const canEditTurno = canDevolver;
 
-  const tbody = document.getElementById('tbody-dist');
+  // aplica a aba ativa (T1/T2/T3/resumo): mostra só o painel correspondente e destaca o botão
+  TURNOS.forEach(t => {
+    const painel = document.getElementById('panel-dist-'+t);
+    if(painel) painel.style.display = (distTabAtiva === t) ? 'block' : 'none';
+    const btn = document.getElementById('dist-tab-btn-'+t);
+    if(btn) btn.classList.toggle('active', distTabAtiva === t);
+  });
+  const painelResumo = document.getElementById('panel-dist-resumo');
+  if(painelResumo) painelResumo.style.display = (distTabAtiva === 'resumo') ? 'block' : 'none';
+  const btnResumo = document.getElementById('dist-tab-btn-resumo');
+  if(btnResumo) btnResumo.classList.toggle('active', distTabAtiva === 'resumo');
+  const badge = document.getElementById('badge-turno-ativo');
+  if(badge) badge.textContent = turnoAtivo;
+
+  TURNOS.forEach(turno => {
+    const tbody = document.getElementById('tbody-dist-'+turno);
+    if(!tbody) return;
+    tbody.innerHTML = '';
+
+    // mantém o índice original em distData (necessário pra editar/remover/devolver a linha certa)
+    const linhas = distData.map((r,i)=>({...r, _idx:i})).filter(r => turnoDaCarga(r) === turno);
+
+    if(linhas.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="11">Nenhuma carga distribuída ainda.</td></tr>';
+    }
+
+    linhas.forEach(row => {
+      const i = row._idx;
+      const tr = document.createElement('tr');
+      if(canDevolver){
+        tr.classList.add('clickable-row');
+        tr.title = 'Clique na linha pra devolver essa carga pro piso';
+        tr.onclick = (ev) => handleDistRowClick(ev, i);
+      }
+      tr.innerHTML = `
+        <td>${escapeHtml(row.etiquetagem)}</td>
+        <td>${escapeHtml(row.doca)}</td>
+        <td>${escapeHtml(row.carga)}</td>
+        <td>${escapeHtml(row.descricao)}</td>
+        <td>${escapeHtml(row.liberacao)}</td>
+        <td>${row.d1}</td>
+        <td>${fmtInt(row.volume)}</td>
+        <td>${row.sku}</td>
+        <td><input type="text" value="${escapeHtml(row.horaDist)}" title="${row.distribuidoPor ? 'Distribuído por '+escapeHtml(row.distribuidoPor) : ''}" style="width:70px" ${canEditHora?'':'disabled'} onchange="updateDist(${i},'horaDist',this.value)"></td>
+        <td>
+          <select ${canEditTurno?'':'disabled'} onchange="updateDist(${i},'turno',this.value)">
+            ${TURNOS.map(t => `<option value="${t}" ${t===turno?'selected':''}>${t}</option>`).join('')}
+          </select>
+        </td>
+        <td>${canDelete ? `<button class="btn btn-danger" onclick="removeDistRow(${i})">Remover</button>` : ''}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Full e Mix são valores adicionais, avulsos das linhas — entram somados no total de volume e no H/H
+    const extras = distExtras[turno] || distExtrasVazio();
+    const volLinhas = linhas.reduce((s,r)=>s+Number(r.volume||0),0);
+    const skuTotal = linhas.reduce((s,r)=>s+Number(r.sku||0),0);
+    const volTotal = volLinhas + Number(extras.estocadoFull||0) + Number(extras.estocadoMix||0);
+    const qtdProdutivos = Number(extras.qtdProdutivos||0);
+    const hh = qtdProdutivos > 0 ? (volTotal / qtdProdutivos / 7).toFixed(1) : '—';
+
+    document.getElementById('ft-dist-vol-'+turno).textContent = fmtInt(volTotal);
+    document.getElementById('ft-dist-sku-'+turno).textContent = skuTotal;
+    document.getElementById('sm-cargas-'+turno).textContent = linhas.length;
+    document.getElementById('sm-hh-'+turno).textContent = hh;
+
+    const inpProdutivos = document.getElementById('sm-produtivos-'+turno);
+    const inpFull = document.getElementById('sm-full-'+turno);
+    const inpMix = document.getElementById('sm-mix-'+turno);
+    inpProdutivos.value = extras.qtdProdutivos;
+    inpFull.value = extras.estocadoFull;
+    inpMix.value = extras.estocadoMix;
+    [inpProdutivos, inpFull, inpMix].forEach(inp => inp.disabled = !canEditManual);
+
+    const d = new Date();
+    document.getElementById('data-dist-'+turno).textContent = `${todayLabel().curto} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  });
+
+  renderResumoDist();
+}
+
+/* Resumo: lista só os turnos que já têm pelo menos uma carga marcada como distribuída */
+function renderResumoDist(){
+  const tbody = document.getElementById('tbody-dist-resumo');
+  if(!tbody) return;
   tbody.innerHTML = '';
 
-  if(distData.length === 0){
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="10">Nenhuma carga distribuída ainda.</td></tr>';
+  const turnosAtivos = TURNOS.filter(t => distData.some(r => turnoDaCarga(r) === t));
+
+  if(turnosAtivos.length === 0){
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Nenhum turno com carga distribuída ainda.</td></tr>';
   }
 
-  distData.forEach((row,i) => {
+  let totProdutivos = 0, totCargas = 0, totVol = 0, totSku = 0;
+
+  turnosAtivos.forEach(turno => {
+    const linhas = distData.filter(r => turnoDaCarga(r) === turno);
+    const extras = distExtras[turno] || distExtrasVazio();
+    const volLinhas = linhas.reduce((s,r)=>s+Number(r.volume||0),0);
+    const skuTotal = linhas.reduce((s,r)=>s+Number(r.sku||0),0);
+    const volTotal = volLinhas + Number(extras.estocadoFull||0) + Number(extras.estocadoMix||0);
+    const qtdProdutivos = Number(extras.qtdProdutivos||0);
+    const hh = qtdProdutivos > 0 ? (volTotal / qtdProdutivos / 7).toFixed(1) : '—';
+
+    totProdutivos += qtdProdutivos;
+    totCargas += linhas.length;
+    totVol += volTotal;
+    totSku += skuTotal;
+
     const tr = document.createElement('tr');
-    if(canDevolver){
-      tr.classList.add('clickable-row');
-      tr.title = 'Clique na linha pra devolver essa carga pro piso';
-      tr.onclick = (ev) => handleDistRowClick(ev, i);
-    }
     tr.innerHTML = `
-      <td>${escapeHtml(row.etiquetagem)}</td>
-      <td>${escapeHtml(row.doca)}</td>
-      <td>${escapeHtml(row.carga)}</td>
-      <td>${escapeHtml(row.descricao)}</td>
-      <td>${escapeHtml(row.liberacao)}</td>
-      <td>${row.d1}</td>
-      <td>${fmtInt(row.volume)}</td>
-      <td>${row.sku}</td>
-      <td><input type="text" value="${escapeHtml(row.horaDist)}" title="${row.distribuidoPor ? 'Distribuído por '+escapeHtml(row.distribuidoPor) : ''}" style="width:70px" ${canEditHora?'':'disabled'} onchange="updateDist(${i},'horaDist',this.value)"></td>
-      <td>${canDelete ? `<button class="btn btn-danger" onclick="removeDistRow(${i})">Remover</button>` : ''}</td>
+      <td><b>${turno}</b></td>
+      <td>${qtdProdutivos}</td>
+      <td>${linhas.length}</td>
+      <td>${fmtInt(volTotal)}</td>
+      <td>${skuTotal}</td>
+      <td>${hh}</td>
+      <td>${fmtInt(extras.estocadoFull||0)}</td>
+      <td>${fmtInt(extras.estocadoMix||0)}</td>
     `;
     tbody.appendChild(tr);
   });
 
-  // Full e Mix são valores adicionais, avulsos das linhas — entram somados no total de volume e no H/H
-  const volLinhas = distData.reduce((s,r)=>s+Number(r.volume||0),0);
-  const skuTotal = distData.reduce((s,r)=>s+Number(r.sku||0),0);
-  const volTotal = volLinhas + Number(distExtras.estocadoFull||0) + Number(distExtras.estocadoMix||0);
-  const qtdProdutivos = Number(distExtras.qtdProdutivos||0);
-  const hh = qtdProdutivos > 0 ? (volTotal / qtdProdutivos / 7).toFixed(1) : '—';
-
-  document.getElementById('ft-dist-vol').textContent = fmtInt(volTotal);
-  document.getElementById('ft-dist-sku').textContent = skuTotal;
-  document.getElementById('sm-cargas').textContent = distData.length;
-  document.getElementById('sm-hh').textContent = hh;
-
-  const inpProdutivos = document.getElementById('sm-produtivos');
-  const inpFull = document.getElementById('sm-full');
-  const inpMix = document.getElementById('sm-mix');
-  inpProdutivos.value = distExtras.qtdProdutivos;
-  inpFull.value = distExtras.estocadoFull;
-  inpMix.value = distExtras.estocadoMix;
-  [inpProdutivos, inpFull, inpMix].forEach(inp => inp.disabled = !canEditManual);
-
-  const d = new Date();
-  document.getElementById('data-dist').textContent = `${todayLabel().curto} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('ft-resumo-produtivos').textContent = totProdutivos;
+  document.getElementById('ft-resumo-cargas').textContent = totCargas;
+  document.getElementById('ft-resumo-vol').textContent = fmtInt(totVol);
+  document.getElementById('ft-resumo-sku').textContent = totSku;
 }
 
-function updateExtra(field, value){
-  distExtras[field] = Number(value) || 0;
+function updateExtra(turno, field, value){
+  if(!distExtras[turno]) distExtras[turno] = distExtrasVazio();
+  distExtras[turno][field] = Number(value) || 0;
   saveDist();
   renderDist();
 }
@@ -1432,7 +1691,7 @@ function toNumberBR(v){
   const n = parseFloat(clean);
   return isNaN(n) ? 0 : n;
 }
-const isStatusToken = t => /ETIQUETADA|PENDENTE|IMPRESS|PROCESSO|PARCIALMENTE|DISTRIB|CONFER/i.test(t);
+const isStatusToken = t => /ETIQUETA|PENDENTE|IMPRESS|PROCESSO|PARCIALMENTE|DISTRIB|CONFER/i.test(t);
 const isDateToken = t => /^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(t);
 const isCargaToken = t => /^\d{4,7}$/.test(t);   // números de carga: 4 a 7 dígitos (ex: 446856)
 const isPureDigits = t => /^\d+$/.test(t);
@@ -1457,7 +1716,7 @@ const looksLikeCargaToken = t => {
    Sem isso, essas palavras "sobravam" soltas entre os tokens e eram tratadas como se fossem
    dado real de outra coluna (normalmente Departamento) — empurrando o resto da linha pro lado.
    statusSpan() "engole" essas palavras vizinhas junto com a âncora, dos dois lados. */
-const STATUS_CONNECTOR_RE = /^(EM|DE|CARGA|PARCIALMENTE|AGUARDANDO|PENDENTE|PROCESSO|ETIQUETAGEM|ETIQUETADA|DISTRIBUIDA|DISTRIBU[IÍ]DA|IMPRESS[AÃ]O|CONFER[EÊ]NCIA)$/i;
+const STATUS_CONNECTOR_RE = /^(EM|DE|CARGA|PARCIALMENTE|AGUARDANDO|PENDENTE|PROCESSO|ETIQUETAGEM|ETIQUETA\w*|DISTRIB\w*|IMPRESS\w*|CONFER\w*)$/i;
 function statusSpan(raw){
   const anchorIdx = raw.findIndex(isStatusToken);
   if(anchorIdx === -1) return null;
@@ -1648,6 +1907,47 @@ function resetPhotoCapture(){
   if(status) status.textContent = '';
 }
 
+/* Reconstrói as "colunas" de uma linha lida pela foto usando a POSIÇÃO (x) de cada palavra
+   na imagem — em vez de confiar no espaçamento do TEXTO, que o OCR quase nunca preserva
+   direito numa tabela densa tipo Excel (células coladas, bordas, fundo colorido). Palavras
+   próximas (espaço pequeno) viram um token só (ex.: "SUPER" + "SAÚDE" + "ID:9215" = um
+   Fornecedor); um espaço bem maior que o normal é onde uma coluna acaba e a próxima começa.
+   Assim, mesmo com uma coluna inteira vazia no meio da linha (ela não gera palavra nenhuma),
+   as colunas ao redor continuam alinhadas pela posição real na imagem, em vez de "puxar pro
+   lado". limiar proporcional à largura média de caractere da própria linha, pra funcionar
+   tanto numa foto de perto (letras grandes) quanto numa print em alta resolução (letras
+   pequenas). */
+function tokensFromOcrLine(line){
+  const words = (line.words || []).filter(w => w && w.text && w.text.trim() !== '' && w.bbox);
+  if(words.length === 0) return [];
+  words.sort((a,b) => a.bbox.x0 - b.bbox.x0);
+
+  let totalWidth = 0, totalChars = 0;
+  words.forEach(w => {
+    totalWidth += Math.max(0, w.bbox.x1 - w.bbox.x0);
+    totalChars += w.text.trim().length || 1;
+  });
+  const avgCharWidth = totalChars > 0 ? totalWidth / totalChars : 10;
+  const gapThreshold = Math.max(avgCharWidth * 2.2, 14);
+
+  const tokens = [];
+  let atual = words[0].text.trim();
+  let prevX1 = words[0].bbox.x1;
+  for(let i = 1; i < words.length; i++){
+    const w = words[i];
+    const gap = w.bbox.x0 - prevX1;
+    if(gap > gapThreshold){
+      tokens.push(atual.trim());
+      atual = w.text.trim();
+    } else {
+      atual += ' ' + w.text.trim();
+    }
+    prevX1 = w.bbox.x1;
+  }
+  tokens.push(atual.trim());
+  return tokens.filter(t => t !== '');
+}
+
 /* Leitura da foto 100% local e gratuita, via OCR no próprio navegador (Tesseract.js) —
    não chama nenhuma API paga nem precisa de chave. A leitura tende a errar mais que uma
    IA de visão, principalmente em números — por isso o passo de conferência abaixo (marcar/
@@ -1661,7 +1961,7 @@ async function analisarFotoPlanilha(){
   status.textContent = 'Lendo a imagem, aguarde…';
 
   try{
-    const { data: { text } } = await Tesseract.recognize(photoCapturedDataUrl, 'por', {
+    const { data } = await Tesseract.recognize(photoCapturedDataUrl, 'por', {
       logger: m => {
         if(m.status === 'recognizing text'){
           status.textContent = `Lendo a imagem… ${Math.round((m.progress||0)*100)}%`;
@@ -1671,16 +1971,32 @@ async function analisarFotoPlanilha(){
       }
     });
 
-    const linhasTexto = String(text||'').split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
     const linhas = [];
-    linhasTexto.forEach(linha => {
-      const porColuna = linha.split(/\s{2,}|\t/).map(c => c.trim()).filter(c => c !== '');
-      const tokens = porColuna.length > 1 ? porColuna : linha.split(/\s+/).filter(c => c !== '');
+
+    // modo principal: usa a posição real das palavras (mais confiável em tabelas densas)
+    const dataLines = Array.isArray(data.lines) ? data.lines : [];
+    dataLines.forEach(line => {
+      const tokens = tokensFromOcrLine(line);
       if(tokens.length === 0) return;
       if((tokens[0]||'').toUpperCase() === 'PRODUTIVO') return; // ignora linha de cabeçalho
       const row = parsePisoRow(tokens);
       if(row && row.carga) linhas.push(row);
     });
+
+    // modo de reserva: se essa versão do Tesseract não trouxe a posição das palavras,
+    // cai pro método antigo (separar por linha de texto + espaços largos) — mais frágil,
+    // mas melhor que não ler nada
+    if(linhas.length === 0){
+      const linhasTexto = String(data.text||'').split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+      linhasTexto.forEach(linha => {
+        const porColuna = linha.split(/\s{2,}|\t/).map(c => c.trim()).filter(c => c !== '');
+        const tokens = porColuna.length > 1 ? porColuna : linha.split(/\s+/).filter(c => c !== '');
+        if(tokens.length === 0) return;
+        if((tokens[0]||'').toUpperCase() === 'PRODUTIVO') return;
+        const row = parsePisoRow(tokens);
+        if(row && row.carga) linhas.push(row);
+      });
+    }
 
     if(linhas.length === 0){
       throw new Error('Não encontrei nenhuma linha de carga legível nessa imagem. Tente tirar a foto com mais luz, mais perto e sem inclinação.');
@@ -2378,8 +2694,11 @@ updateLoginLockUI();
 setInterval(()=>{ if(currentUser) renderDistClockOnly(); }, 1000*30);
 function renderDistClockOnly(){
   const d = new Date();
-  const el = document.getElementById('data-dist');
-  if(el) el.textContent = `${todayLabel().curto} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  const texto = `${todayLabel().curto} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  TURNOS.forEach(turno => {
+    const el = document.getElementById('data-dist-'+turno);
+    if(el) el.textContent = texto;
+  });
 }
 </script>
 
@@ -2504,7 +2823,7 @@ function renderDistClockOnly(){
       }
 
       distData = novasRows;
-      distExtras = d.extras || distExtras;
+      distExtras = normalizeDistExtras(d.extras || distExtras);
     } else {
       saveDist();
     }
