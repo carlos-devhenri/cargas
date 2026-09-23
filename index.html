@@ -557,6 +557,7 @@
         <button class="btn btn-ghost btn-sm" id="btn-add-piso" onclick="addPisoRow()">+ Adicionar carga</button>
         <button class="btn btn-ghost btn-sm" id="btn-colar-piso" onclick="openImportModal()">Colar da planilha (Excel)</button>
         <button class="btn btn-ghost btn-sm" id="btn-foto-piso" onclick="openPhotoImportModal()">📷 Preencher por foto</button>
+        <button class="btn btn-danger btn-sm" id="btn-limpar-piso" style="margin-left:auto;" onclick="limparCargasNoPiso()">🗑 Limpar cargas no piso</button>
       </div>
     </section>
 
@@ -1065,6 +1066,7 @@ async function doLogin(){
   document.getElementById('btn-add-piso').style.display = role==='admin' ? 'inline-block' : 'none';
   document.getElementById('btn-colar-piso').style.display = role==='admin' ? 'inline-block' : 'none';
   document.getElementById('btn-foto-piso').style.display = podeUsarFoto ? 'inline-block' : 'none';
+  document.getElementById('btn-limpar-piso').style.display = role==='admin' ? 'inline-block' : 'none';
   document.getElementById('demo-btn').style.display = role==='admin' ? 'inline-block' : 'none';
   document.getElementById('panel-usuarios').style.display = role==='admin' ? 'block' : 'none';
   document.getElementById('panel-solicitacoes').style.display = role==='admin' ? 'block' : 'none';
@@ -1232,6 +1234,20 @@ function addPisoRow(){
   pisoData.push({produtivo:'', doca:'', carga:'', fornecedor:'', liberacao: todayLabel().curto, d1:0, volume:0, sku:0, departamento:'', status:'PENDENTE DE ETIQUETAGEM', obs:''});
   savePiso();
   renderAll();
+}
+
+/* zera o painel de Cargas no Piso (não mexe na Distribuição T2 nem no Cross) — ação
+   destrutiva e irreversível, por isso só admin vê o botão e pede confirmação com o
+   número exato de cargas que vão ser apagadas. */
+function limparCargasNoPiso(){
+  if(!currentUser || currentUser.role !== 'admin') return;
+  const qtd = pisoData.length;
+  if(qtd === 0){ showToast('Não há cargas no piso pra limpar.', true); return; }
+  if(!confirm(`Limpar TODAS as ${qtd} carga(s) no piso? Essa ação apaga a lista inteira e não pode ser desfeita. A Distribuição T2 e o relatório Cross não são afetados.`)) return;
+  pisoData = [];
+  savePiso();
+  renderAll();
+  showToast(`🗑 ${qtd} carga(s) removida(s) do piso.`, false);
 }
 
 /* ===================== RENDER: PAINEL 2 - FILA DE DISTRIBUIÇÃO ===================== */
