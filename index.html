@@ -1421,6 +1421,36 @@ const isDateToken = t => /^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(t);
 const isCargaToken = t => /^\d{4,7}$/.test(t);   // números de carga: 4 a 7 dígitos (ex: 446856)
 const isPureDigits = t => /^\d+$/.test(t);
 
+/* a foto (OCR) troca com frequência dígito por letra parecida (0/O, 5/S, 1/I/l, 8/B, 2/Z, 6/G).
+   Isso só é usado pra RECONHECER a coluna da Carga quando o número "de verdade" (isCargaToken)
+   não bate — o valor mostrado/gravado continua sendo o texto lido, sem essa normalização,
+   pra não inventar um número que pode estar errado. */
+function normalizeOcrDigits(t){
+  return String(t||'').replace(/[OoQ]/g,'0').replace(/[IlL]/g,'1').replace(/[Ss]/g,'5')
+    .replace(/[Bb]/g,'8').replace(/[Zz]/g,'2').replace(/[Gg]/g,'6');
+}
+const looksLikeCargaToken = t => {
+  const s = String(t||'');
+  return s.length >= 4 && s.length <= 7 && /^\d{4,7}$/.test(normalizeOcrDigits(s));
+};
+
+/* palavras que formam o NOME do status (ex.: "CARGA ETIQUETADA", "EM CONFERÊNCIA",
+   "AGUARDANDO IMPRESSÃO", "PARCIALMENTE DISTRIBUIDA"...). isStatusToken só bate numa
+   palavra do nome (a que tem a "marca registrada", tipo ETIQUETADA ou CONFER) — as outras
+   palavras do MESMO status (CARGA, EM, AGUARDANDO, DE, ETIQUETAGEM...) não batem sozinhas.
+   Sem isso, essas palavras "sobravam" soltas entre os tokens e eram tratadas como se fossem
+   dado real de outra coluna (normalmente Departamento) — empurrando o resto da linha pro lado.
+   statusSpan() "engole" essas palavras vizinhas junto com a âncora, dos dois lados. */
+const STATUS_CONNECTOR_RE = /^(EM|DE|CARGA|PARCIALMENTE|AGUARDANDO|PENDENTE|PROCESSO|ETIQUETAGEM|ETIQUETADA|DISTRIBUIDA|DISTRIBU[IÍ]DA|IMPRESS[AÃ]O|CONFER[EÊ]NCIA)$/i;
+function statusSpan(raw){
+  const anchorIdx = raw.findIndex(isStatusToken);
+  if(anchorIdx === -1) return null;
+  let start = anchorIdx, end = anchorIdx;
+  while(start > 0 && STATUS_CONNECTOR_RE.test(raw[start-1])) start--;
+  while(end < raw.length-1 && STATUS_CONNECTOR_RE.test(raw[end+1])) end++;
+  return { start, end };
+}
+
 /*
   Em vez de assumir que a linha sempre tem exatamente 11 colunas na ordem fixa,
   a gente localiza colunas "âncora" pelo formato do próprio valor (Status, Data e
@@ -1429,11 +1459,11 @@ const isPureDigits = t => /^\d+$/.test(t);
   o resto da linha continua caindo no lugar certo — em vez de "puxar pra esquerda".
 */
 function parsePisoRow(raw){
-  const statusIdx = raw.findIndex(isStatusToken);
-  const temStatus = statusIdx !== -1;
-  const status = temStatus ? mapStatusToken(raw[statusIdx]) : 'NÃO ANALISADO';
-  const obs = temStatus ? raw.slice(statusIdx+1).join(' ').trim() : '';
-  const before = temStatus ? raw.slice(0, statusIdx) : raw;
+  const span = statusSpan(raw);
+  const temStatus = span !== null;
+  const status = temStatus ? mapStatusToken(raw.slice(span.start, span.end+1).join(' ')) : 'NÃO ANALISADO';
+  const obs = temStatus ? raw.slice(span.end+1).join(' ').trim() : '';
+  const before = temStatus ? raw.slice(0, span.start) : raw;
 
   const dateIdx = before.findIndex(isDateToken);
 
@@ -1463,7 +1493,8 @@ function parsePisoRow(raw){
     // antes da data: Produtivo, Doca, Carga, Fornecedor
     const beforeDate = before.slice(0, dateIdx);
     let cargaIdx = beforeDate.findIndex(isCargaToken);
-    if(cargaIdx === -1) cargaIdx = Math.max(0, beforeDate.length - 2);
+    if(cargaIdx === -1) cargaIdx = beforeDate.findIndex(looksLikeCargaToken); // tolera troca de dígito por letra na leitura da foto
+    if(cargaIdx === -1) cargaIdx = Math.max(0, beforeDate.length - 2); // chute de posição, só como último recurso
     carga = beforeDate[cargaIdx] || '';
     fornecedor = beforeDate.slice(cargaIdx+1).join(' ').trim();
 
@@ -1476,8 +1507,10 @@ function parsePisoRow(raw){
     }
   } else {
     // tem status reconhecido, mas não achou data: só aceita se achar um número de carga
-    // de verdade (4 a 7 dígitos) — sem essa âncora não dá pra confiar em qual token é o quê
-    const cargaIdx = before.findIndex(isCargaToken);
+    // de verdade (4 a 7 dígitos, tolerando troca de dígito por letra na foto) — sem essa
+    // âncora não dá pra confiar em qual token é o quê
+    let cargaIdx = before.findIndex(isCargaToken);
+    if(cargaIdx === -1) cargaIdx = before.findIndex(looksLikeCargaToken);
     if(cargaIdx === -1) return null;
     carga = before[cargaIdx] || '';
     fornecedor = before.slice(cargaIdx+1).join(' ').trim();
