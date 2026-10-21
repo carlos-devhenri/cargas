@@ -460,7 +460,7 @@
       </div>
       <div id="login-error"></div>
       <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
-      <p class="hint">O acesso é liberado por perfil (senha): Administrador, Encarregado, Conferente, Supervisor, Operador ou Geral. Peça a senha do seu perfil ao responsável pelo CD.</p>
+      <p class="hint">O acesso é liberado por perfil (senha): Administrador, Encarregado, Conferente, Supervisor ou Operador. Peça a senha do seu perfil ao responsável pelo CD.</p>
     </div>
   </div>
 </div>
@@ -1007,14 +1007,12 @@ const ROLE_PASSWORDS = {
   'EncarCD30SECOS': 'encarregado',
   'Conf30': 'conferente',
   'Sup30': 'supervisor',
-  'Operador30': 'operador',
-  'OpCD30SECOS': 'geral'
+  'Operador30': 'operador'
 };
-const ROLE_LABELS = { admin:'Administrador', encarregado:'Encarregado', conferente:'Conferente', supervisor:'Supervisor', operador:'Operador', geral:'Geral' };
+const ROLE_LABELS = { admin:'Administrador', encarregado:'Encarregado', conferente:'Conferente', supervisor:'Supervisor', operador:'Operador' };
 
 /* quais status cada perfil enxerga em "Cargas no Piso" (perfil ausente = vê tudo) */
 const STATUS_VISIVEL = {
-  geral: ['PENDENTE DE ETIQUETAGEM'],
   operador: ['PENDENTE DE ETIQUETAGEM', 'PARCIALMENTE ETIQUETADA', 'AGUARDANDO IMPRESSÃO']
 };
 const PERFIS_DISTRIBUICAO = ['admin','encarregado','conferente'];
