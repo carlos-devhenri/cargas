@@ -230,7 +230,7 @@
   tbody tr.clickable-row:hover{ background:#2c3542; outline:1px dashed var(--band); outline-offset:-2px; }
 
   .fila-grid{
-    display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr));
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr));
     gap:12px; padding:18px 20px;
   }
   .fila-card{
@@ -242,13 +242,15 @@
   .fila-card.marcando{ filter:grayscale(1); opacity:.45; pointer-events:none; }
   .fila-card .carga-num{ font-size:.66rem; color:var(--text-dim); letter-spacing:.04em; }
   .fila-card .fornecedor{
-    font-family:'Oswald',sans-serif; font-weight:600; font-size:.92rem;
+    font-family:'Oswald',sans-serif; font-weight:600; font-size:1.2rem;
     margin:3px 0 12px; line-height:1.25; min-height:2.4em;
   }
   .fila-card .stats{ display:flex; gap:6px; border-top:1px solid var(--line); padding-top:10px; }
   .fila-card .stat{ flex:1; text-align:center; }
   .fila-card .stat .n{ font-family:'Oswald',sans-serif; font-size:1rem; font-weight:600; color:var(--band); }
   .fila-card .stat .l{ font-size:.58rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-dim); margin-top:1px; }
+  #tbody-piso td:nth-child(4){ min-width:260px; }
+  #tbody-piso td:nth-child(4) input{ font-size:.98rem; padding:8px 8px; }
   .fila-empty{ grid-column:1/-1; text-align:center; color:var(--text-dim); padding:22px; font-style:italic; }
 
   #toast-layer{
@@ -1015,7 +1017,11 @@ const ROLE_LABELS = { admin:'Administrador', encarregado:'Encarregado', conferen
 const STATUS_VISIVEL = {
   operador: ['PENDENTE DE ETIQUETAGEM', 'PARCIALMENTE ETIQUETADA', 'AGUARDANDO IMPRESSÃO']
 };
-const PERFIS_DISTRIBUICAO = ['admin','encarregado','conferente'];
+/* todos os perfis têm as funções do Administrador, menos o Operador (só vê pendências e marca etiquetadas) */
+function ehAdminLike(role){ return !!role && role !== 'operador'; }
+/* só o Administrador: editar cargas, limpar o piso, ver Usuários/Solicitações (remover, expulsar, banir, aprovar) */
+function souAdmin(){ return !!currentUser && currentUser.role === 'admin'; }
+const PERFIS_DISTRIBUICAO = ['admin','encarregado','conferente','supervisor'];
 
 const STATUS_LIST = [
   'NÃO ANALISADO',
@@ -1238,11 +1244,10 @@ async function doLogin(){
 
   const isAdmin = role === 'admin';
   document.getElementById('titulo-piso').setAttribute('contenteditable', isAdmin ? 'true' : 'false');
-  const podeUsarFoto = PERFIS_DISTRIBUICAO.includes(role);
-  document.getElementById('piso-actions').style.display = podeUsarFoto ? 'flex' : 'none';
+  document.getElementById('piso-actions').style.display = isAdmin ? 'flex' : 'none';
   document.getElementById('btn-add-piso').style.display = isAdmin ? 'inline-block' : 'none';
   document.getElementById('btn-colar-piso').style.display = isAdmin ? 'inline-block' : 'none';
-  document.getElementById('btn-foto-piso').style.display = podeUsarFoto ? 'inline-block' : 'none';
+  document.getElementById('btn-foto-piso').style.display = isAdmin ? 'inline-block' : 'none';
   document.getElementById('btn-limpar-piso').style.display = isAdmin ? 'inline-block' : 'none';
   document.getElementById('demo-btn').style.display = isAdmin ? 'inline-block' : 'none';
   document.getElementById('panel-usuarios').style.display = isAdmin ? 'block' : 'none';
@@ -1293,7 +1298,7 @@ function applySectorVisibility(){
 }
 
 function loadDemo(){
-  if(currentUser.role !== 'admin') return;
+  if(!souAdmin()) return;
   distData = JSON.parse(JSON.stringify(DEMO_DIST));
   distExtras = normalizeDistExtras(DEMO_EXTRAS);
   saveDist();
@@ -1377,9 +1382,9 @@ function renderPiso(){
   const { role } = currentUser;
   const perm = {
     editAll: role === 'admin',
-    markStatus: role === 'admin' || role === 'encarregado',
-    prio: role === 'admin' || role === 'supervisor',
-    mark: role === 'admin' || role === 'operador'
+    markStatus: ehAdminLike(role),
+    prio: ehAdminLike(role),
+    mark: true
   };
 
   const tbody = document.getElementById('tbody-piso');
@@ -1436,7 +1441,7 @@ function cargaJaDistribuida(cargaNum){
 }
 
 function updatePiso(i, field, value){
-  if(!currentUser || (currentUser.role !== 'admin' && !(field === 'status' && currentUser.role === 'encarregado'))) return;
+  if(!currentUser || !(souAdmin() || (field === 'status' && ehAdminLike(currentUser.role)))) return; // editar dados da carga: só admin; mudar status: demais perfis (exceto operador)
   if(field === 'carga' && cargaJaDistribuida(value)){
     const existente = distData.find(r => String(r.carga).trim() === String(value).trim());
     const turnoExistente = existente ? turnoDaCarga(existente) : '';
@@ -1451,7 +1456,7 @@ function updatePiso(i, field, value){
 
 /* Supervisor (e admin): sinaliza/remove prioridade; cada sinalização gera um bilhete com o nome de quem sinalizou */
 function togglePrioridade(i){
-  if(!currentUser || !['admin','supervisor'].includes(currentUser.role)) return;
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
   const row = pisoData[i];
   if(!row) return;
   if(row.prioridade){
@@ -1465,7 +1470,7 @@ function togglePrioridade(i){
 
 /* Operador (e admin): só MARCA como etiquetada — não altera o STATUS da carga */
 function toggleMarcaEtiquetada(i, checked){
-  if(!currentUser || !['admin','operador'].includes(currentUser.role)) return;
+  if(!currentUser) return;
   const row = pisoData[i];
   if(!row) return;
   if(checked){
@@ -1478,19 +1483,21 @@ function toggleMarcaEtiquetada(i, checked){
 }
 
 function removePisoRow(i){
+  if(!souAdmin()) return;
   if(!confirm('Remover esta carga do piso?')) return;
   pisoData.splice(i,1);
   savePiso();
   renderAll();
 }
 function addPisoRow(){
+  if(!souAdmin()) return;
   pisoData.push({produtivo:'', doca:'', carga:'', fornecedor:'', liberacao: todayLabel().curto, d1:0, volume:0, sku:0, departamento:'', status:'PENDENTE DE ETIQUETAGEM', obs:''});
   savePiso();
   renderAll();
 }
 
 function limparCargasNoPiso(){
-  if(!currentUser || currentUser.role !== 'admin') return;
+  if(!currentUser || !souAdmin()) return;
   const qtd = pisoData.length;
   if(qtd === 0){ showToast('Não há cargas no piso pra limpar.', true); return; }
   if(!confirm(`Limpar TODAS as ${qtd} carga(s) no piso? Essa ação apaga a lista inteira e não pode ser desfeita. A Distribuição e o relatório Cross não são afetados.`)) return;
@@ -1884,7 +1891,7 @@ function renderFechamentos(){
 
 /* ===================== IMPORTAR PLANILHA (colar do Excel) ===================== */
 function openImportModal(){
-  if(currentUser.role !== 'admin') return;
+  if(!souAdmin()) return;
   document.getElementById('import-textarea').value = '';
   document.getElementById('import-modal').classList.add('open');
 }
@@ -2028,7 +2035,7 @@ let photoCapturedDataUrl = null;
 let photoReviewRows = [];
 
 function openPhotoImportModal(){
-  if(!PERFIS_DISTRIBUICAO.includes(currentUser.role)) return;
+  if(!souAdmin()) return;
   resetPhotoCapture();
   document.getElementById('photo-status').textContent = '';
   document.getElementById('photo-review-wrap').style.display = 'none';
@@ -2354,7 +2361,7 @@ function toggleCrossMarcada(carga, checked){
 
 function renderCrossPendencias(){
   const canMark = PERFIS_DISTRIBUICAO.includes(currentUser.role);
-  const canImport = currentUser.role === 'admin';
+  const canImport = ehAdminLike(currentUser.role);
   document.getElementById('cross-pend-actions').style.display = canImport ? 'flex' : 'none';
 
   const tbody = document.getElementById('tbody-cross-pend');
@@ -2447,7 +2454,7 @@ function imprimirRelatorioCross(){
 
 /* ===================== IMPORTAR RELATÓRIO CROSS (colar do Excel) ===================== */
 function openCrossImportModal(){
-  if(currentUser.role !== 'admin') return;
+  if(!ehAdminLike(currentUser.role)) return;
   document.getElementById('import-cross-textarea').value = '';
   document.getElementById('import-cross-modal').classList.add('open');
 }
@@ -2562,8 +2569,8 @@ function renderPlanejamento(){
   popularSelectQtdEstacoes();
 
   const configWrap = document.getElementById('plan-config-toggle-wrap');
-  if(configWrap) configWrap.style.display = currentUser.role === 'admin' ? 'block' : 'none';
-  if(currentUser.role !== 'admin'){
+  if(configWrap) configWrap.style.display = ehAdminLike(currentUser.role) ? 'block' : 'none';
+  if(!ehAdminLike(currentUser.role)){
     document.getElementById('panel-plan-config').style.display = 'none';
   }
 
@@ -2732,7 +2739,7 @@ function notifyDistribuicao(row){
 }
 
 function notifySolicitacaoAcesso(s){
-  if(!currentUser || currentUser.role !== 'admin') return;
+  if(!currentUser || !souAdmin()) return;
   const rotulo = s.situacaoAtual === 'banido' ? 'banido' : 'expulso';
   const msg = `🔔 ${s.nome} (${rotulo}) tentou acessar o painel de novo. Aprovar ou recusar em "Solicitações de acesso".`;
   showToast(msg, true);
@@ -2748,7 +2755,7 @@ let usuariosData = [];
 let solicitacoesData = [];
 
 function renderUsuarios(){
-  if(!currentUser || currentUser.role !== 'admin') return;
+  if(!currentUser || !souAdmin()) return;
   const tbody = document.getElementById('tbody-usuarios');
   if(!tbody) return;
   tbody.innerHTML = '';
@@ -2776,7 +2783,7 @@ function renderUsuarios(){
       <td>
         <button class="btn btn-ghost btn-sm" onclick="kickUser('${u.id}')">Expulsar</button>
         <button class="btn btn-danger" onclick="banUser('${u.id}')">Banir</button>
-        <button class="btn btn-ghost btn-sm" title="Tira o nome da lista (limpa membros fantasmas)" onclick="removerUsuario('${u.id}')">Remover</button>
+        <button class="btn btn-ghost btn-sm" title="Remove o usuário do sistema (sem punição — pode entrar de novo)" onclick="removerUsuario('${u.id}')">Remover</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -2784,7 +2791,7 @@ function renderUsuarios(){
 }
 
 function renderSolicitacoes(){
-  if(!currentUser || currentUser.role !== 'admin') return;
+  if(!currentUser || !souAdmin()) return;
   const tbody = document.getElementById('tbody-solicitacoes');
   if(!tbody) return;
   tbody.innerHTML = '';
@@ -2836,7 +2843,7 @@ function renderAll(){
 updateLoginLockUI();
 
 setInterval(()=>{ if(currentUser) renderDistClockOnly(); }, 1000*30);
-setInterval(()=>{ if(currentUser && currentUser.role === 'admin') renderUsuarios(); }, 1000*30); // atualiza online/offline
+setInterval(()=>{ if(currentUser && souAdmin()) renderUsuarios(); }, 1000*30); // atualiza online/offline
 function renderDistClockOnly(){
   const d = new Date();
   const texto = `${todayLabel().curto} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
@@ -3141,8 +3148,14 @@ function renderDistClockOnly(){
   window.watchOwnUserStatus = function(onBlocked){
     if(!currentUser) return;
     const ref = doc(usuariosCol, currentUser.id);
+    let jaExistiu = false;
     onSnapshot(ref, snap => {
-      if(!snap.exists()) return; // "Remover" só limpa a lista — não derruba a sessão de ninguém
+      if(!snap.exists()){
+        // o admin usou "Remover": a pessoa sai do sistema agora (sem punição) e pode entrar de novo normalmente
+        if(jaExistiu && currentUser) onBlocked('Você foi removido do sistema pelo administrador. Pode entrar novamente quando quiser.');
+        return;
+      }
+      jaExistiu = true;
       const status = snap.data().status;
       if(status === 'banido'){
         onBlocked('Você foi banido deste painel pelo administrador.');
@@ -3154,7 +3167,7 @@ function renderDistClockOnly(){
 
   onSnapshot(usuariosCol, snap => {
     usuariosData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    if(currentUser && currentUser.role === 'admin') renderUsuarios();
+    if(currentUser && souAdmin()) renderUsuarios();
   }, err => reportError('Erro ao ler usuários:', err));
 
   let solicitacoesConhecidas = null;
@@ -3173,34 +3186,37 @@ function renderDistClockOnly(){
     }
 
     solicitacoesData = pendentes;
-    if(currentUser && currentUser.role === 'admin') renderSolicitacoes();
+    if(currentUser && souAdmin()) renderSolicitacoes();
   }, err => reportError('Erro ao ler solicitações de acesso:', err));
 
   window.banUser = function(id){
+    if(!souAdmin()) return;
     if(!confirm('Banir esse usuário? Ele será desconectado agora e, se tentar entrar de novo, você vai receber um pedido de acesso pra aprovar ou recusar.')) return;
     setDoc(doc(usuariosCol, id), { status:'banido' }, { merge:true })
       .catch(err => reportError('Erro ao banir usuário:', err));
   };
   window.kickUser = function(id){
+    if(!souAdmin()) return;
     setDoc(doc(usuariosCol, id), { status:'expulso' }, { merge:true })
       .catch(err => reportError('Erro ao expulsar usuário:', err));
   };
-  /* Remover: apaga o registro do membro (limpa "fantasmas" da lista). Não bane nem expulsa —
-     se a pessoa entrar de novo, ela volta como um usuário novo. */
+  /* Remover: apaga o registro do membro e desconecta a pessoa (sem punição) — ela pode entrar de novo normalmente. */
   window.removerUsuario = function(id){
-    if(!currentUser || currentUser.role !== 'admin') return;
+    if(!currentUser || !souAdmin()) return;
     const u = usuariosData.find(x => x.id === id);
-    if(!confirm(`Remover "${u ? u.nome : id}" da lista de usuários? Se a pessoa entrar de novo, ela volta a aparecer normalmente.`)) return;
+    if(!confirm(`Remover "${u ? u.nome : id}" do sistema? Ela será desconectada agora, sem punição, e pode entrar de novo normalmente.`)) return;
     deleteDoc(doc(usuariosCol, id))
       .then(() => showToast('🧹 Membro removido da lista.', false))
       .catch(err => reportError('Erro ao remover usuário:', err));
   };
   window.aprovarSolicitacao = function(id){
+    if(!souAdmin()) return;
     setDoc(doc(usuariosCol, id), { status:'ativo' }, { merge:true })
       .then(() => deleteDoc(doc(solicitacoesCol, id)))
       .catch(err => reportError('Erro ao aprovar solicitação de acesso:', err));
   };
   window.recusarSolicitacao = function(id){
+    if(!souAdmin()) return;
     deleteDoc(doc(solicitacoesCol, id))
       .catch(err => reportError('Erro ao recusar solicitação de acesso:', err));
   };
