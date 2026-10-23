@@ -868,25 +868,25 @@
     <section class="panel" id="panel-plan">
       <div class="panel-header">
         <div class="title-block">
-          <h2>PLANEJAMENTO</h2>
+          <h2>PLANEJAMENTO</h2><span class="tag" id="plan-live-tag" title="Alterações aparecem na hora para todos que estão nesta aba">● Ao vivo</span>
           <span class="sub">Digite a carga, escolha a qtd. de estações e o painel divide as lojas e aponta as estações críticas</span>
         </div>
       </div>
       <div class="plan-form">
         <div class="field">
           <label for="plan-carga-input">Carga(s) — separe por vírgula ou clique nas cargas abaixo</label>
-          <input type="text" id="plan-carga-input" placeholder="Ex.: 483216 ou 483216, 481470" oninput="renderPlanejamento()">
+          <input type="text" id="plan-carga-input" placeholder="Ex.: 483216 ou 483216, 481470" oninput="planFormChanged()">
         </div>
         <div class="field">
           <label for="plan-qtd-estacoes">Qtd. de estações</label>
           <div class="plan-range-wrap">
-            <input type="range" id="plan-qtd-estacoes" min="1" max="20" value="5" oninput="renderPlanejamento()">
+            <input type="range" id="plan-qtd-estacoes" min="1" max="20" value="5" oninput="planFormChanged()">
             <span class="plan-range-val" id="plan-qtd-label">5</span>
           </div>
         </div>
         <div class="field small">
           <label for="plan-modo">Divisão das lojas</label>
-          <select id="plan-modo" onchange="renderPlanejamento()">
+          <select id="plan-modo" onchange="planFormChanged()">
             <option value="volume">Equilibrar por volume</option>
             <option value="lojas">Mesma qtd. de lojas</option>
             <option value="manual">Escolher lojas por estação</option>
@@ -894,10 +894,10 @@
         </div>
         <div class="field small">
           <label for="plan-loja-filter">Destacar loja</label>
-          <input type="text" id="plan-loja-filter" placeholder="Ex.: 11" oninput="renderPlanejamento()">
+          <input type="text" id="plan-loja-filter" placeholder="Ex.: 11" oninput="planFormChanged()">
         </div>
         <div class="field small">
-          <label class="plan-check"><input type="checkbox" id="plan-ordem-crit" onchange="renderPlanejamento()"> Críticas primeiro</label>
+          <label class="plan-check"><input type="checkbox" id="plan-ordem-crit" onchange="planFormChanged()"> Críticas primeiro</label>
         </div>
         <div class="field small no-print" style="min-width:200px;">
           <label for="plan-escala-sel">Escalas salvas</label>
@@ -2361,7 +2361,7 @@ function carregarEscala(id){
   document.getElementById('plan-modo').value = esc.modo || 'volume';
   planStations = Array.from({ length: 20 }, (_, i) => ({ responsavel: (esc.responsaveis && esc.responsaveis[i]) || '', lojas: (esc.lojas && esc.lojas[i]) || '' }));
   if(currentUser && ehAdminLike(currentUser.role)) savePlanConfig();
-  renderPlanejamento();
+  planFormChanged();
   showToast(`Escala "${esc.nome}" carregada.`, false);
 }
 
@@ -2389,7 +2389,7 @@ function limparPlanejamento(){
     planStations = gerarPlanStationsPadrao();
     savePlanConfig();
   }
-  renderPlanejamento();
+  planFormChanged();
 }
 
 /* ===================== IMPORTAR PLANILHA (colar do Excel) ===================== */
@@ -3124,10 +3124,84 @@ function renderPlanManual(N, modo, lojasArr){
   for(let i = 0; i < N; i++){
     const v = (planStations[i] && planStations[i].lojas) || '';
     html += `<label class="plan-manual-item"><span>Estação ${i+1}</span>
-      <input type="text" value="${escapeHtml(v)}" placeholder="Ex.: 1-5, 8" ${pode ? '' : 'disabled'} onchange="updatePlanLojas(${i}, this.value)"></label>`;
+      <input type="text" value="${escapeHtml(v)}" placeholder="Ex.: 1-5, 8" ${pode ? '' : 'disabled'} oninput="updatePlanLojasLive(${i}, this.value)" onchange="updatePlanLojas(${i}, this.value)"></label>`;
   }
   html += '</div>';
   el.innerHTML = html;
+}
+
+/* ----- tempo real: o que um usuário muda no Planejamento aparece pra todos ----- */
+const PLAN_CLIENT_ID = Math.random().toString(36).slice(2);
+let planAtivoTimer = null, planSaveTimer = null, planRenderPendente = false;
+
+function planLerForm(){
+  return {
+    carga: document.getElementById('plan-carga-input').value,
+    qtd: Number(document.getElementById('plan-qtd-estacoes').value) || 5,
+    modo: document.getElementById('plan-modo').value,
+    filtro: document.getElementById('plan-loja-filter').value,
+    crit: document.getElementById('plan-ordem-crit').checked
+  };
+}
+/* chamado quando o usuário mexe nos controles: desenha na hora e manda pra nuvem (com um pequeno atraso ao digitar) */
+function planFormChanged(){
+  renderPlanejamento();
+  clearTimeout(planAtivoTimer);
+  planAtivoTimer = setTimeout(() => {
+    if(typeof savePlanAtivo === 'function' && currentUser){
+      savePlanAtivo({ ...planLerForm(), autor: PLAN_CLIENT_ID, por: currentUser.nome, em: Date.now() });
+    }
+  }, 350);
+}
+/* recebe a alteração de outro usuário */
+function aplicarPlanAtivo(d){
+  if(!d || d.autor === PLAN_CLIENT_ID) return;
+  const campos = [
+    ['plan-carga-input', 'value', d.carga || ''],
+    ['plan-qtd-estacoes', 'value', d.qtd || 5],
+    ['plan-modo', 'value', d.modo || 'volume'],
+    ['plan-loja-filter', 'value', d.filtro || ''],
+    ['plan-ordem-crit', 'checked', !!d.crit]
+  ];
+  campos.forEach(([id, prop, v]) => {
+    const el = document.getElementById(id);
+    if(!el || el === document.activeElement) return; // não atrapalha quem está digitando nesse campo
+    if(String(el[prop]) !== String(v)) el[prop] = v;
+  });
+  const tag = document.getElementById('plan-live-tag');
+  if(tag && d.por) tag.textContent = '● Ao vivo · ' + d.por;
+  renderPlanejamentoSeguro();
+}
+/* não redesenha a grade enquanto alguém digita nela (associados / lojas); redesenha quando sair do campo */
+function planEditandoInterno(){
+  const a = document.activeElement;
+  return !!(a && a.tagName === 'INPUT' && a.closest && a.closest('#plan-resultado, #plan-manual'));
+}
+function renderPlanejamentoSeguro(){
+  if(planEditandoInterno()){ planRenderPendente = true; return; }
+  renderPlanejamento();
+}
+document.addEventListener('focusout', () => {
+  if(!planRenderPendente) return;
+  setTimeout(() => {
+    if(!planEditandoInterno()){ planRenderPendente = false; renderPlanejamento(); }
+  }, 60);
+});
+function planSalvarDebounce(){
+  clearTimeout(planSaveTimer);
+  planSaveTimer = setTimeout(() => savePlanConfig(), 400);
+}
+function updatePlanRespLive(i, value){
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
+  if(!planStations[i]) planStations[i] = { responsavel:'', lojas:'' };
+  planStations[i].responsavel = value;
+  planSalvarDebounce();
+}
+function updatePlanLojasLive(i, value){
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
+  if(!planStations[i]) planStations[i] = { responsavel:'', lojas:'' };
+  planStations[i].lojas = value;
+  planSalvarDebounce();
 }
 
 function listaCargasPlan(raw){
@@ -3212,7 +3286,7 @@ function togglePlanCarga(c){
   const i = lista.indexOf(c);
   if(i >= 0) lista.splice(i, 1); else lista.push(c);
   inp.value = lista.join(', ');
-  renderPlanejamento();
+  planFormChanged();
 }
 
 /* atalhos clicáveis com as cargas do relatório Cross importado */
@@ -3387,7 +3461,7 @@ function renderPlanejamento(){
       <div class="plan-station-card-header">
         <div class="st-top"><span class="st-num">Estação ${e.idx+1}</span><span class="plan-badge ${e.nivel}">${rotulo[e.nivel]}</span></div>
         <div class="st-faixa">${faixa}</div>
-        <input type="text" class="st-resp-input" placeholder="Associado(s)" value="${escapeHtml(resp)}" ${podeEditarResp ? '' : 'disabled'} onchange="updatePlanResp(${e.idx}, this.value)">
+        <input type="text" class="st-resp-input" placeholder="Associado(s)" value="${escapeHtml(resp)}" ${podeEditarResp ? '' : 'disabled'} oninput="updatePlanRespLive(${e.idx}, this.value)" onchange="updatePlanResp(${e.idx}, this.value)">
       </div>
       <div class="plan-load">
         <div class="plan-bar"><i class="${e.nivel}" style="width:${(e.vol / maxVolEst * 100).toFixed(0)}%"></i></div>
@@ -3586,7 +3660,7 @@ function renderAll(){
   renderSolicitacoes();
   renderCrossAll();
   const tabPlan = document.getElementById('tab-plan');
-  if(tabPlan && tabPlan.style.display !== 'none') renderPlanejamento();
+  if(tabPlan && tabPlan.style.display !== 'none') renderPlanejamentoSeguro();
   renderFechamentos();
 }
 
@@ -3821,6 +3895,15 @@ function renderDistClockOnly(){
       return false;
     }
   };
+
+  // ---------- Planejamento ao vivo: carga, qtd. de estações, divisão, filtro ----------
+  const planAtivoRef = doc(db, 'painelCD', 'planejamentoAtivo');
+  window.savePlanAtivo = function(o){
+    setDoc(planAtivoRef, o).catch(err => reportError('Erro ao sincronizar o planejamento:', err));
+  };
+  onSnapshot(planAtivoRef, snap => {
+    if(snap.exists()) aplicarPlanAtivo(snap.data());
+  }, err => reportError('Erro ao ler o planejamento ao vivo:', err));
 
   window.apagarFechamentoTurnos = async function(dia, turnos){
     try{
