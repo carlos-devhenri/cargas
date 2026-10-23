@@ -417,6 +417,11 @@
   .plan-rank b{ color:var(--band); }
   .plan-rank .crit-txt{ color:var(--danger); font-weight:700; }
 
+  .plan-manual{ padding:14px 20px 0; }
+  .plan-manual-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:8px; }
+  .plan-manual-item span{ display:block; font-size:.66rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.05em; margin-bottom:3px; font-weight:600; }
+  .plan-manual-item input{ width:100%; background:var(--input-bg); border:1px solid var(--line); color:var(--text); padding:6px 8px; border-radius:3px; font-size:.82rem; font-family:'Inter',sans-serif; }
+  .plan-manual-item input:focus{ outline:2px solid var(--band); }
   .plan-lojas-strip{ display:flex; flex-wrap:wrap; gap:5px; padding:12px 20px 0; }
   .plan-loja-chip{ font-size:.7rem; padding:3px 8px; border-radius:3px; border:1px solid var(--line); color:var(--text); }
   .plan-loja-chip b{ font-family:'Oswald',sans-serif; font-weight:600; }
@@ -884,6 +889,7 @@
           <select id="plan-modo" onchange="renderPlanejamento()">
             <option value="volume">Equilibrar por volume</option>
             <option value="lojas">Mesma qtd. de lojas</option>
+            <option value="manual">Escolher lojas por estação</option>
           </select>
         </div>
         <div class="field small">
@@ -915,6 +921,7 @@
         </div>
       </div>
       <div class="plan-chips no-print" id="plan-chips"></div>
+      <div class="plan-manual no-print" id="plan-manual" style="display:none;"></div>
       <div id="plan-print-area">
       <div class="plan-result-box" id="plan-resultado"></div>
       </div>
@@ -2334,6 +2341,7 @@ function salvarEscala(){
     qtdEstacoes: Math.max(1, Number(document.getElementById('plan-qtd-estacoes').value) || 5),
     modo: document.getElementById('plan-modo').value,
     responsaveis: Array.from({ length: 20 }, (_, i) => (planStations[i] && planStations[i].responsavel) || ''),
+    lojas: Array.from({ length: 20 }, (_, i) => (planStations[i] && planStations[i].lojas) || ''),
     salvoPor: currentUser.nome,
     salvoEm: new Date().toLocaleString('pt-BR')
   };
@@ -2351,7 +2359,7 @@ function carregarEscala(id){
   if(!esc) return;
   document.getElementById('plan-qtd-estacoes').value = esc.qtdEstacoes || 5;
   document.getElementById('plan-modo').value = esc.modo || 'volume';
-  planStations = Array.from({ length: 20 }, (_, i) => ({ responsavel: (esc.responsaveis && esc.responsaveis[i]) || '' }));
+  planStations = Array.from({ length: 20 }, (_, i) => ({ responsavel: (esc.responsaveis && esc.responsaveis[i]) || '', lojas: (esc.lojas && esc.lojas[i]) || '' }));
   if(currentUser && ehAdminLike(currentUser.role)) savePlanConfig();
   renderPlanejamento();
   showToast(`Escala "${esc.nome}" carregada.`, false);
@@ -2376,8 +2384,8 @@ function limparPlanejamento(){
   document.getElementById('plan-loja-filter').value = '';
   document.getElementById('plan-ordem-crit').checked = false;
   const selEsc = document.getElementById('plan-escala-sel'); if(selEsc) selEsc.value = '';
-  if(currentUser && ehAdminLike(currentUser.role) && planStations.some(s => s && s.responsavel) &&
-     confirm('Limpar também os nomes dos associados de todas as estações?')){
+  if(currentUser && ehAdminLike(currentUser.role) && planStations.some(s => s && (s.responsavel || s.lojas)) &&
+     confirm('Limpar também os nomes dos associados e as lojas definidas de todas as estações?')){
     planStations = gerarPlanStationsPadrao();
     savePlanConfig();
   }
@@ -3027,7 +3035,7 @@ function importCrossFromPaste(){
    O que fica salvo na nuvem é só o(s) associado(s) de cada estação (planStations[i].responsavel). */
 function gerarPlanStationsPadrao(){
   const arr = [];
-  for(let i = 0; i < 20; i++) arr.push({ responsavel:'' });
+  for(let i = 0; i < 20; i++) arr.push({ responsavel:'', lojas:'' });
   return arr;
 }
 let planStations = gerarPlanStationsPadrao();
@@ -3048,6 +3056,78 @@ function updatePlanResp(i, value){
   if(!planStations[i]) planStations[i] = {};
   planStations[i].responsavel = value;
   savePlanConfig();
+}
+
+/* ----- lojas por estação (modo manual): "1-5, 8, 11" ----- */
+function parseLojasSpec(txt){
+  const set = new Set();
+  String(txt || '').replace(/\s*[-–]\s*/g, '-').split(/[,;\s]+/).forEach(p => {
+    p = p.trim();
+    if(!p) return;
+    const r = p.match(/^(\d+)-(\d+)$/);
+    if(r){
+      const a = parseInt(r[1], 10), b = parseInt(r[2], 10);
+      if(a <= b && b - a <= 500) for(let n = a; n <= b; n++) set.add(n);
+    } else if(/^\d+$/.test(p)){
+      set.add(parseInt(p, 10));
+    }
+  });
+  return set;
+}
+function lojasParaSpec(nums){
+  const arr = [...nums].sort((a,b) => a - b);
+  const out = [];
+  let i = 0;
+  while(i < arr.length){
+    let j = i;
+    while(j + 1 < arr.length && arr[j+1] === arr[j] + 1) j++;
+    out.push(j > i ? `${arr[i]}-${arr[j]}` : `${arr[i]}`);
+    i = j + 1;
+  }
+  return out.join(', ');
+}
+function updatePlanLojas(i, value){
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
+  if(!planStations[i]) planStations[i] = { responsavel:'', lojas:'' };
+  planStations[i].lojas = value;
+  savePlanConfig();
+  renderPlanejamento();
+}
+/* usa a divisão automática equilibrada como ponto de partida pra editar à mão */
+function planPreencherManual(){
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
+  const res = computePlanejamento(document.getElementById('plan-carga-input').value);
+  if(!res || !res.encontrada){ showToast('Digite uma carga válida primeiro.', true); return; }
+  const lojasArr = Object.keys(res.porLoja).map(Number).sort((a,b) => a - b).map(l => ({ loja:l, ...res.porLoja[l] }));
+  if(lojasArr.length === 0){ showToast('Essa carga ainda não tem itens montados.', true); return; }
+  const N = Math.max(1, Number(document.getElementById('plan-qtd-estacoes').value) || 5);
+  const grupos = planParticionar(lojasArr, N, 'volume');
+  for(let i = 0; i < 20; i++){
+    if(!planStations[i]) planStations[i] = { responsavel:'', lojas:'' };
+    planStations[i].lojas = grupos[i] ? lojasParaSpec(grupos[i].map(l => l.loja)) : '';
+  }
+  savePlanConfig();
+  renderPlanejamento();
+}
+function renderPlanManual(N, modo, lojasArr){
+  const el = document.getElementById('plan-manual');
+  if(!el) return;
+  if(modo !== 'manual'){ el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = 'block';
+  const pode = currentUser && ehAdminLike(currentUser.role);
+  const dica = lojasArr && lojasArr.length
+    ? `Lojas da carga: <b>${lojasParaSpec(lojasArr.map(l => l.loja))}</b>.`
+    : 'Digite uma carga para ver as lojas dela.';
+  let html = `<div class="hint" style="margin:0 0 8px;">Digite as lojas de cada estação — use vírgula e faixas, ex.: <b>1-5, 8, 11</b>. ${dica}
+    ${pode ? ' <button type="button" class="btn btn-ghost btn-sm" onclick="planPreencherManual()">Preencher automaticamente</button>' : ''}</div>
+    <div class="plan-manual-grid">`;
+  for(let i = 0; i < N; i++){
+    const v = (planStations[i] && planStations[i].lojas) || '';
+    html += `<label class="plan-manual-item"><span>Estação ${i+1}</span>
+      <input type="text" value="${escapeHtml(v)}" placeholder="Ex.: 1-5, 8" ${pode ? '' : 'disabled'} onchange="updatePlanLojas(${i}, this.value)"></label>`;
+  }
+  html += '</div>';
+  el.innerHTML = html;
 }
 
 function listaCargasPlan(raw){
@@ -3178,6 +3258,7 @@ function renderPlanejamento(){
 
   renderPlanChips(cargaInput);
   renderEscalasSelect();
+  renderPlanManual(N, modo, []);
 
   if(!cargaInput.trim()){
     box.innerHTML = '<p class="hint" style="margin:0; padding:16px 20px;">Digite o número de uma carga (ou várias, separadas por vírgula) ou clique em uma das cargas acima pra ver as lojas, os volumes e a divisão por estação.</p>';
@@ -3209,8 +3290,27 @@ function renderPlanejamento(){
   const totalCub = lojasArr.reduce((s,l) => s + l.cubagem, 0);
   const maiorLoja = lojasArr.reduce((m,l) => l.volume > m.volume ? l : m, lojasArr[0]);
 
-  const grupos = planParticionar(lojasArr, N, modo);
+  let grupos, idxs, semEstacao = [];
+  if(modo === 'manual'){
+    grupos = []; idxs = [];
+    const usadas = new Set();
+    for(let i = 0; i < N; i++){
+      const spec = parseLojasSpec((planStations[i] || {}).lojas);
+      const g = lojasArr.filter(l => spec.has(l.loja) && !usadas.has(l.loja));
+      g.forEach(l => usadas.add(l.loja));
+      if(g.length){ grupos.push(g); idxs.push(i); }
+    }
+    semEstacao = lojasArr.filter(l => !usadas.has(l.loja));
+    renderPlanManual(N, modo, lojasArr);
+  } else {
+    grupos = planParticionar(lojasArr, N, modo);
+    idxs = grupos.map((_, i) => i);
+  }
   const ativas = grupos.length;
+  if(ativas === 0){
+    box.innerHTML = '<p class="hint" style="margin:0; padding:16px 20px;">Nenhuma loja dessa carga foi atribuída a uma estação ainda. Digite as lojas de cada estação acima ou use "Preencher automaticamente".</p>';
+    return;
+  }
   const media = totalVol / ativas;
 
   const estacoes = grupos.map((g, i) => {
@@ -3218,7 +3318,7 @@ function renderPlanejamento(){
     const itens = g.reduce((s,l) => s + l.itens, 0);
     const ratio = media > 0 ? vol / media : 0;
     const nivel = ativas > 1 && ratio >= 1.3 ? 'crit' : (ativas > 1 && ratio >= 1.1 ? 'warn' : 'ok');
-    return { idx:i, lojas:g, vol, itens, ratio, nivel, pct: totalVol > 0 ? vol / totalVol * 100 : 0 };
+    return { idx:idxs[i], lojas:g, vol, itens, ratio, nivel, pct: totalVol > 0 ? vol / totalVol * 100 : 0 };
   });
   const maxVolEst = Math.max(...estacoes.map(e => e.vol)) || 1;
   const criticas = estacoes.filter(e => e.nivel === 'crit');
@@ -3230,6 +3330,9 @@ function renderPlanejamento(){
     <p class="plan-header-result">Carga${resultado.cargas.length>1?'s':''}: <b>${escapeHtml(resultado.cargas.join(', '))}</b> — Fornecedor: <b>${escapeHtml(resultado.fornecedores.join(' / ') || '—')}</b></p>`;
   if(resultado.naoEncontradas && resultado.naoEncontradas.length){
     html += `<div class="plan-warning">Não encontrei no relatório: ${escapeHtml(resultado.naoEncontradas.join(', '))}.</div>`;
+  }
+  if(semEstacao.length){
+    html += `<div class="plan-warning">⚠️ Lojas sem estação: ${semEstacao.map(l => pad2(l.loja)).join(', ')} (volume ${fmtInt(semEstacao.reduce((s,l) => s + l.volume, 0))}) — não entram na grade abaixo.</div>`;
   }
   if(resultado.temAgrupado){
     html += `<div class="plan-warning">⚠️ Essa carga tem itens ainda "Agrupados" (não totalmente montados) — os números abaixo consideram só o que já está Montado.</div>`;
@@ -3250,7 +3353,7 @@ function renderPlanejamento(){
       ? `<span class="crit-txt">⚠ ${criticas.length} estação(ões) crítica(s):</span> ${criticas.map(e => 'Estação ' + (e.idx+1)).join(', ')} — acima de 130% da média (${fmtInt(media)} por estação).`
       : `✔ Nenhuma estação crítica — volumes bem distribuídos (média de ${fmtInt(media)} por estação).`}<br>
     Mais carregadas: ${ranking.map(e => `<b>Estação ${e.idx+1}</b> ${fmtInt(e.vol)} (${e.pct.toFixed(0)}%)`).join(' · ')}
-    ${N > ativas ? `<br><span style="color:var(--text-dim);">A carga tem só ${lojasArr.length} loja(s) — ${ativas} estação(ões) em uso.</span>` : ''}
+    ${(modo !== 'manual' && N > ativas) ? `<br><span style="color:var(--text-dim);">A carga tem só ${lojasArr.length} loja(s) — ${ativas} estação(ões) em uso.</span>` : ''}
     <br><span style="color:var(--text-dim); font-size:.74rem;">Crítica: ≥ 130% da média · Atenção: ≥ 110% da média</span>
   </div>
 
@@ -3267,7 +3370,9 @@ function renderPlanejamento(){
     const primeira = e.lojas[0].loja, ultima = e.lojas[e.lojas.length-1].loja;
     const faixa = e.lojas.length === 1
       ? `Loja ${pad2(primeira)} · 1 loja`
-      : `Lojas ${pad2(primeira)}–${pad2(ultima)} · ${e.lojas.length} lojas`;
+      : (modo === 'manual'
+          ? `Lojas ${e.lojas.slice(0, 10).map(l => pad2(l.loja)).join(', ')}${e.lojas.length > 10 ? '…' : ''} · ${e.lojas.length} lojas`
+          : `Lojas ${pad2(primeira)}–${pad2(ultima)} · ${e.lojas.length} lojas`);
     const cardMatch = lojaFiltro && e.lojas.some(l => pad2(l.loja).includes(lojaFiltro));
     const resp = (planStations[e.idx] && planStations[e.idx].responsavel) || '';
 
