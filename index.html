@@ -209,7 +209,7 @@
   .modal-overlay.open{display:flex;}
   .modal-box{
     background:var(--panel); border:1px solid var(--line); border-radius:4px;
-    width:100%; max-width:720px; overflow:hidden;
+    width:100%; max-width:720px; overflow:hidden; max-height:94vh; overflow-y:auto;
   }
   .modal-box .login-band{padding:16px 20px;}
   .modal-box .login-band h1{font-size:1.05rem;}
@@ -301,7 +301,7 @@
   .resumo-turno-block:last-child{ border-bottom:none; }
   .resumo-turno-block h3{ color:var(--band); font-size:1rem; margin:0 0 10px; }
 
-  /* ---------- IMPRESSÃO (relatório Cross) ---------- */
+  /* ---------- IMPRESSÃO (relatório Cross / Planejamento) ---------- */
   @media print{
     body[data-print-target="cross"] *{ visibility:hidden; }
     body[data-print-target="cross"] #panel-relatorio-cross, body[data-print-target="cross"] #panel-relatorio-cross *{ visibility:visible; }
@@ -310,6 +310,14 @@
     body[data-print-target="plan"] *{ visibility:hidden; }
     body[data-print-target="plan"] #plan-print-area, body[data-print-target="plan"] #plan-print-area *{ visibility:visible; }
     body[data-print-target="plan"] #plan-print-area{ position:absolute; left:0; top:0; width:100%; margin:0; border:none; }
+
+    /* texto escuro sobre fundo branco (o tema do painel é escuro) */
+    body[data-print-target="plan"] #plan-print-area, body[data-print-target="plan"] #plan-print-area *,
+    body[data-print-target="cross"] #panel-relatorio-cross, body[data-print-target="cross"] #panel-relatorio-cross *{
+      color:#000 !important; background:#fff !important; border-color:#888 !important; box-shadow:none !important;
+    }
+    body[data-print-target="plan"] #plan-print-area input{ border:none !important; }
+    .plan-bar{ display:none !important; }
 
     .no-print{ display:none !important; }
   }
@@ -374,20 +382,45 @@
 
   /* ---------- FECHAMENTOS ---------- */
   .fech-img{ width:100%; border:1px solid var(--line); border-radius:4px; background:#fff; display:block; }
+  .fech-foto-bar{ border-top:none; border-bottom:1px solid var(--line); align-items:center; flex-wrap:wrap; }
 
   /* ---------- PLANEJAMENTO ---------- */
   .plan-form{ padding:16px 20px; display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; border-bottom:1px solid var(--line); }
   .plan-form .field{ margin:0; min-width:220px; flex:1; }
-  .plan-form .field.small{ min-width:140px; flex:0 0 auto; }
+  .plan-form .field.small{ min-width:150px; flex:0 0 auto; }
   .plan-header-result{ font-family:'Oswald',sans-serif; font-size:1.1rem; margin:0 0 4px; }
   .plan-header-result b{ color:var(--band); }
   .plan-warning{
     background:var(--warn-bg); color:var(--warn-text); padding:8px 12px; border-radius:4px;
     font-size:.82rem; font-weight:600; margin:8px 0;
   }
-  .plan-config-table td, .plan-config-table th{ padding:6px 8px; }
-  .plan-config-table input[type=number]{ width:70px; }
-  .plan-config-table input[type=text]{ width:160px; }
+  .plan-range-wrap{ display:flex; align-items:center; gap:12px; background:var(--input-bg); border:1px solid var(--line); border-radius:3px; padding:6px 12px; }
+  .plan-form .plan-range-wrap input[type=range]{ flex:1; padding:0; border:none; background:transparent; accent-color:var(--band); cursor:pointer; }
+  .plan-range-val{ font-family:'Oswald',sans-serif; font-size:1.3rem; color:var(--band); min-width:28px; text-align:right; }
+  .plan-check{ display:flex !important; align-items:center; gap:6px; text-transform:none !important; letter-spacing:0 !important; font-size:.82rem !important; color:var(--text) !important; cursor:pointer; padding:10px 0; }
+  .plan-check input{ width:auto !important; }
+
+  .plan-chips{ display:flex; flex-wrap:wrap; gap:6px; padding:12px 20px 0; align-items:center; }
+  .plan-chip{
+    cursor:pointer; border:1px solid var(--line); background:var(--input-bg); color:var(--text);
+    border-radius:14px; padding:4px 11px; font-size:.74rem; font-family:'Inter',sans-serif;
+  }
+  .plan-chip:hover{ border-color:var(--band); }
+  .plan-chip b{ font-family:'Oswald',sans-serif; color:var(--band); font-weight:600; }
+  .plan-chip.sel{ background:var(--band); color:var(--band-text); border-color:var(--band); }
+  .plan-chip.sel b{ color:var(--band-text); }
+
+  .plan-rank{
+    margin:12px 20px 0; padding:10px 14px; border-radius:4px; font-size:.84rem; line-height:1.55;
+    background:var(--row-alt); border:1px solid var(--line);
+  }
+  .plan-rank b{ color:var(--band); }
+  .plan-rank .crit-txt{ color:var(--danger); font-weight:700; }
+
+  .plan-lojas-strip{ display:flex; flex-wrap:wrap; gap:5px; padding:12px 20px 0; }
+  .plan-loja-chip{ font-size:.7rem; padding:3px 8px; border-radius:3px; border:1px solid var(--line); color:var(--text); }
+  .plan-loja-chip b{ font-family:'Oswald',sans-serif; font-weight:600; }
+  .plan-loja-chip.match{ outline:2px solid var(--info-text); }
 
   .plan-grid{
     display:grid; grid-template-columns:repeat(5, 1fr); gap:14px; padding:16px 20px;
@@ -400,13 +433,29 @@
     border:1px solid var(--line); border-radius:6px; overflow:hidden;
     background:var(--row-alt); display:flex; flex-direction:column;
   }
-  .plan-station-card.is-empty{ opacity:.4; }
+  .plan-station-card.crit{ border-color:var(--danger); box-shadow:0 0 0 1px var(--danger); }
+  .plan-station-card.warn{ border-color:var(--warn-text); }
+  .plan-station-card.match{ outline:2px solid var(--info-text); outline-offset:2px; }
   .plan-station-card-header{
     background:var(--panel-header); padding:10px 12px; border-bottom:1px solid var(--line);
   }
+  .plan-station-card-header .st-top{ display:flex; justify-content:space-between; align-items:center; gap:6px; }
   .plan-station-card-header .st-num{ font-family:'Oswald',sans-serif; color:var(--band); font-size:.95rem; font-weight:700; }
-  .plan-station-card-header .st-resp{ font-size:.75rem; color:var(--text-dim); margin-top:2px; }
-  .plan-station-card-header .st-resp b{ color:var(--text); font-weight:600; }
+  .plan-station-card-header .st-faixa{ font-size:.7rem; color:var(--text-dim); margin-top:2px; }
+  .plan-station-card-header .st-resp-input{
+    width:100%; margin-top:6px; background:var(--input-bg); border:1px solid var(--line); color:var(--text);
+    padding:4px 6px; border-radius:2px; font-size:.78rem; font-family:'Inter',sans-serif;
+  }
+  .plan-station-card-header .st-resp-input:disabled{ background:transparent; border-color:transparent; padding-left:0; opacity:.9; }
+  .plan-badge{ font-size:.6rem; font-weight:700; letter-spacing:.05em; padding:2px 7px; border-radius:2px; text-transform:uppercase; }
+  .plan-badge.crit{ background:#4a1f1f; color:var(--danger); }
+  .plan-badge.warn{ background:var(--warn-bg); color:var(--warn-text); }
+  .plan-badge.ok{ background:var(--ok-bg); color:var(--ok-text); }
+  .plan-load{ padding:8px 12px 10px; border-bottom:1px solid var(--line); font-size:.7rem; color:var(--text-dim); }
+  .plan-bar{ height:6px; background:var(--input-bg); border-radius:3px; overflow:hidden; margin-bottom:5px; }
+  .plan-bar i{ display:block; height:100%; background:var(--ok-text); }
+  .plan-bar i.warn{ background:var(--warn-text); }
+  .plan-bar i.crit{ background:var(--danger); }
   .plan-mini-table{ width:100%; border-collapse:collapse; font-size:.78rem; }
   .plan-mini-table thead th{
     background:transparent; color:var(--text-dim); border-bottom:1px solid var(--line);
@@ -414,6 +463,7 @@
   }
   .plan-mini-table tbody td{ padding:6px 8px; border-bottom:1px solid var(--line); }
   .plan-mini-table tbody tr:nth-child(even){ background:rgba(255,255,255,.02); }
+  .plan-mini-table tbody tr.row-match td{ background:rgba(110,195,255,.2); }
   .plan-mini-table td.pm-vol, .plan-mini-table td.pm-sku{
     font-family:'Oswald',sans-serif; font-weight:700; color:var(--band); text-align:right; font-size:.9rem;
   }
@@ -423,7 +473,6 @@
     font-family:'Oswald',sans-serif; font-weight:700; font-size:.8rem;
   }
   .plan-mini-table tfoot td.pm-vol, .plan-mini-table tfoot td.pm-sku{ color:var(--band); text-align:right; font-size:1rem; }
-  .plan-station-empty-msg{ padding:14px; text-align:center; color:var(--text-dim); font-style:italic; font-size:.78rem; }
 </style>
 </head>
 <body>
@@ -756,7 +805,7 @@
       <div class="panel-header">
         <div class="title-block">
           <h2>PENDÊNCIAS RELATÓRIO CROSS</h2>
-          <span class="sub">Cargas com % de agrupamento acima de 1% · Caminho: CROSS</span>
+          <span class="sub">Cargas com % de agrupamento acima de 1% · Pedido: Cross-Docking</span>
         </div>
         <div class="stat-row">
           <div class="stat"><div class="n" id="st-cross-pend-count">0</div><div class="l">Cargas pendentes</div></div>
@@ -766,7 +815,7 @@
         <table>
           <thead>
             <tr>
-              <th>Carga</th><th>Fornecedor</th><th>Aging</th><th>Vol. Montado</th><th>Vol. Agrupado</th><th>% Agrupado</th><th>Imprimir?</th>
+              <th>Carga</th><th>Fornecedor</th><th>Recebimento</th><th>Aging</th><th>Vol. Montado</th><th>Vol. Agrupado</th><th>% Agrupado</th><th>Imprimir?</th>
             </tr>
           </thead>
           <tbody id="tbody-cross-pend"></tbody>
@@ -791,7 +840,7 @@
         <table>
           <thead>
             <tr>
-              <th>Master</th><th>Destino</th><th>Cód</th><th>Descrição</th><th>Embl</th><th>Qtd</th><th>Carga</th><th>Fornecedor</th><th>Aging</th>
+              <th>Master</th><th>Destino</th><th>Cód</th><th>Descrição</th><th>Embalagem</th><th>Qtd</th><th>Peso (kg)</th><th>Volume (m³)</th><th>Carga</th><th>Fornecedor</th><th>Recebimento</th><th>Aging</th>
             </tr>
           </thead>
           <tbody id="tbody-cross-relatorio"></tbody>
@@ -811,53 +860,61 @@
 
   <div id="tab-plan" style="display:none;">
 
-    <section class="panel" id="panel-plan-config" style="display:none;">
-      <div class="panel-header">
-        <div class="title-block">
-          <h2>ESTAÇÕES — CONFIGURAÇÃO</h2>
-          <span class="sub">Defina a faixa de lojas e o(s) associado(s) responsável(is) por cada estação</span>
-        </div>
-      </div>
-      <div class="table-scroll">
-        <table class="plan-config-table">
-          <thead><tr><th>Estação</th><th>Loja de</th><th>até</th><th>Associado(s)</th></tr></thead>
-          <tbody id="tbody-plan-config"></tbody>
-        </table>
-      </div>
-      <div class="panel-footer-actions">
-        <button class="btn btn-primary" style="width:auto;" onclick="savePlanStationsConfig()">Salvar configuração</button>
-      </div>
-    </section>
-
     <section class="panel" id="panel-plan">
       <div class="panel-header">
         <div class="title-block">
           <h2>PLANEJAMENTO</h2>
-          <span class="sub">Distribuição de volumes por estação, a partir do relatório Montado do Cross</span>
+          <span class="sub">Digite a carga, escolha a qtd. de estações e o painel divide as lojas e aponta as estações críticas</span>
         </div>
       </div>
       <div class="plan-form">
         <div class="field">
-          <label for="plan-carga-input">Carga(s) — separe por vírgula se for mais de uma</label>
-          <input type="text" id="plan-carga-input" placeholder="Ex.: 312151 ou 312151, 312160" oninput="renderPlanejamento()">
-        </div>
-        <div class="field small">
-          <label for="plan-qtd-estacoes">Usar estações de 1 até</label>
-          <select id="plan-qtd-estacoes" onchange="renderPlanejamento()"></select>
+          <label for="plan-carga-input">Carga(s) — separe por vírgula ou clique nas cargas abaixo</label>
+          <input type="text" id="plan-carga-input" placeholder="Ex.: 483216 ou 483216, 481470" oninput="renderPlanejamento()">
         </div>
         <div class="field">
-          <label for="plan-loja-filter">Filtrar loja</label>
-          <input type="text" id="plan-loja-filter" placeholder="Ex.: 11 ou 211" oninput="renderPlanejamento()">
+          <label for="plan-qtd-estacoes">Qtd. de estações</label>
+          <div class="plan-range-wrap">
+            <input type="range" id="plan-qtd-estacoes" min="1" max="20" value="5" oninput="renderPlanejamento()">
+            <span class="plan-range-val" id="plan-qtd-label">5</span>
+          </div>
         </div>
-        <div class="field small" id="plan-config-toggle-wrap" style="display:none;">
+        <div class="field small">
+          <label for="plan-modo">Divisão das lojas</label>
+          <select id="plan-modo" onchange="renderPlanejamento()">
+            <option value="volume">Equilibrar por volume</option>
+            <option value="lojas">Mesma qtd. de lojas</option>
+          </select>
+        </div>
+        <div class="field small">
+          <label for="plan-loja-filter">Destacar loja</label>
+          <input type="text" id="plan-loja-filter" placeholder="Ex.: 11" oninput="renderPlanejamento()">
+        </div>
+        <div class="field small">
+          <label class="plan-check"><input type="checkbox" id="plan-ordem-crit" onchange="renderPlanejamento()"> Críticas primeiro</label>
+        </div>
+        <div class="field small no-print" style="min-width:200px;">
+          <label for="plan-escala-sel">Escalas salvas</label>
+          <select id="plan-escala-sel" onchange="carregarEscala(this.value)"><option value="">— selecionar —</option></select>
+        </div>
+        <div class="field small no-print">
           <label>&nbsp;</label>
-          <button class="btn btn-ghost btn-sm" style="width:100%;" onclick="togglePlanConfig()">Configurar estações</button>
+          <button class="btn btn-ghost btn-sm" style="width:100%;" onclick="salvarEscala()">💾 Salvar escala</button>
+        </div>
+        <div class="field small no-print">
+          <label>&nbsp;</label>
+          <button class="btn btn-danger btn-sm" style="width:100%;" onclick="excluirEscala()">Excluir escala</button>
+        </div>
+        <div class="field small no-print">
+          <label>&nbsp;</label>
+          <button class="btn btn-ghost btn-sm" style="width:100%;" onclick="limparPlanejamento()">🧹 Limpar alterações</button>
         </div>
         <div class="field small no-print" id="plan-print-wrap" style="display:none;">
           <label>&nbsp;</label>
           <button class="btn btn-ghost btn-sm" style="width:100%;" onclick="imprimirPlanejamento()">Imprimir grade</button>
         </div>
       </div>
+      <div class="plan-chips no-print" id="plan-chips"></div>
       <div id="plan-print-area">
       <div class="plan-result-box" id="plan-resultado"></div>
       </div>
@@ -876,6 +933,11 @@
         <div class="stat-row">
           <div class="stat"><div class="n" id="st-fech-count">0</div><div class="l">Dias fechados</div></div>
         </div>
+      </div>
+      <div class="panel-footer-actions fech-foto-bar no-print" id="fech-foto-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openFechPhotoModal()">📷 Gravar distribuição por foto</button>
+        <button class="btn btn-danger btn-sm" onclick="openFechApagarModal()">🗑 Apagar fechamento (data e turno)</button>
+        <span class="hint" style="margin:0;">Tire a foto da distribuição e ela fica salva no turno escolhido. Só é possível se esse turno ainda não tiver nenhuma carga distribuída no painel.</span>
       </div>
       <div id="fech-container"></div>
     </section>
@@ -962,16 +1024,103 @@
   </div>
 </div>
 
+<!-- ===================== MODAL: GRAVAR DISTRIBUIÇÃO POR FOTO (Fechamentos) ===================== -->
+<div class="modal-overlay" id="fech-foto-modal">
+  <div class="modal-box" style="max-width:680px;">
+    <div class="login-band">
+      <h1>Gravar distribuição por foto</h1>
+      <p>A foto fica salva em Fechamentos, no dia e turno escolhidos</p>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <div class="field" style="flex:1; min-width:150px;">
+          <label for="fech-foto-dia">Dia</label>
+          <input type="date" id="fech-foto-dia" onchange="fechFotoVerificar()">
+        </div>
+        <div class="field" style="flex:1; min-width:150px;">
+          <label for="fech-foto-turno">Turno</label>
+          <select id="fech-foto-turno" onchange="fechFotoVerificar()">
+            <option value="T1">T1 (05:40–14:00)</option>
+            <option value="T2">T2 (14:01–22:00)</option>
+            <option value="T3">T3 (22:01–05:39)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="justify-content:flex-start; flex-wrap:wrap; margin-top:0;">
+        <button class="btn btn-ghost btn-sm" onclick="fechStartCamera()">📷 Usar câmera (ao vivo)</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('fech-foto-file').click()">🖼️ Enviar imagem / print</button>
+        <input type="file" id="fech-foto-file" accept="image/*" style="display:none;" onchange="fechHandleFile(this.files)">
+      </div>
+
+      <div id="fech-foto-camera-wrap" style="display:none; margin-top:14px;">
+        <video id="fech-foto-video" autoplay playsinline style="width:100%; border-radius:4px; border:1px solid var(--line); background:#000;"></video>
+        <div class="modal-actions" style="justify-content:flex-start; margin-top:10px;">
+          <button class="btn btn-primary" style="width:auto;" onclick="fechCapturar()">Capturar foto</button>
+          <button class="btn btn-ghost btn-sm" onclick="fechStopCamera()">Cancelar câmera</button>
+        </div>
+      </div>
+
+      <div id="fech-foto-preview-wrap" style="display:none; margin-top:14px;">
+        <img id="fech-foto-preview-img" style="width:100%; max-height:380px; object-fit:contain; border-radius:4px; border:1px solid var(--line); background:#000;">
+        <div class="modal-actions" style="justify-content:flex-start; margin-top:10px;">
+          <button class="btn btn-ghost btn-sm" onclick="fechResetFoto()">Tirar/enviar outra</button>
+        </div>
+      </div>
+
+      <canvas id="fech-foto-canvas" style="display:none;"></canvas>
+      <p id="fech-foto-status" class="hint" style="min-height:1em;"></p>
+
+      <div class="modal-actions">
+        <button class="btn btn-ghost btn-sm" onclick="closeFechPhotoModal()">Fechar</button>
+        <button class="btn btn-primary" style="width:auto;" id="btn-salvar-fech-foto" onclick="salvarFechFoto()" disabled>Salvar foto neste turno</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: APAGAR FECHAMENTO ===================== -->
+<div class="modal-overlay" id="fech-apagar-modal">
+  <div class="modal-box" style="max-width:500px;">
+    <div class="login-band">
+      <h1>Apagar fechamento</h1>
+      <p>Escolha a data e o turno que quer apagar</p>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <div class="field" style="flex:1; min-width:150px;">
+          <label for="fech-apagar-dia">Data</label>
+          <select id="fech-apagar-dia" onchange="fechApagarInfo()"></select>
+        </div>
+        <div class="field" style="flex:1; min-width:150px;">
+          <label for="fech-apagar-turno">Turno</label>
+          <select id="fech-apagar-turno" onchange="fechApagarInfo()">
+            <option value="T1">T1</option>
+            <option value="T2">T2</option>
+            <option value="T3">T3</option>
+            <option value="TODOS">Todos os turnos</option>
+          </select>
+        </div>
+      </div>
+      <p id="fech-apagar-info" class="hint" style="min-height:3em;"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost btn-sm" onclick="closeFechApagarModal()">Cancelar</button>
+        <button class="btn btn-danger" id="btn-confirmar-apagar" style="padding:10px 18px; font-size:.85rem;" onclick="confirmarApagarFech()" disabled>Apagar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== MODAL: IMPORTAR RELATÓRIO CROSS ===================== -->
 <div class="modal-overlay" id="import-cross-modal">
   <div class="modal-box">
     <div class="login-band">
       <h1>Colar relatório Cross da planilha</h1>
-      <p>Cole as linhas copiadas do Excel (colunas: Agrupadora, Master, Status, Destino, Cód, Descrição, Embl, Qtd, Carga, Fornecedor, Aging, Caminho)</p>
+      <p>Cole as linhas copiadas do Excel (colunas: Agrupadora, Master, Status, Destino, Cód, Descrição, Embalagem, Qtd, Peso, Volume, Carga, Fornecedor, Recebimento, Coluna1, Pedido)</p>
     </div>
     <div class="modal-body">
       <textarea id="import-cross-textarea" placeholder="Cole aqui o intervalo copiado do Excel..."></textarea>
-      <p class="hint">Isso substitui todo o relatório Cross atual pelas linhas coladas e reinicia as marcações de impressão. A tabela de pendências é calculada automaticamente somando o QTD por carga, separando as linhas com status "Montada" das linhas com status "Agrupada".</p>
+      <p class="hint">Isso substitui todo o relatório Cross atual pelas linhas coladas e reinicia as marcações de impressão. A tabela de pendências considera só as linhas com Pedido "Cross-Docking" e é calculada somando o QTD por carga, separando as linhas com status "Montada" das linhas com status "Agrupada". O Aging é calculado em dias a partir da data de Recebimento.</p>
       <div class="modal-actions">
         <button class="btn btn-ghost btn-sm" onclick="closeCrossImportModal()">Cancelar</button>
         <button class="btn btn-primary" style="width:auto;" onclick="importCrossFromPaste()">Importar</button>
@@ -1143,6 +1292,7 @@ const DEMO_EXTRAS = { qtdProdutivos: 7, estocadoFull: 175, estocadoMix: 8588 };
 let fechamentosData = [];      // [{id:'2026-10-20', rows, extras, ...}]
 let fechImagens = {};          // { 'yyyy-mm-dd': { T1:dataUrl, ... } }
 let fechCarregando = {};
+let fechOrigem = {};           // { 'yyyy-mm-dd': { T1:'foto'|'auto', ... } }
 let fechSelecionado = null;
 
 /* Sobrescritas pelo módulo do Firebase (se ele não carregar, o painel segue só em memória) */
@@ -1307,6 +1457,7 @@ function loadDemo(){
 
 /* ===================== HELPERS ===================== */
 function fmtInt(n){ return Math.round(n).toLocaleString('pt-BR'); }
+function fmtDec(n, maxD){ return Number(n||0).toLocaleString('pt-BR', { minimumFractionDigits:0, maximumFractionDigits:maxD }); }
 function todayLabel(){
   const d = new Date();
   const dia = String(d.getDate()).padStart(2,'0');
@@ -1872,21 +2023,365 @@ function renderFechamentos(){
   TURNOS.forEach(t => {
     const rows = (f.rows || []).filter(r => turnoDaCarga(r) === t);
     html += `<div class="resumo-turno-block"><h3 class="label-font">DISTRIBUIÇÃO ${t} — ${fmtDia(f.id)}</h3>`;
-    if(rows.length === 0){
-      html += '<p class="hint" style="margin:0;">Sem cargas distribuídas neste turno.</p>';
-    } else if(!imgs){
+    if(!imgs){
       html += '<p class="hint" style="margin:0;">Carregando imagem…</p>';
-    } else {
+    } else if(imgs[t] || rows.length > 0){
+      const ehFoto = !!(fechOrigem[f.id] && fechOrigem[f.id][t] === 'foto');
       if(!imgs[t]){ // imagem ainda não salva: gera a partir dos dados do fechamento e guarda
         imgs[t] = renderDistImage(t, rows, extrasNorm[t], f.id);
         if(typeof saveFechImagem === 'function') saveFechImagem(f.id, t, imgs[t]);
       }
       html += `<img class="fech-img" alt="Distribuição ${t} ${fmtDia(f.id)}" src="${imgs[t]}">
-        <div style="margin-top:8px;"><a class="btn btn-ghost btn-sm" style="text-decoration:none; display:inline-block;" href="${imgs[t]}" download="fechamento-${f.id}-${t}.jpg">Baixar imagem</a></div>`;
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <a class="btn btn-ghost btn-sm" style="text-decoration:none; display:inline-block;" href="${imgs[t]}" download="fechamento-${f.id}-${t}.jpg">Baixar imagem</a>
+          ${ehFoto ? `<span class="tag">📷 Gravada por foto</span><button class="btn btn-danger" onclick="removerFotoFech('${f.id}','${t}')">Remover foto</button>` : ''}
+        </div>`;
+    } else {
+      html += `<p class="hint" style="margin:0 0 8px;">Sem cargas distribuídas neste turno.</p>
+        <button class="btn btn-ghost btn-sm" onclick="openFechPhotoModal('${f.id}','${t}')">📷 Gravar por foto</button>`;
     }
     html += '</div>';
   });
   cont.innerHTML = html;
+}
+
+/* ===================== FECHAMENTOS: GRAVAR DISTRIBUIÇÃO POR FOTO ===================== */
+let fechCamStream = null;
+let fechFotoDataUrl = null;
+
+/* quantas cargas já estão preenchidas na Distribuição daquele dia/turno
+   (dia atual = distribuição ao vivo; dias anteriores = o fechamento já arquivado) */
+function fechFotoCargasNoTurno(dia, turno){
+  if(dia === diaOperacional()) return distData.filter(r => turnoDaCarga(r) === turno).length;
+  const f = fechamentosData.find(x => x.id === dia);
+  return f ? (f.rows || []).filter(r => turnoDaCarga(r) === turno).length : 0;
+}
+
+function openFechPhotoModal(dia, turno){
+  if(!currentUser || !podeVerFechamentos()) return; // Operador não tem acesso
+  fechResetFoto();
+  const inpDia = document.getElementById('fech-foto-dia');
+  inpDia.max = diaOperacional();
+  inpDia.value = dia || diaOperacional();
+  document.getElementById('fech-foto-turno').value = turno || turnoAtivo || turnoPorHorario();
+  document.getElementById('fech-foto-modal').classList.add('open');
+  fechFotoVerificar();
+}
+function closeFechPhotoModal(){
+  fechStopCamera();
+  fechResetFoto();
+  document.getElementById('fech-foto-modal').classList.remove('open');
+}
+
+/* confere se o turno escolhido aceita foto e habilita/desabilita o botão Salvar */
+function fechFotoVerificar(){
+  const dia = document.getElementById('fech-foto-dia').value;
+  const turno = document.getElementById('fech-foto-turno').value;
+  const st = document.getElementById('fech-foto-status');
+  const btn = document.getElementById('btn-salvar-fech-foto');
+  let bloqueado = false, msg = '';
+  if(!dia){
+    bloqueado = true; msg = 'Escolha o dia.';
+  } else if(dia > diaOperacional()){
+    bloqueado = true; msg = '⛔ Esse dia ainda não começou — escolha hoje ou um dia anterior.';
+  } else {
+    const n = fechFotoCargasNoTurno(dia, turno);
+    if(n > 0){
+      bloqueado = true;
+      msg = `⛔ A Distribuição ${turno} de ${fmtDia(dia)} já tem ${n} carga(s) preenchida(s) — não é possível gravar por foto nesse turno.`;
+    }
+  }
+  if(bloqueado){
+    st.textContent = msg; st.style.color = 'var(--danger)';
+  } else {
+    st.style.color = '';
+    st.textContent = fechFotoDataUrl ? '' : 'Tire ou envie a foto da distribuição.';
+  }
+  btn.disabled = bloqueado || !fechFotoDataUrl;
+  return bloqueado;
+}
+
+async function fechStartCamera(){
+  try{
+    fechCamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    document.getElementById('fech-foto-video').srcObject = fechCamStream;
+    document.getElementById('fech-foto-camera-wrap').style.display = 'block';
+    document.getElementById('fech-foto-preview-wrap').style.display = 'none';
+  } catch(err){
+    showToast('Não deu pra acessar a câmera: ' + (err && err.message ? err.message : err), true);
+  }
+}
+function fechStopCamera(){
+  if(fechCamStream){
+    fechCamStream.getTracks().forEach(t => t.stop());
+    fechCamStream = null;
+  }
+  const w = document.getElementById('fech-foto-camera-wrap');
+  if(w) w.style.display = 'none';
+}
+function fechMostrarPreview(){
+  document.getElementById('fech-foto-preview-img').src = fechFotoDataUrl;
+  document.getElementById('fech-foto-preview-wrap').style.display = 'block';
+  fechFotoVerificar();
+}
+function fechCapturar(){
+  const video = document.getElementById('fech-foto-video');
+  const canvas = document.getElementById('fech-foto-canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+  fechFotoDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+  fechStopCamera();
+  fechMostrarPreview();
+}
+function fechHandleFile(files){
+  const file = files && files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { fechFotoDataUrl = reader.result; fechMostrarPreview(); };
+  reader.readAsDataURL(file);
+}
+function fechResetFoto(){
+  fechFotoDataUrl = null;
+  const img = document.getElementById('fech-foto-preview-img');
+  if(img) img.src = '';
+  const pw = document.getElementById('fech-foto-preview-wrap');
+  if(pw) pw.style.display = 'none';
+  const fi = document.getElementById('fech-foto-file');
+  if(fi) fi.value = '';
+  const btn = document.getElementById('btn-salvar-fech-foto');
+  if(btn) btn.disabled = true;
+  const st = document.getElementById('fech-foto-status');
+  if(st){ st.textContent = ''; st.style.color = ''; }
+}
+
+/* reduz a foto até caber com folga no limite de 1 MB de um documento do Firestore */
+function comprimirFotoFech(srcDataUrl){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      let maxW = 1800, q = 0.78, out = '';
+      for(let t = 0; t < 10; t++){
+        const scale = Math.min(1, maxW / img.width);
+        const c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.width * scale));
+        c.height = Math.max(1, Math.round(img.height * scale));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        out = c.toDataURL('image/jpeg', q);
+        if(out.length < 700000) break;
+        maxW = Math.round(maxW * 0.85);
+        q = Math.max(0.5, q - 0.04);
+      }
+      resolve(out);
+    };
+    img.onerror = () => reject(new Error('Não consegui abrir essa imagem.'));
+    img.src = srcDataUrl;
+  });
+}
+
+async function salvarFechFoto(){
+  if(!currentUser || !podeVerFechamentos()) return;
+  const dia = document.getElementById('fech-foto-dia').value;
+  const turno = document.getElementById('fech-foto-turno').value;
+  if(fechFotoVerificar()) return;
+  if(!fechFotoDataUrl){ showToast('Tire ou envie a foto primeiro.', true); return; }
+  if(typeof saveFechFoto !== 'function'){ showToast('Sem conexão com a nuvem — tente de novo em instantes.', true); return; }
+
+  const btn = document.getElementById('btn-salvar-fech-foto');
+  const st = document.getElementById('fech-foto-status');
+  btn.disabled = true;
+  st.textContent = 'Salvando…';
+  try{
+    if(!fechImagens[dia] && typeof loadFechImagens === 'function') await loadFechImagens(dia);
+    if(fechImagens[dia] && fechImagens[dia][turno] &&
+       !confirm(`Já existe uma imagem salva no ${turno} de ${fmtDia(dia)}. Substituir pela nova foto?`)){
+      return;
+    }
+    const img = await comprimirFotoFech(fechFotoDataUrl);
+    if(img.length > 950000) throw new Error('A foto ficou grande demais. Tente de novo com menos zoom.');
+    const ok = await saveFechFoto(dia, turno, img);
+    if(!ok) return; // o aviso de erro já foi mostrado
+    fechImagens[dia] = fechImagens[dia] || {};
+    fechOrigem[dia] = fechOrigem[dia] || {};
+    fechImagens[dia][turno] = img;
+    fechOrigem[dia][turno] = 'foto';
+    fechSelecionado = dia;
+    closeFechPhotoModal();
+    showToast(`✅ Foto gravada na Distribuição ${turno} de ${fmtDia(dia)}.`, false);
+    renderFechamentos();
+  } catch(err){
+    showToast('⚠️ ' + (err && err.message ? err.message : err), true);
+  } finally {
+    fechFotoVerificar();
+  }
+}
+
+async function removerFotoFech(dia, turno){
+  if(!currentUser || !podeVerFechamentos()) return;
+  if(!confirm(`Remover a foto da Distribuição ${turno} de ${fmtDia(dia)}?`)) return;
+  if(typeof removeFechFoto !== 'function') return;
+  const ok = await removeFechFoto(dia, turno);
+  if(ok){
+    if(fechImagens[dia]) delete fechImagens[dia][turno];
+    if(fechOrigem[dia]) delete fechOrigem[dia][turno];
+    showToast('🗑 Foto removida.', false);
+    renderFechamentos();
+  }
+}
+
+/* ===================== LIMPAR ALTERAÇÕES (Fechamentos / Planejamento) ===================== */
+let fechApagarSeq = 0;
+
+function openFechApagarModal(){
+  if(!currentUser || !podeVerFechamentos()) return;
+  const lista = [...fechamentosData].sort((a,b) => b.id.localeCompare(a.id));
+  if(lista.length === 0){ showToast('Não há fechamentos para apagar.', true); return; }
+  const sel = document.getElementById('fech-apagar-dia');
+  sel.innerHTML = lista.map(x => `<option value="${x.id}">${fmtDia(x.id)}</option>`).join('');
+  if(fechSelecionado && lista.some(x => x.id === fechSelecionado)) sel.value = fechSelecionado;
+  document.getElementById('fech-apagar-turno').value = 'T1';
+  document.getElementById('fech-apagar-modal').classList.add('open');
+  fechApagarInfo();
+}
+function closeFechApagarModal(){
+  document.getElementById('fech-apagar-modal').classList.remove('open');
+}
+function fechApagarTurnos(){
+  const t = document.getElementById('fech-apagar-turno').value;
+  return t === 'TODOS' ? TURNOS.slice() : [t];
+}
+
+/* mostra o que existe salvo na data/turno escolhidos e só libera "Apagar" se houver algo */
+async function fechApagarInfo(){
+  const dia = document.getElementById('fech-apagar-dia').value;
+  const info = document.getElementById('fech-apagar-info');
+  const btn = document.getElementById('btn-confirmar-apagar');
+  const seq = ++fechApagarSeq;
+  btn.disabled = true;
+  info.textContent = 'Verificando…';
+  if(!dia){ info.textContent = ''; return; }
+  if(!fechImagens[dia] && typeof loadFechImagens === 'function') await loadFechImagens(dia);
+  if(seq !== fechApagarSeq) return; // a escolha mudou enquanto carregava
+
+  const f = fechamentosData.find(x => x.id === dia);
+  const imgs = fechImagens[dia] || {};
+  const partes = [];
+  fechApagarTurnos().forEach(t => {
+    const n = f ? (f.rows || []).filter(r => turnoDaCarga(r) === t).length : 0;
+    const temImg = !!imgs[t];
+    if(n === 0 && !temImg) return;
+    const foto = fechOrigem[dia] && fechOrigem[dia][t] === 'foto';
+    partes.push(`${t}: ${n} carga(s)${temImg ? ' + imagem' + (foto ? ' (foto)' : '') : ''}`);
+  });
+  if(partes.length === 0){
+    info.textContent = `Não há nada salvo em ${fmtDia(dia)} para esse turno.`;
+    return;
+  }
+  info.textContent = `Será apagado em ${fmtDia(dia)} — ${partes.join(' · ')}. Essa ação não pode ser desfeita.`;
+  btn.disabled = false;
+}
+
+async function confirmarApagarFech(){
+  if(!currentUser || !podeVerFechamentos()) return;
+  const dia = document.getElementById('fech-apagar-dia').value;
+  const turnos = fechApagarTurnos();
+  const rotulo = turnos.length === 3 ? 'todos os turnos' : turnos[0];
+  if(!confirm(`Apagar o fechamento de ${fmtDia(dia)} (${rotulo})? Não dá pra desfazer.`)) return;
+  if(typeof apagarFechamentoTurnos !== 'function'){ showToast('Sem conexão com a nuvem — tente de novo.', true); return; }
+  const btn = document.getElementById('btn-confirmar-apagar');
+  btn.disabled = true;
+  const ok = await apagarFechamentoTurnos(dia, turnos);
+  if(ok){
+    turnos.forEach(t => {
+      if(fechImagens[dia]) delete fechImagens[dia][t];
+      if(fechOrigem[dia]) delete fechOrigem[dia][t];
+    });
+    closeFechApagarModal();
+    showToast(`🗑 Fechamento de ${fmtDia(dia)} (${rotulo}) apagado.`, false);
+    renderFechamentos();
+  } else {
+    fechApagarInfo();
+  }
+}
+
+/* ===================== PLANEJAMENTO: ESCALAS SALVAS ===================== */
+let escalasData = [];
+
+function renderEscalasSelect(){
+  const sel = document.getElementById('plan-escala-sel');
+  if(!sel) return;
+  const atual = sel.value;
+  const lista = [...escalasData].sort((a,b) => String(a.nome).localeCompare(String(b.nome), 'pt-BR'));
+  sel.innerHTML = '<option value="">— selecionar —</option>' +
+    lista.map(e => `<option value="${escapeHtml(e.id)}">${escapeHtml(e.nome)} · ${e.qtdEstacoes} est.</option>`).join('');
+  if(lista.some(e => e.id === atual)) sel.value = atual;
+}
+
+/* guarda a qtd. de estações, o modo de divisão e os associados de cada estação (a carga não entra: a escala serve pra qualquer carga) */
+function salvarEscala(){
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
+  if(typeof saveEscala !== 'function'){ showToast('Sem conexão com a nuvem — tente de novo.', true); return; }
+  const selId = document.getElementById('plan-escala-sel').value;
+  const sugestao = (escalasData.find(e => e.id === selId) || {}).nome || '';
+  const nome = (prompt('Nome da escala (ex.: Escala T1 — 5 estações):', sugestao) || '').trim();
+  if(!nome) return;
+  const id = slugifyName(nome);
+  if(!id){ showToast('Use um nome com letras ou números.', true); return; }
+  if(escalasData.some(e => e.id === id) && !confirm(`Já existe a escala "${nome}". Substituir pelas informações atuais?`)) return;
+
+  const esc = {
+    id, nome,
+    qtdEstacoes: Math.max(1, Number(document.getElementById('plan-qtd-estacoes').value) || 5),
+    modo: document.getElementById('plan-modo').value,
+    responsaveis: Array.from({ length: 20 }, (_, i) => (planStations[i] && planStations[i].responsavel) || ''),
+    salvoPor: currentUser.nome,
+    salvoEm: new Date().toLocaleString('pt-BR')
+  };
+  saveEscala(esc).then(ok => {
+    if(ok){
+      showToast(`💾 Escala "${nome}" salva.`, false);
+      setTimeout(() => { const s = document.getElementById('plan-escala-sel'); if(s) s.value = id; }, 300);
+    }
+  });
+}
+
+function carregarEscala(id){
+  if(!id) return;
+  const esc = escalasData.find(e => e.id === id);
+  if(!esc) return;
+  document.getElementById('plan-qtd-estacoes').value = esc.qtdEstacoes || 5;
+  document.getElementById('plan-modo').value = esc.modo || 'volume';
+  planStations = Array.from({ length: 20 }, (_, i) => ({ responsavel: (esc.responsaveis && esc.responsaveis[i]) || '' }));
+  if(currentUser && ehAdminLike(currentUser.role)) savePlanConfig();
+  renderPlanejamento();
+  showToast(`Escala "${esc.nome}" carregada.`, false);
+}
+
+function excluirEscala(){
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
+  const id = document.getElementById('plan-escala-sel').value;
+  const esc = escalasData.find(e => e.id === id);
+  if(!esc){ showToast('Selecione uma escala salva para excluir.', true); return; }
+  if(!confirm(`Excluir a escala "${esc.nome}"?`)) return;
+  if(typeof deleteEscala !== 'function') return;
+  deleteEscala(id).then(ok => {
+    if(ok){ document.getElementById('plan-escala-sel').value = ''; showToast('🗑 Escala excluída.', false); }
+  });
+}
+
+function limparPlanejamento(){
+  document.getElementById('plan-carga-input').value = '';
+  document.getElementById('plan-qtd-estacoes').value = 5;
+  document.getElementById('plan-modo').value = 'volume';
+  document.getElementById('plan-loja-filter').value = '';
+  document.getElementById('plan-ordem-crit').checked = false;
+  const selEsc = document.getElementById('plan-escala-sel'); if(selEsc) selEsc.value = '';
+  if(currentUser && ehAdminLike(currentUser.role) && planStations.some(s => s && s.responsavel) &&
+     confirm('Limpar também os nomes dos associados de todas as estações?')){
+    planStations = gerarPlanStationsPadrao();
+    savePlanConfig();
+  }
+  renderPlanejamento();
 }
 
 /* ===================== IMPORTAR PLANILHA (colar do Excel) ===================== */
@@ -2261,17 +2756,32 @@ const CROSS_HEADER_MAP = {
   'DESTINO':'destino', 'DESETINO':'destino',
   'COD':'cod', 'CODIGO':'cod',
   'DESCRICAO':'descricao',
-  'EMBL':'embl',
+  'EMBALAGEM':'embalagem', 'EMBL':'embalagem',
   'QTD':'qtd',
+  'PESO':'peso',
+  'VOLUME':'volume',
   'CARGA':'carga',
   'FORNECEDOR':'fornecedor',
-  'AGING':'aging',
-  'CAMINHO':'caminho'
+  'RECEBIMENTO':'recebimento',
+  'PEDIDO':'pedido', 'CAMINHO':'pedido',
+  'AGING':'aging'
 };
 function normalizeHeader(h){
   return String(h||'').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 }
 
+/* peso/volume (m³) podem vir com vírgula decimal ("0,0819") ou ponto */
+function toDecimalBR(v){
+  if(v === undefined || v === null) return 0;
+  let s = String(v).trim();
+  if(s === '') return 0;
+  if(s.includes(',')) s = s.replace(/\./g,'').replace(',', '.');
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+
+/* colunas da planilha: AGRUPADORA, MASTER, STATUS, DESTINO, CÓD, DESCRIÇÃO, EMBALAGEM, QTD, PESO,
+   VOLUME, CARGA, FORNECEDOR, RECEBIMENTO, (Coluna1), PEDIDO */
 function parseCrossPaste(raw){
   const lines = raw.split(/\r?\n/).filter(l => l.trim() !== '');
   if(lines.length === 0) return [];
@@ -2282,7 +2792,7 @@ function parseCrossPaste(raw){
 
   const colKeys = hasHeader
     ? headerCols.map(h => CROSS_HEADER_MAP[h] || null)
-    : ['agrupadora','master','status','destino','cod','descricao','embl','qtd','carga','fornecedor','aging','caminho'];
+    : ['agrupadora','master','status','destino','cod','descricao','embalagem','qtd','peso','volume','carga','fornecedor','recebimento',null,'pedido'];
 
   const rows = [];
   dataLines.forEach(line => {
@@ -2297,32 +2807,58 @@ function parseCrossPaste(raw){
         destino: obj.destino || '',
         cod: obj.cod || '',
         descricao: obj.descricao || '',
-        embl: obj.embl || '',
+        embalagem: obj.embalagem || '',
         qtd: toNumberBR(obj.qtd),
+        peso: toDecimalBR(obj.peso),
+        volume: toDecimalBR(obj.volume),
         carga: obj.carga || '',
         fornecedor: obj.fornecedor || '',
-        aging: obj.aging || '',
-        caminho: obj.caminho || ''
+        recebimento: obj.recebimento || '',
+        pedido: obj.pedido || '',
+        aging: obj.aging || ''
       });
     }
   });
   return rows;
 }
 
+/* só entram nas pendências as linhas com Pedido = Cross-Docking (relatórios antigos usavam "Caminho: CROSS") */
+function ehCrossDocking(r){
+  return normalizeHeader(r.pedido || r.caminho || '').includes('CROSS');
+}
+function parseDataBR(s){
+  const m = String(s||'').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if(!m) return null;
+  let y = Number(m[3]); if(y < 100) y += 2000;
+  return new Date(y, Number(m[2])-1, Number(m[1]));
+}
+/* aging = dias entre a data de Recebimento e hoje */
+function agingDias(r){
+  const d = parseDataBR(r.recebimento);
+  if(!d) return null;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  return Math.round((hoje - d) / 86400000);
+}
+function agingLabel(r){
+  const n = agingDias(r);
+  if(n === null) return r.aging || '—';
+  return n + (Math.abs(n) === 1 ? ' dia' : ' dias');
+}
+
 function computePendenciasCross(){
   const grupos = {};
   crossRawData
-    .filter(r => String(r.caminho||'').trim().toUpperCase() === 'CROSS')
+    .filter(ehCrossDocking)
     .forEach(r => {
       const key = r.carga;
-      if(!grupos[key]) grupos[key] = { carga:r.carga, fornecedor:r.fornecedor, aging:r.aging, montado:0, agrupado:0 };
+      if(!grupos[key]) grupos[key] = { carga:r.carga, fornecedor:r.fornecedor, recebimento:r.recebimento || '', ref:r, montado:0, agrupado:0 };
       const st = String(r.status||'').toUpperCase();
       const qtd = Number(r.qtd) || 0;
       if(st.includes('MONTAD')) grupos[key].montado += qtd;
       else if(st.includes('AGRUPAD')) grupos[key].agrupado += qtd;
     });
   return Object.values(grupos)
-    .map(g => ({ ...g, pct: (g.montado + g.agrupado) > 0 ? (g.agrupado / (g.montado + g.agrupado) * 100) : 0 }))
+    .map(g => ({ ...g, aging: agingLabel(g.ref), pct: (g.montado + g.agrupado) > 0 ? (g.agrupado / (g.montado + g.agrupado) * 100) : 0 }))
     .filter(g => g.pct > 1 && g.pct < 100)
     .sort((a,b) => b.pct - a.pct);
 }
@@ -2369,7 +2905,7 @@ function renderCrossPendencias(){
   const pendencias = computePendenciasCross();
 
   if(pendencias.length === 0){
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Nenhuma carga pendente no relatório Cross.</td></tr>';
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Nenhuma carga pendente no relatório Cross.</td></tr>';
   }
 
   pendencias.forEach(p => {
@@ -2378,6 +2914,7 @@ function renderCrossPendencias(){
     tr.innerHTML = `
       <td>${escapeHtml(p.carga)}</td>
       <td>${escapeHtml(p.fornecedor)}</td>
+      <td>${escapeHtml(p.recebimento)}</td>
       <td>${escapeHtml(p.aging)}</td>
       <td>${fmtInt(p.montado)}</td>
       <td>${fmtInt(p.agrupado)}</td>
@@ -2397,24 +2934,29 @@ function renderCrossRelatorio(){
   const itens = computeRelatorioCross();
 
   if(itens.length === 0){
-    tbody.innerHTML = '<tr class="empty-row"><td class="mc-only mc-show" style="display:block;" colspan="9">Nenhuma carga marcada para o relatório ainda.</td></tr>';
+    tbody.innerHTML = '<tr class="empty-row"><td class="mc-only mc-show" style="display:block;" colspan="12">Nenhuma carga marcada para o relatório ainda.</td></tr>';
   }
 
   itens.forEach(r => {
     const tr = document.createElement('tr');
+    const emb = r.embalagem || r.embl || '';
+    const aging = agingLabel(r);
     tr.innerHTML = `
       <td class="mc-only mc-title">${escapeHtml(r.cod)} — ${escapeHtml(r.descricao)}</td>
       <td class="mc-only" data-label="Master / Destino">${escapeHtml(r.master)} → ${escapeHtml(r.destino)}</td>
-      <td class="mc-only" data-label="Carga / Fornecedor">${escapeHtml(r.carga)} — ${escapeHtml(r.fornecedor)} · Aging ${escapeHtml(r.aging)}</td>
+      <td class="mc-only" data-label="Carga / Fornecedor">${escapeHtml(r.carga)} — ${escapeHtml(r.fornecedor)} · Aging ${escapeHtml(aging)}</td>
       <td data-label="Master">${escapeHtml(r.master)}</td>
       <td data-label="Destino">${escapeHtml(r.destino)}</td>
       <td data-label="Cód">${escapeHtml(r.cod)}</td>
       <td data-label="Descrição">${escapeHtml(r.descricao)}</td>
-      <td class="mc-show" data-label="Embl">${escapeHtml(r.embl)}</td>
+      <td class="mc-show" data-label="Embalagem">${escapeHtml(emb)}</td>
       <td class="mc-show" data-label="Qtd">${fmtInt(r.qtd)}</td>
+      <td class="mc-show" data-label="Peso (kg)">${fmtDec(r.peso, 2)}</td>
+      <td class="mc-show" data-label="Volume (m³)">${fmtDec(r.volume, 5)}</td>
       <td data-label="Carga">${escapeHtml(r.carga)}</td>
       <td data-label="Fornecedor">${escapeHtml(r.fornecedor)}</td>
-      <td data-label="Aging">${escapeHtml(r.aging)}</td>
+      <td data-label="Recebimento">${escapeHtml(r.recebimento || '')}</td>
+      <td data-label="Aging">${escapeHtml(aging)}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -2441,6 +2983,7 @@ function toggleMobilePreview(){
   applyCrossReportLayout();
 }
 window.addEventListener('resize', applyCrossReportLayout);
+window.addEventListener('afterprint', () => document.body.removeAttribute('data-print-target'));
 
 function renderCrossAll(){
   renderCrossPendencias();
@@ -2479,12 +3022,12 @@ function importCrossFromPaste(){
 }
 
 /* ===================== PLANEJAMENTO (estações x lojas) ===================== */
+/* As estações são calculadas automaticamente: o usuário digita a(s) carga(s) e escolhe a qtd. de
+   estações. As lojas são divididas em faixas contíguas e as estações mais carregadas são sinalizadas.
+   O que fica salvo na nuvem é só o(s) associado(s) de cada estação (planStations[i].responsavel). */
 function gerarPlanStationsPadrao(){
   const arr = [];
-  for(let i = 0; i < 20; i++){
-    if(i === 0){ arr.push({ de:1, ate:20, responsavel:'' }); }
-    else{ const de = 21 + (i-1)*10; arr.push({ de, ate: de+9, responsavel:'' }); }
-  }
+  for(let i = 0; i < 20; i++) arr.push({ responsavel:'' });
   return arr;
 }
 let planStations = gerarPlanStationsPadrao();
@@ -2500,54 +3043,25 @@ function normalizeLojaNum(destinoRaw){
   return parseInt(digits, 10);
 }
 
-function popularSelectQtdEstacoes(){
-  const sel = document.getElementById('plan-qtd-estacoes');
-  if(!sel || sel.options.length > 0) return;
-  for(let n = 1; n <= 20; n++){
-    const opt = document.createElement('option');
-    opt.value = n;
-    opt.textContent = n === 1 ? 'Estação 1' : `Estação ${n}`;
-    if(n === 20) opt.selected = true;
-    sel.appendChild(opt);
-  }
+function updatePlanResp(i, value){
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
+  if(!planStations[i]) planStations[i] = {};
+  planStations[i].responsavel = value;
+  savePlanConfig();
 }
 
-function renderPlanConfig(){
-  const tbody = document.getElementById('tbody-plan-config');
-  if(!tbody) return;
-  tbody.innerHTML = '';
-  planStations.forEach((st, i) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>Estação ${i+1}</td>
-      <td><input type="number" min="0" value="${st.de}" onchange="updatePlanStationField(${i},'de',this.value)"></td>
-      <td><input type="number" min="0" value="${st.ate}" onchange="updatePlanStationField(${i},'ate',this.value)"></td>
-      <td><input type="text" placeholder="Nome do(s) associado(s)" value="${escapeHtml(st.responsavel||'')}" onchange="updatePlanStationField(${i},'responsavel',this.value)"></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-function updatePlanStationField(i, field, value){
-  planStations[i][field] = field === 'responsavel' ? value : (Number(value) || 0);
-}
-function savePlanStationsConfig(){
-  savePlanConfig();
-  showToast('Configuração das estações salva!');
-  renderPlanejamento();
-}
-function togglePlanConfig(){
-  const painel = document.getElementById('panel-plan-config');
-  painel.style.display = painel.style.display === 'none' ? 'block' : 'none';
-  if(painel.style.display === 'block') renderPlanConfig();
+function listaCargasPlan(raw){
+  return String(raw || '').split(/[,;\s]+/).map(c => c.trim()).filter(Boolean);
 }
 
 function computePlanejamento(cargaInputRaw){
-  const cargas = String(cargaInputRaw || '').split(',').map(c => c.trim()).filter(Boolean);
+  const cargas = listaCargasPlan(cargaInputRaw);
   if(cargas.length === 0) return null;
 
   const linhas = crossRawData.filter(r => cargas.includes(String(r.carga).trim()));
   if(linhas.length === 0) return { encontrada:false, cargas };
 
+  const naoEncontradas = cargas.filter(c => !linhas.some(r => String(r.carga).trim() === c));
   const fornecedores = [...new Set(linhas.map(r => r.fornecedor).filter(Boolean))];
   const temAgrupado = linhas.some(r => String(r.status||'').toUpperCase().includes('AGRUPAD'));
   const montadas = linhas.filter(r => String(r.status||'').toUpperCase().includes('MONTAD'));
@@ -2556,108 +3070,239 @@ function computePlanejamento(cargaInputRaw){
   montadas.forEach(r => {
     const loja = normalizeLojaNum(r.destino);
     if(isNaN(loja)) return;
-    if(!porLoja[loja]) porLoja[loja] = { volume:0, itens:0 };
+    if(!porLoja[loja]) porLoja[loja] = { volume:0, itens:0, peso:0, cubagem:0 };
     porLoja[loja].volume += Number(r.qtd) || 0;
     porLoja[loja].itens += 1;
+    porLoja[loja].peso += Number(r.peso) || 0;
+    porLoja[loja].cubagem += Number(r.volume) || 0;
   });
 
-  return { encontrada:true, cargas, fornecedores, temAgrupado, porLoja };
+  return { encontrada:true, cargas, naoEncontradas, fornecedores, temAgrupado, porLoja };
+}
+
+/* divide as lojas (já ordenadas) em N faixas contíguas.
+   modo "volume": minimiza o volume da estação mais carregada; modo "lojas": mesma qtd. de lojas por estação */
+function planParticionar(lojas, N, modo){
+  const L = lojas.length;
+  if(L === 0) return [];
+  const G = Math.min(N, L);
+
+  if(modo === 'lojas'){
+    const base = Math.floor(L / G), extra = L % G;
+    const out = [];
+    let p = 0;
+    for(let g = 0; g < G; g++){
+      const n = base + (g < extra ? 1 : 0);
+      out.push(lojas.slice(p, p + n));
+      p += n;
+    }
+    return out;
+  }
+
+  const vols = lojas.map(l => l.volume);
+  let lo = Math.ceil(Math.max(...vols)), hi = Math.ceil(vols.reduce((a,b) => a + b, 0));
+  const cabe = cap => {
+    let g = 1, s = 0;
+    for(const v of vols){
+      if(s + v > cap && s > 0){ g++; s = v; } else { s += v; }
+    }
+    return g <= G;
+  };
+  while(lo < hi){
+    const mid = Math.floor((lo + hi) / 2);
+    if(cabe(mid)) hi = mid; else lo = mid + 1;
+  }
+  const cap = lo;
+
+  const out = [];
+  let cur = [], soma = 0;
+  lojas.forEach((l, i) => {
+    const restantes = L - i;
+    const quebrar = cur.length > 0 && (soma + l.volume > cap || restantes <= G - out.length - 1);
+    if(quebrar){ out.push(cur); cur = []; soma = 0; }
+    cur.push(l); soma += l.volume;
+  });
+  if(cur.length) out.push(cur);
+  return out;
+}
+
+function togglePlanCarga(c){
+  const inp = document.getElementById('plan-carga-input');
+  const lista = listaCargasPlan(inp.value);
+  const i = lista.indexOf(c);
+  if(i >= 0) lista.splice(i, 1); else lista.push(c);
+  inp.value = lista.join(', ');
+  renderPlanejamento();
+}
+
+/* atalhos clicáveis com as cargas do relatório Cross importado */
+function renderPlanChips(cargaInput){
+  const el = document.getElementById('plan-chips');
+  if(!el) return;
+  const sel = new Set(listaCargasPlan(cargaInput));
+  const mapa = {};
+  crossRawData.forEach(r => {
+    const c = String(r.carga || '').trim();
+    if(!c) return;
+    if(!mapa[c]) mapa[c] = { carga:c, fornecedor:r.fornecedor, vol:0, cross:false };
+    if(String(r.status||'').toUpperCase().includes('MONTAD')) mapa[c].vol += Number(r.qtd) || 0;
+    if(ehCrossDocking(r)) mapa[c].cross = true;
+  });
+  let lista = Object.values(mapa).filter(x => x.vol > 0);
+  const soCross = lista.filter(x => x.cross);
+  if(soCross.length) lista = soCross;
+  lista.sort((a,b) => b.vol - a.vol);
+  if(lista.length === 0){ el.innerHTML = ''; return; }
+
+  el.innerHTML = '<span class="hint" style="margin:0 6px 0 0;">Cargas do relatório:</span>' +
+    lista.slice(0, 40).map(x => {
+      const nome = String(x.fornecedor || '').replace(/^\d+\s*-\s*/, '').slice(0, 20);
+      return `<button type="button" class="plan-chip ${sel.has(x.carga) ? 'sel' : ''}" onclick="togglePlanCarga('${escapeHtml(x.carga)}')">${escapeHtml(x.carga)} <span>${escapeHtml(nome)}</span> · <b>${fmtInt(x.vol)}</b></button>`;
+    }).join('');
 }
 
 function renderPlanejamento(){
   if(!currentUser) return;
-  popularSelectQtdEstacoes();
 
-  const configWrap = document.getElementById('plan-config-toggle-wrap');
-  if(configWrap) configWrap.style.display = ehAdminLike(currentUser.role) ? 'block' : 'none';
-  if(!ehAdminLike(currentUser.role)){
-    document.getElementById('panel-plan-config').style.display = 'none';
-  }
-
+  const N = Math.max(1, Number(document.getElementById('plan-qtd-estacoes').value) || 5);
+  document.getElementById('plan-qtd-label').textContent = N;
+  const cargaInput = document.getElementById('plan-carga-input').value;
+  const modo = document.getElementById('plan-modo').value;
+  const critPrimeiro = document.getElementById('plan-ordem-crit').checked;
+  const lojaFiltro = (document.getElementById('plan-loja-filter').value || '').trim().replace(/\D/g,'');
+  const podeEditarResp = ehAdminLike(currentUser.role);
   const canPrint = PERFIS_DISTRIBUICAO.includes(currentUser.role);
   const printWrap = document.getElementById('plan-print-wrap');
-
   const box = document.getElementById('plan-resultado');
   if(!box) return;
 
-  const cargaInput = document.getElementById('plan-carga-input').value;
-  const lojaFiltro = (document.getElementById('plan-loja-filter').value || '').trim().replace(/\D/g,'');
+  renderPlanChips(cargaInput);
+  renderEscalasSelect();
 
   if(!cargaInput.trim()){
-    box.innerHTML = '<p class="hint" style="margin:0; padding:16px 20px;">Digite o número de uma carga (ou várias, separadas por vírgula) pra ver o planejamento por estação.</p>';
+    box.innerHTML = '<p class="hint" style="margin:0; padding:16px 20px;">Digite o número de uma carga (ou várias, separadas por vírgula) ou clique em uma das cargas acima pra ver as lojas, os volumes e a divisão por estação.</p>';
     if(printWrap) printWrap.style.display = 'none';
     return;
   }
 
   const resultado = computePlanejamento(cargaInput);
-  if(!resultado.encontrada){
-    box.innerHTML = `<p class="hint" style="margin:0; padding:16px 20px; color:var(--danger);">Carga ${escapeHtml(resultado.cargas.join(', '))} não encontrada no relatório Cross importado.</p>`;
+  if(!resultado || !resultado.encontrada){
+    const cs = resultado ? resultado.cargas.join(', ') : cargaInput;
+    box.innerHTML = `<p class="hint" style="margin:0; padding:16px 20px; color:var(--danger);">Carga ${escapeHtml(cs)} não encontrada no relatório Cross importado.</p>`;
     if(printWrap) printWrap.style.display = 'none';
     return;
   }
 
+  const lojasArr = Object.keys(resultado.porLoja).map(Number).sort((a,b) => a - b)
+    .map(l => ({ loja:l, ...resultado.porLoja[l] }));
+  if(lojasArr.length === 0){
+    box.innerHTML = `<p class="hint" style="margin:0; padding:16px 20px; color:var(--warn-text);">A carga ${escapeHtml(resultado.cargas.join(', '))} ainda não tem itens "Montados" com loja de destino.</p>`;
+    if(printWrap) printWrap.style.display = 'none';
+    return;
+  }
   if(printWrap) printWrap.style.display = canPrint ? 'block' : 'none';
+
+  const pad2 = n => String(n).padStart(2,'0');
+  const totalVol = lojasArr.reduce((s,l) => s + l.volume, 0);
+  const totalItens = lojasArr.reduce((s,l) => s + l.itens, 0);
+  const totalPeso = lojasArr.reduce((s,l) => s + l.peso, 0);
+  const totalCub = lojasArr.reduce((s,l) => s + l.cubagem, 0);
+  const maiorLoja = lojasArr.reduce((m,l) => l.volume > m.volume ? l : m, lojasArr[0]);
+
+  const grupos = planParticionar(lojasArr, N, modo);
+  const ativas = grupos.length;
+  const media = totalVol / ativas;
+
+  const estacoes = grupos.map((g, i) => {
+    const vol = g.reduce((s,l) => s + l.volume, 0);
+    const itens = g.reduce((s,l) => s + l.itens, 0);
+    const ratio = media > 0 ? vol / media : 0;
+    const nivel = ativas > 1 && ratio >= 1.3 ? 'crit' : (ativas > 1 && ratio >= 1.1 ? 'warn' : 'ok');
+    return { idx:i, lojas:g, vol, itens, ratio, nivel, pct: totalVol > 0 ? vol / totalVol * 100 : 0 };
+  });
+  const maxVolEst = Math.max(...estacoes.map(e => e.vol)) || 1;
+  const criticas = estacoes.filter(e => e.nivel === 'crit');
+  const ranking = [...estacoes].sort((a,b) => b.vol - a.vol).slice(0, 3);
+  const ordem = critPrimeiro ? [...estacoes].sort((a,b) => b.vol - a.vol) : estacoes;
+  const rotulo = { crit:'Crítica', warn:'Atenção', ok:'OK' };
 
   let html = `<div style="padding:16px 20px 0;">
     <p class="plan-header-result">Carga${resultado.cargas.length>1?'s':''}: <b>${escapeHtml(resultado.cargas.join(', '))}</b> — Fornecedor: <b>${escapeHtml(resultado.fornecedores.join(' / ') || '—')}</b></p>`;
+  if(resultado.naoEncontradas && resultado.naoEncontradas.length){
+    html += `<div class="plan-warning">Não encontrei no relatório: ${escapeHtml(resultado.naoEncontradas.join(', '))}.</div>`;
+  }
   if(resultado.temAgrupado){
     html += `<div class="plan-warning">⚠️ Essa carga tem itens ainda "Agrupados" (não totalmente montados) — os números abaixo consideram só o que já está Montado.</div>`;
   }
-  html += `</div><div class="plan-grid">`;
+  html += `</div>
+  <div class="summary-cards" style="margin-top:8px;">
+    <div class="card"><div class="n">${lojasArr.length}</div><div class="l">Lojas</div></div>
+    <div class="card"><div class="n">${fmtInt(totalVol)}</div><div class="l">Volume total</div></div>
+    <div class="card"><div class="n">${totalItens}</div><div class="l">SKU (itens)</div></div>
+    <div class="card"><div class="n">${fmtDec(totalPeso, 1)}</div><div class="l">Peso (kg)</div></div>
+    <div class="card"><div class="n">${fmtDec(totalCub, 2)}</div><div class="l">Cubagem (m³)</div></div>
+    <div class="card"><div class="n">${fmtInt(media)}</div><div class="l">Média por estação (${ativas})</div></div>
+    <div class="card"><div class="n">Loja ${pad2(maiorLoja.loja)}</div><div class="l">Maior loja · ${fmtInt(maiorLoja.volume)}</div></div>
+  </div>
 
-  const qtdEstacoesAtivas = Number(document.getElementById('plan-qtd-estacoes').value) || 20;
-  let algumaEstacaoComDados = false;
+  <div class="plan-rank">
+    ${criticas.length
+      ? `<span class="crit-txt">⚠ ${criticas.length} estação(ões) crítica(s):</span> ${criticas.map(e => 'Estação ' + (e.idx+1)).join(', ')} — acima de 130% da média (${fmtInt(media)} por estação).`
+      : `✔ Nenhuma estação crítica — volumes bem distribuídos (média de ${fmtInt(media)} por estação).`}<br>
+    Mais carregadas: ${ranking.map(e => `<b>Estação ${e.idx+1}</b> ${fmtInt(e.vol)} (${e.pct.toFixed(0)}%)`).join(' · ')}
+    ${N > ativas ? `<br><span style="color:var(--text-dim);">A carga tem só ${lojasArr.length} loja(s) — ${ativas} estação(ões) em uso.</span>` : ''}
+    <br><span style="color:var(--text-dim); font-size:.74rem;">Crítica: ≥ 130% da média · Atenção: ≥ 110% da média</span>
+  </div>
 
-  for(let i = 0; i < qtdEstacoesAtivas; i++){
-    const st = planStations[i];
-    if(!st) continue;
+  <div class="plan-lojas-strip">
+    ${lojasArr.map(l => {
+      const a = (0.12 + 0.55 * (l.volume / (maiorLoja.volume || 1))).toFixed(2);
+      const match = lojaFiltro && pad2(l.loja).includes(lojaFiltro);
+      return `<span class="plan-loja-chip ${match ? 'match' : ''}" style="background:rgba(227,178,60,${a});">Loja ${pad2(l.loja)} · <b>${fmtInt(l.volume)}</b></span>`;
+    }).join('')}
+  </div>
+  <div class="plan-grid">`;
 
-    let lojasDaEstacao = [];
-    for(let loja = st.de; loja <= st.ate; loja++){
-      const d = resultado.porLoja[loja];
-      if(!d) continue;
-      if(lojaFiltro && !String(loja).padStart(2,'0').includes(lojaFiltro)) continue;
-      lojasDaEstacao.push({ loja, ...d });
-    }
-    if(!lojasDaEstacao.length) continue;
-    algumaEstacaoComDados = true;
+  ordem.forEach(e => {
+    const primeira = e.lojas[0].loja, ultima = e.lojas[e.lojas.length-1].loja;
+    const faixa = e.lojas.length === 1
+      ? `Loja ${pad2(primeira)} · 1 loja`
+      : `Lojas ${pad2(primeira)}–${pad2(ultima)} · ${e.lojas.length} lojas`;
+    const cardMatch = lojaFiltro && e.lojas.some(l => pad2(l.loja).includes(lojaFiltro));
+    const resp = (planStations[e.idx] && planStations[e.idx].responsavel) || '';
 
-    const volTotal = lojasDaEstacao.reduce((s,l)=>s+l.volume,0);
-    const itensTotal = lojasDaEstacao.reduce((s,l)=>s+l.itens,0);
-
-    const linhasHtml = lojasDaEstacao.map(l => `
-      <tr>
-        <td>Loja ${String(l.loja).padStart(2,'0')}</td>
+    const linhasHtml = e.lojas.map(l => `
+      <tr class="${lojaFiltro && pad2(l.loja).includes(lojaFiltro) ? 'row-match' : ''}">
+        <td>Loja ${pad2(l.loja)}</td>
         <td class="pm-vol">${fmtInt(l.volume)}</td>
         <td class="pm-sku">${l.itens}</td>
-      </tr>
-    `).join('');
+      </tr>`).join('');
 
-    html += `<div class="plan-station-card">
+    html += `<div class="plan-station-card ${e.nivel} ${cardMatch ? 'match' : ''}">
       <div class="plan-station-card-header">
-        <div class="st-num">Estação ${i+1}</div>
-        <div class="st-resp">Associado: <b>${st.responsavel ? escapeHtml(st.responsavel) : '—'}</b></div>
+        <div class="st-top"><span class="st-num">Estação ${e.idx+1}</span><span class="plan-badge ${e.nivel}">${rotulo[e.nivel]}</span></div>
+        <div class="st-faixa">${faixa}</div>
+        <input type="text" class="st-resp-input" placeholder="Associado(s)" value="${escapeHtml(resp)}" ${podeEditarResp ? '' : 'disabled'} onchange="updatePlanResp(${e.idx}, this.value)">
+      </div>
+      <div class="plan-load">
+        <div class="plan-bar"><i class="${e.nivel}" style="width:${(e.vol / maxVolEst * 100).toFixed(0)}%"></i></div>
+        ${e.pct.toFixed(0)}% do volume · ${e.ratio.toFixed(2).replace('.', ',')}× a média
       </div>
       <table class="plan-mini-table">
         <thead><tr><th>Destino</th><th class="pm-vol">Volume</th><th class="pm-sku">SKU</th></tr></thead>
         <tbody>${linhasHtml}</tbody>
         <tfoot>
           <tr>
-            <td>TOTAL · ${lojasDaEstacao.length} loja${lojasDaEstacao.length===1?'':'s'}</td>
-            <td class="pm-vol">${fmtInt(volTotal)}</td>
-            <td class="pm-sku">${itensTotal}</td>
+            <td>TOTAL</td>
+            <td class="pm-vol">${fmtInt(e.vol)}</td>
+            <td class="pm-sku">${e.itens}</td>
           </tr>
         </tfoot>
       </table>
     </div>`;
-  }
+  });
 
   html += `</div>`;
-
-  if(!algumaEstacaoComDados){
-    html += `<p class="hint" style="margin:14px 20px 0;">Nenhuma loja dessa carga caiu dentro das estações configuradas${lojaFiltro ? ' com esse filtro' : ''}. Confira a configuração das estações.</p>`;
-  }
-
   box.innerHTML = html;
 }
 
@@ -3029,7 +3674,9 @@ function renderDistClockOnly(){
     try{
       const snap = await getDocs(collection(db, 'fechamentos', dia, 'imagens'));
       const obj = {};
-      snap.forEach(d => { obj[d.id] = d.data().img; });
+      const org = {};
+      snap.forEach(d => { obj[d.id] = d.data().img; org[d.id] = d.data().origem || 'auto'; });
+      fechOrigem[dia] = org;
       fechImagens[dia] = obj;
     } catch(err){
       fechImagens[dia] = {};
@@ -3040,6 +3687,73 @@ function renderDistClockOnly(){
   window.saveFechImagem = function(dia, turno, img){
     setDoc(doc(db, 'fechamentos', dia, 'imagens', turno), { img })
       .catch(err => reportError('Erro ao salvar imagem do fechamento:', err));
+  };
+
+  window.saveFechFoto = async function(dia, turno, img){
+    try{
+      const fRef = doc(fechCol, dia);
+      const s = await getDoc(fRef);
+      if(!s.exists()){ // dia ainda sem fechamento: cria o registro só pra aparecer na lista
+        await setDoc(fRef, { dia, rows: [], extras: null, fechadoEm: new Date().toLocaleString('pt-BR'), soFoto: true });
+      }
+      await setDoc(doc(db, 'fechamentos', dia, 'imagens', turno), {
+        img, origem: 'foto',
+        por: currentUser ? currentUser.nome : '',
+        em: new Date().toLocaleString('pt-BR')
+      });
+      return true;
+    } catch(err){
+      reportError('Erro ao salvar a foto da distribuição:', err);
+      return false;
+    }
+  };
+  window.removeFechFoto = async function(dia, turno){
+    try{
+      await deleteDoc(doc(db, 'fechamentos', dia, 'imagens', turno));
+      return true;
+    } catch(err){
+      reportError('Erro ao remover a foto:', err);
+      return false;
+    }
+  };
+
+  window.apagarFechamentoTurnos = async function(dia, turnos){
+    try{
+      for(const t of turnos) await deleteDoc(doc(db, 'fechamentos', dia, 'imagens', t));
+      const ref = doc(fechCol, dia);
+      const snap = await getDoc(ref);
+      if(snap.exists()){
+        const d = snap.data();
+        const rows = (d.rows || []).filter(r => !turnos.includes(turnoDaCarga(r)));
+        const extras = normalizeDistExtras(d.extras || null);
+        turnos.forEach(t => { extras[t] = distExtrasVazio(); });
+        const restantes = await getDocs(collection(db, 'fechamentos', dia, 'imagens'));
+        if(rows.length === 0 && restantes.empty){
+          await deleteDoc(ref);
+        } else {
+          await setDoc(ref, { rows, extras }, { merge: true });
+        }
+      }
+      return true;
+    } catch(err){
+      reportError('Erro ao apagar o fechamento:', err);
+      return false;
+    }
+  };
+
+  // ---------- escalas salvas (Planejamento) ----------
+  const escalasCol = collection(db, 'escalasPlanejamento');
+  onSnapshot(escalasCol, snap => {
+    escalasData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if(currentUser) renderEscalasSelect();
+  }, err => reportError('Erro ao ler escalas salvas:', err));
+  window.saveEscala = async function(esc){
+    try{ await setDoc(doc(escalasCol, esc.id), esc); return true; }
+    catch(err){ reportError('Erro ao salvar a escala:', err); return false; }
+  };
+  window.deleteEscala = async function(id){
+    try{ await deleteDoc(doc(escalasCol, id)); return true; }
+    catch(err){ reportError('Erro ao excluir a escala:', err); return false; }
   };
 
   async function gerarImagensFechamento(f){
