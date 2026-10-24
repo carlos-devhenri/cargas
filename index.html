@@ -380,6 +380,56 @@
   .marca-label{ display:flex; align-items:center; gap:6px; font-size:.72rem; cursor:pointer; margin-top:4px; white-space:nowrap; }
   .marca-ok{ color:var(--ok-text); font-size:.7rem; font-weight:600; margin-top:4px; line-height:1.3; }
 
+
+  /* ---------- TURNO / SOMENTE LEITURA ---------- */
+  #ro-banner{ display:none; background:var(--warn-bg); color:var(--warn-text); font-weight:700; font-size:.84rem;
+    padding:10px 20px; border-bottom:2px solid var(--warn-text); text-align:center; position:sticky; top:0; z-index:50; }
+  body.readonly #ro-banner{ display:block; }
+  body.readonly #app input:not([data-ro-ok]), body.readonly #app select:not([data-ro-ok]), body.readonly #app textarea{ opacity:.75; }
+  .login-turno-hint{ font-size:.7rem; color:var(--text-dim); margin-top:5px; line-height:1.4; }
+
+  /* ---------- FILA: CARGA CRÍTICA ---------- */
+  .fila-card.critico{ border-color:var(--danger); box-shadow:0 0 0 1px var(--danger), 0 0 16px rgba(226,104,95,.35); animation:critPulse 1.8s ease-in-out infinite; }
+  @keyframes critPulse{ 0%,100%{ box-shadow:0 0 0 1px var(--danger), 0 0 6px rgba(226,104,95,.25); } 50%{ box-shadow:0 0 0 2px var(--danger), 0 0 20px rgba(226,104,95,.55); } }
+  .crit-badge{ display:inline-block; background:var(--danger); color:#1a0705; font-weight:800; font-size:.68rem; letter-spacing:.05em;
+    padding:3px 8px; border-radius:3px; margin-bottom:8px; }
+  .fila-card.critico .stat .n.crit-n{ color:var(--danger); }
+  .dist-por{ display:inline-block; background:var(--row-alt); border:1px solid var(--band); color:var(--band); font-weight:700;
+    font-size:.74rem; padding:2px 8px; border-radius:10px; white-space:nowrap; }
+
+  /* ---------- PRODUTIVIDADE DO MÊS ---------- */
+  .prod-wrap{ padding:16px 20px 6px; border-bottom:1px solid var(--line); }
+  .prod-head{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; justify-content:space-between; margin-bottom:6px; }
+  .prod-head h3{ color:var(--band); font-size:1.05rem; margin:0; }
+  .prod-head label{ font-size:.74rem; color:var(--text-dim); display:flex; gap:8px; align-items:center; }
+  .prod-head input[type=month]{ width:auto; padding:6px 10px; }
+  .prod-turno{ border:1px solid var(--line); border-radius:6px; margin:14px 0; background:var(--panel); overflow:hidden; }
+  .prod-turno-head{ display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center; padding:12px 16px; background:var(--panel-header); border-bottom:1px solid var(--line); }
+  .prod-turno-head .tt{ font-family:'Oswald',sans-serif; font-size:1.3rem; color:var(--band); letter-spacing:.04em; min-width:44px; }
+  .prod-kpi{ display:flex; flex-direction:column; }
+  .prod-kpi .v{ font-family:'Oswald',sans-serif; font-size:1.35rem; font-weight:600; line-height:1.1; }
+  .prod-kpi .v.vol{ color:var(--band); font-size:1.8rem; }
+  .prod-kpi .v.skuv{ color:#7cc7ec; }
+  .prod-kpi .l{ font-size:.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.07em; }
+  .prod-chart{ overflow-x:auto; padding:8px 8px 10px; }
+  .prod-vazio{ padding:22px; text-align:center; color:var(--text-dim); font-style:italic; }
+
+  /* ---------- EXPEDIÇÃO ---------- */
+  .exp-kpis{ display:flex; flex-wrap:wrap; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); }
+  .exp-kpi{ background:var(--row-alt); border:1px solid var(--line); border-radius:6px; padding:10px 16px; min-width:140px; }
+  .exp-kpi .v{ font-family:'Oswald',sans-serif; font-size:1.5rem; color:var(--band); font-weight:600; line-height:1.15; }
+  .exp-kpi .l{ font-size:.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.07em; }
+  .exp-chips{ display:flex; flex-wrap:wrap; gap:8px; padding:12px 20px 0; }
+  .exp-chip{ border:1px solid var(--line); border-radius:14px; padding:3px 11px; font-size:.76rem; background:var(--input-bg); }
+  .exp-chip b{ font-family:'Oswald',sans-serif; color:var(--band); }
+  .exp-st{ display:inline-block; padding:3px 10px; border-radius:10px; font-size:.72rem; font-weight:700; background:#2b323c; color:var(--text); white-space:nowrap; }
+  .exp-st.fin{ background:#1f4a2e; color:#7ddc9b; }
+  .exp-st.conj{ background:#4d3a20; color:#f2b565; }
+  .exp-st.horti{ background:#1d3b4d; color:#7cc7ec; }
+  .exp-st.tela{ background:#4a1f1f; color:#e2685f; }
+  .exp-meta{ padding:12px 20px 16px; font-size:.8rem; color:var(--text-dim); line-height:1.7; }
+  .exp-meta b{ color:var(--text); }
+
   /* ---------- FECHAMENTOS ---------- */
   .fech-img{ width:100%; border:1px solid var(--line); border-radius:4px; background:#fff; display:block; }
   .fech-foto-bar{ border-top:none; border-bottom:1px solid var(--line); align-items:center; flex-wrap:wrap; }
@@ -507,12 +557,18 @@
         </div>
       </div>
       <div class="field">
-        <label for="in-celular">Tipo de celular</label>
+        <label for="in-celular">Tipo de acesso</label>
         <select id="in-celular">
+          <option value="" selected>— Selecione —</option>
           <option value="Android">Android</option>
           <option value="iPhone">iPhone</option>
           <option value="Computador">Computador (sem celular)</option>
         </select>
+      </div>
+      <div class="field">
+        <label for="in-turno">Turno</label>
+        <select id="in-turno" onchange="turnoLoginManual = true;"></select>
+        <div class="login-turno-hint">Preenchido automaticamente pelo horário de cada turno. Fora do horário do seu turno o site abre só para consulta — somente o Administrador altera.</div>
       </div>
       <div id="login-error"></div>
       <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
@@ -523,6 +579,7 @@
 
 <!-- ===================== APP ===================== -->
 <div id="app">
+  <div id="ro-banner"></div>
   <div id="topbar">
     <div class="brand">
       <div class="dot"></div>
@@ -544,6 +601,7 @@
     <button class="tab-btn" id="tab-btn-cross" onclick="switchTab('cross')">Pendências Relatório Cross</button>
     <button class="tab-btn" id="tab-btn-plan" onclick="switchTab('plan')">Planejamento</button>
     <button class="tab-btn" id="tab-btn-fech" onclick="switchTab('fech')" style="display:none;">Fechamentos</button>
+    <button class="tab-btn" id="tab-btn-exp" onclick="switchTab('exp')">Expedição</button>
   </div>
 
   <main>
@@ -563,7 +621,7 @@
       <div class="table-scroll">
         <table>
           <thead>
-            <tr><th>Nome</th><th>Situação atual</th><th>Função solicitada</th><th>Celular</th><th>Solicitado em</th><th></th></tr>
+            <tr><th>Nome</th><th>Situação atual</th><th>Função solicitada</th><th>Tipo de acesso</th><th>Solicitado em</th><th></th></tr>
           </thead>
           <tbody id="tbody-solicitacoes"></tbody>
         </table>
@@ -581,7 +639,7 @@
       <div class="table-scroll">
         <table>
           <thead>
-            <tr><th>Nome</th><th>Função</th><th>Celular</th><th>Status</th><th>Último acesso</th><th></th></tr>
+            <tr><th>Nome</th><th>Função</th><th>Turno</th><th>Tipo de acesso</th><th>Status</th><th>Último acesso</th><th></th></tr>
           </thead>
           <tbody id="tbody-usuarios"></tbody>
         </table>
@@ -640,6 +698,7 @@
         </div>
         <div class="stat-row" style="align-items:center;">
           <div class="stat"><div class="n" id="badge-turno-ativo">—</div><div class="l">Turno ativo</div></div>
+          <div class="stat"><div class="n" id="st-fila-crit" style="color:var(--danger);">0</div><div class="l">Críticas</div></div>
           <div class="stat"><div class="n" id="st-fila-count">0</div><div class="l">Aguardando</div></div>
         </div>
       </div>
@@ -683,7 +742,7 @@
           <thead>
             <tr>
               <th>Etiquetagem</th><th>Doca</th><th>Carga</th><th>Descrição</th><th>Liberação</th>
-              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th><th>Turno</th><th></th>
+              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th><th>Turno</th><th>Distribuído por</th><th></th>
             </tr>
           </thead>
           <tbody id="tbody-dist-T1"></tbody>
@@ -692,7 +751,7 @@
               <td colspan="6">DISTRIBUIÇÃO TOTAL T1</td>
               <td id="ft-dist-vol-T1">0</td>
               <td id="ft-dist-sku-T1">0</td>
-              <td colspan="3"></td>
+              <td colspan="4"></td>
             </tr>
           </tfoot>
         </table>
@@ -727,7 +786,7 @@
           <thead>
             <tr>
               <th>Etiquetagem</th><th>Doca</th><th>Carga</th><th>Descrição</th><th>Liberação</th>
-              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th><th>Turno</th><th></th>
+              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th><th>Turno</th><th>Distribuído por</th><th></th>
             </tr>
           </thead>
           <tbody id="tbody-dist-T2"></tbody>
@@ -736,7 +795,7 @@
               <td colspan="6">DISTRIBUIÇÃO TOTAL T2</td>
               <td id="ft-dist-vol-T2">0</td>
               <td id="ft-dist-sku-T2">0</td>
-              <td colspan="3"></td>
+              <td colspan="4"></td>
             </tr>
           </tfoot>
         </table>
@@ -771,7 +830,7 @@
           <thead>
             <tr>
               <th>Etiquetagem</th><th>Doca</th><th>Carga</th><th>Descrição</th><th>Liberação</th>
-              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th><th>Turno</th><th></th>
+              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th><th>Turno</th><th>Distribuído por</th><th></th>
             </tr>
           </thead>
           <tbody id="tbody-dist-T3"></tbody>
@@ -780,7 +839,7 @@
               <td colspan="6">DISTRIBUIÇÃO TOTAL T3</td>
               <td id="ft-dist-vol-T3">0</td>
               <td id="ft-dist-sku-T3">0</td>
-              <td colspan="3"></td>
+              <td colspan="4"></td>
             </tr>
           </tfoot>
         </table>
@@ -941,6 +1000,14 @@
           <div class="stat"><div class="n" id="st-fech-count">0</div><div class="l">Dias fechados</div></div>
         </div>
       </div>
+      <div class="prod-wrap" id="prod-wrap">
+        <div class="prod-head">
+          <h3 class="label-font">PRODUTIVIDADE DO MÊS — VOLUME DISTRIBUÍDO</h3>
+          <label>Mês <input type="month" id="prod-mes" data-ro-ok onchange="prodMes = this.value; renderProdutividade();"></label>
+        </div>
+        <span class="hint" style="display:block; margin:0 0 4px;">Uma barra por dia, por turno: a altura é o volume distribuído (grade + estocado full/mix) e o número azul embaixo é o SKU do dia. Vem da Distribuição fechada de cada dia; o dia de hoje aparece mais claro (em andamento).</span>
+        <div id="prod-container"></div>
+      </div>
       <div class="panel-footer-actions fech-foto-bar no-print" id="fech-foto-actions">
         <button class="btn btn-ghost btn-sm" onclick="openFechPhotoModal()">📷 Gravar distribuição por foto</button>
         <button class="btn btn-danger btn-sm" onclick="openFechApagarModal()">🗑 Apagar fechamento (data e turno)</button>
@@ -951,7 +1018,46 @@
   </div>
   <!-- fim da aba "Fechamentos" -->
 
+  <div id="tab-exp" style="display:none;">
+    <section class="panel" id="panel-exp">
+      <div class="panel-header">
+        <div class="title-block">
+          <h2>EXPEDIÇÃO — STATUS T2</h2>
+          <span class="sub" id="exp-sub">Cole o Status Expedição (só o T2 é considerado)</span>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="n" id="st-exp-veic">0</div><div class="l">Veículos</div></div>
+          <div class="stat"><div class="n" id="st-exp-lojas">0</div><div class="l">Lojas</div></div>
+        </div>
+      </div>
+      <div class="panel-footer-actions no-print" id="exp-actions" style="display:none;">
+        <button class="btn btn-ghost btn-sm" onclick="openExpImportModal()">Colar status da expedição (Excel)</button>
+        <button class="btn btn-danger btn-sm" onclick="limparExpedicao()">🗑 Limpar expedição</button>
+      </div>
+      <div id="exp-container"></div>
+    </section>
+  </div>
+  <!-- fim da aba "Expedição" -->
+
   </main>
+</div>
+
+<!-- ===================== MODAL: COLAR STATUS EXPEDIÇÃO ===================== -->
+<div class="modal-overlay" id="import-exp-modal">
+  <div class="modal-box">
+    <div class="login-band">
+      <h1>Colar Status Expedição (T2)</h1>
+      <p>Cole o bloco copiado da planilha "Status Expedição": DESTINO, PLACA, TURNO, STATUS, VEÍCULO, TRANSP., VOLUME e FATURAMENTO</p>
+    </div>
+    <div class="modal-body">
+      <textarea id="import-exp-textarea" placeholder="Cole aqui o Status Expedição..."></textarea>
+      <p class="hint">Só as linhas do turno T2 são importadas. Isso substitui o status da expedição que está no painel. Linhas sem volume (ex.: veículo "EM TELA") entram com volume em branco. Veículos, volume e faturamento totais são calculados a partir das linhas.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost btn-sm" onclick="closeExpImportModal()">Cancelar</button>
+        <button class="btn btn-primary" style="width:auto;" onclick="importExpFromPaste()">Importar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ===================== MODAL: IMPORTAR PLANILHA ===================== -->
@@ -1256,6 +1362,23 @@ function diaOperacional(date){
 
 let turnoAtivo = turnoPorHorario();
 let distTabAtiva = turnoAtivo;
+
+/* ===== catálogo "Turno" da tela inicial + modo somente leitura fora do horário ===== */
+const TURNO_HORARIOS = { T1:'05:40–14:00', T2:'14:01–22:00', T3:'22:01–05:39' }; // mesmos horários de turnoPorHorario()
+let turnoLogin = turnoPorHorario();
+let turnoLoginManual = false;
+function preencherCatalogoTurno(){
+  const sel = document.getElementById('in-turno');
+  if(!sel) return;
+  if(!sel.options.length){
+    sel.innerHTML = Object.keys(TURNO_HORARIOS).map(t => `<option value="${t}">${t} (${TURNO_HORARIOS[t]})</option>`).join('');
+  }
+  if(!turnoLoginManual) sel.value = turnoPorHorario(); // acompanha o relógio até a pessoa escolher outro
+}
+/* só o Administrador mexe fora do horário do próprio turno; os demais ficam só consultando */
+function somenteLeitura(){
+  return !!currentUser && currentUser.role !== 'admin' && currentUser.turno !== turnoPorHorario();
+}
 function distExtrasVazio(){ return { qtdProdutivos:0, estocadoFull:0, estocadoMix:0 }; }
 function normalizeDistExtras(e){
   if(!e) return { T1: distExtrasVazio(), T2: distExtrasVazio(), T3: distExtrasVazio() };
@@ -1361,8 +1484,10 @@ async function doLogin(){
   const senha = document.getElementById('in-senha').value;
   const celular = document.getElementById('in-celular').value;
   const errBox = document.getElementById('login-error');
+  turnoLogin = document.getElementById('in-turno').value || turnoPorHorario();
 
   if(!nome){ errBox.textContent = 'Digite seu nome.'; return; }
+  if(!celular){ errBox.textContent = 'Selecione o tipo de acesso para entrar.'; return; }
   const role = ROLE_PASSWORDS[senha];
   if(!role){
     const novoEstado = { tentativas: (state.tentativas || 0) + 1, bloqueadoAte: 0 };
@@ -1380,14 +1505,14 @@ async function doLogin(){
   setLoginLockState({ tentativas:0, bloqueadoAte:0 });
 
   errBox.textContent = 'Verificando acesso…';
-  const check = await checkAndRegisterUser(nome, celular, role);
+  const check = await checkAndRegisterUser(nome, celular, role, turnoLogin);
   if(!check.ok){
     errBox.textContent = check.motivo || 'Acesso bloqueado.';
     return;
   }
   errBox.textContent = '';
-  currentUser = { nome, role, celular, id: slugifyName(nome) };
-  turnoAtivo = turnoPorHorario();
+  currentUser = { nome, role, celular, turno: turnoLogin, id: slugifyName(nome) };
+  turnoAtivo = turnoLogin;
   distTabAtiva = turnoAtivo;
 
   if('Notification' in window && Notification.permission === 'default'){
@@ -1397,7 +1522,7 @@ async function doLogin(){
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   document.getElementById('who-name').textContent = nome;
-  document.getElementById('who-role').textContent = ROLE_LABELS[role];
+  document.getElementById('who-role').textContent = ROLE_LABELS[role] + ' · ' + turnoLogin;
 
   const isAdmin = role === 'admin';
   document.getElementById('titulo-piso').setAttribute('contenteditable', isAdmin ? 'true' : 'false');
@@ -1413,6 +1538,7 @@ async function doLogin(){
   applySectorVisibility();
   switchTab('piso');
   renderAll();
+  aplicarSomenteLeitura();
   watchOwnUserStatus(forceLogout);
   if(typeof setPresence === 'function') setPresence(true);
   if(typeof verificarVirada === 'function') verificarVirada();
@@ -1425,12 +1551,13 @@ function podeVerFechamentos(){
 function switchTab(name){
   if(currentUser && currentUser.role === 'operador') name = 'piso'; // operador só tem a aba de cargas no piso
   if(name === 'fech' && !podeVerFechamentos()) name = 'piso';
-  ['piso','cross','plan','fech'].forEach(n => {
+  ['piso','cross','plan','fech','exp'].forEach(n => {
     document.getElementById('tab-'+n).style.display = name === n ? 'block' : 'none';
     document.getElementById('tab-btn-'+n).classList.toggle('active', name === n);
   });
   if(name === 'plan') renderPlanejamento();
   if(name === 'fech') renderFechamentos();
+  if(name === 'exp') renderExpedicao();
 }
 
 function forceLogout(motivo){
@@ -1438,6 +1565,10 @@ function forceLogout(motivo){
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('in-senha').value = '';
+  document.getElementById('in-celular').value = ''; // tipo de acesso volta vazio: tem que escolher a cada entrada
+  turnoLoginManual = false;
+  preencherCatalogoTurno();
+  document.body.classList.remove('readonly');
   document.getElementById('login-error').textContent = motivo || 'Sua sessão foi encerrada.';
 }
 
@@ -1666,6 +1797,10 @@ function limparCargasNoPiso(){
 }
 
 /* ===================== RENDER: PAINEL 2 - FILA DE DISTRIBUIÇÃO ===================== */
+/* carga crítica: 3 dias (ou mais) no D-1 — vale tanto pra +3 quanto -3 */
+const D1_CRITICO = 3;
+function cargaCritica(row){ return Math.abs(Number(row.d1) || 0) >= D1_CRITICO; }
+
 function renderFila(){
   const canDistribuir = PERFIS_DISTRIBUICAO.includes(currentUser.role);
   const grid = document.getElementById('fila-grid');
@@ -1677,17 +1812,22 @@ function renderFila(){
     grid.innerHTML = '<div class="fila-empty">Nenhuma carga aguardando distribuição.</div>';
   }
 
+  fila.sort((a,b) => (cargaCritica(b)?1:0) - (cargaCritica(a)?1:0)); // críticas primeiro
+  let qtdCriticas = 0;
   fila.forEach(row => {
     const card = document.createElement('div');
-    card.className = 'fila-card';
+    const crit = cargaCritica(row);
+    if(crit) qtdCriticas++;
+    card.className = 'fila-card' + (crit ? ' critico' : '');
     card.title = canDistribuir ? 'Clique pra marcar como distribuída' : '';
     card.innerHTML = `
+      ${crit ? `<div class="crit-badge">⚠ CRÍTICO · ${Math.abs(Number(row.d1))} dias no D-1</div>` : ''}
       <div class="carga-num">Carga ${escapeHtml(row.carga)}${row.doca ? ' · Doca '+escapeHtml(row.doca) : ''}</div>
       <div class="fornecedor">${escapeHtml(row.fornecedor)}</div>
       <div class="stats">
         <div class="stat"><div class="n">${fmtInt(row.volume)}</div><div class="l">Volume</div></div>
         <div class="stat"><div class="n">${row.sku}</div><div class="l">SKU</div></div>
-        <div class="stat"><div class="n">${row.d1}</div><div class="l">Aging</div></div>
+        <div class="stat"><div class="n ${crit ? 'crit-n' : ''}">${row.d1}</div><div class="l">Aging</div></div>
       </div>
     `;
     if(canDistribuir){
@@ -1699,6 +1839,7 @@ function renderFila(){
   });
 
   document.getElementById('st-fila-count').textContent = fila.length;
+  document.getElementById('st-fila-crit').textContent = qtdCriticas;
 }
 
 function marcarDistribuido(cardEl, idx){
@@ -1783,7 +1924,7 @@ function renderDist(){
     const linhas = distData.map((r,i)=>({...r, _idx:i})).filter(r => turnoDaCarga(r) === turno);
 
     if(linhas.length === 0){
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="11">Nenhuma carga distribuída ainda.</td></tr>';
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="12">Nenhuma carga distribuída ainda.</td></tr>';
     }
 
     linhas.forEach(row => {
@@ -1809,6 +1950,7 @@ function renderDist(){
             ${TURNOS.map(t => `<option value="${t}" ${t===turno?'selected':''}>${t}</option>`).join('')}
           </select>
         </td>
+        <td>${row.distribuidoPor ? `<span class="dist-por" title="Marcou esta carga como distribuída">👤 ${escapeHtml(row.distribuidoPor)}</span>` : '<span style="color:var(--text-dim)">—</span>'}</td>
         <td>${canDelete ? `<button class="btn btn-danger" onclick="removeDistRow(${i})">Remover</button>` : ''}</td>
       `;
       tbody.appendChild(tr);
@@ -1870,7 +2012,7 @@ function renderResumoDist(){
           <thead>
             <tr>
               <th>Etiquetagem</th><th>Doca</th><th>Carga</th><th>Descrição</th><th>Liberação</th>
-              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th>
+              <th>D-1</th><th>Volume</th><th>SKU</th><th>Hora dist.</th><th>Distribuído por</th>
             </tr>
           </thead>
           <tbody>
@@ -1885,6 +2027,7 @@ function renderResumoDist(){
                 <td>${fmtInt(row.volume)}</td>
                 <td>${row.sku}</td>
                 <td>${escapeHtml(row.horaDist)}</td>
+                <td>${row.distribuidoPor ? `<span class="dist-por">👤 ${escapeHtml(row.distribuidoPor)}</span>` : '—'}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -1929,7 +2072,7 @@ function fmtDia(dia){
 /* desenha a grade da distribuição de um turno num canvas e devolve um JPEG (dataURL) */
 function renderDistImage(turno, rows, extras, dia){
   extras = extras || distExtrasVazio();
-  const cols = [['Etiquetagem',130],['Doca',60],['Carga',90],['Descrição',300],['Liberação',100],['D-1',50],['Volume',90],['SKU',60],['Hora dist.',90]];
+  const cols = [['Etiquetagem',130],['Doca',60],['Carga',90],['Descrição',300],['Liberação',100],['D-1',50],['Volume',90],['SKU',60],['Hora dist.',90],['Distribuído por',150]];
   const pad = 20, rowH = 30, headH = 34, titleH = 64, sumH = 40, footH = 40;
   const W = cols.reduce((s,c)=>s+c[1],0) + pad*2;
   const H = pad + titleH + sumH + headH + Math.max(rows.length,1)*rowH + footH + pad;
@@ -1977,7 +2120,7 @@ function renderDistImage(turno, rows, extras, dia){
   rows.forEach((r, idx) => {
     if(idx % 2 === 1){ ctx.fillStyle = '#f7f7f7'; ctx.fillRect(0,y,W,rowH); }
     ctx.fillStyle = '#12151a';
-    const vals = [r.etiquetagem, r.doca, r.carga, r.descricao, r.liberacao, r.d1, fmtInt(r.volume||0), r.sku, r.horaDist];
+    const vals = [r.etiquetagem, r.doca, r.carga, r.descricao, r.liberacao, r.d1, fmtInt(r.volume||0), r.sku, r.horaDist, r.distribuidoPor || ''];
     let cx = pad;
     vals.forEach((v, ci) => { ctx.fillText(fit(v, cols[ci][1]-12), cx+6, y + rowH/2); cx += cols[ci][1]; });
     ctx.strokeStyle = '#ddd'; ctx.beginPath(); ctx.moveTo(0,y+rowH); ctx.lineTo(W,y+rowH); ctx.stroke();
@@ -2004,6 +2147,7 @@ function renderFechamentos(){
   const tab = document.getElementById('tab-fech');
   if(!cont || !tab || tab.style.display === 'none' || !currentUser) return;
 
+  renderProdutividade();
   const lista = [...fechamentosData].sort((a,b) => b.id.localeCompare(a.id));
   document.getElementById('st-fech-count').textContent = lista.length;
 
@@ -3587,7 +3731,7 @@ function renderUsuarios(){
   const ativos = usuariosData.filter(u => u.status === 'ativo' || !u.status);
 
   if(ativos.length === 0){
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Nenhum usuário ativo no momento.</td></tr>';
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Nenhum usuário ativo no momento.</td></tr>';
     return;
   }
 
@@ -3601,6 +3745,7 @@ function renderUsuarios(){
     tr.innerHTML = `
       <td>${escapeHtml(u.nome)}</td>
       <td>${escapeHtml(ROLE_LABELS[u.role] || u.role)}</td>
+      <td>${escapeHtml(u.turno || '')}</td>
       <td>${escapeHtml(u.celular)}</td>
       <td><span class="status-pill ${on ? 'status-ativo' : 'status-offline'}">${on ? '● Online' : 'Offline'}</span></td>
       <td>${escapeHtml(u.ultimoAcesso || '')}</td>
@@ -3662,7 +3807,352 @@ function renderAll(){
   const tabPlan = document.getElementById('tab-plan');
   if(tabPlan && tabPlan.style.display !== 'none') renderPlanejamentoSeguro();
   renderFechamentos();
+  renderExpedicao();
 }
+
+
+/* ===================== PRODUTIVIDADE DO MÊS (Fechamentos) ===================== */
+let prodMes = '';
+function prodDiasNoMes(ym){ const [a,m] = ym.split('-').map(Number); return new Date(a, m, 0).getDate(); }
+
+/* junta os dias fechados + o dia de hoje (ao vivo). Retorna { 'yyyy-mm-dd': { T1:{vol,sku,cargas}, ... } } */
+function prodColetar(ym){
+  const dias = {};
+  const add = (id, rows, extrasBrutos) => {
+    if(!id || id.slice(0,7) !== ym) return;
+    const ex = normalizeDistExtras(extrasBrutos);
+    TURNOS.forEach(t => {
+      const rs = (rows || []).filter(r => turnoDaCarga(r) === t);
+      const e = ex[t] || distExtrasVazio();
+      const extra = Number(e.estocadoFull||0) + Number(e.estocadoMix||0);
+      if(rs.length === 0 && extra === 0) return;
+      (dias[id] = dias[id] || {})[t] = {
+        vol: rs.reduce((s,r) => s + Number(r.volume||0), 0) + extra,
+        sku: rs.reduce((s,r) => s + Number(r.sku||0), 0),
+        cargas: rs.length
+      };
+    });
+  };
+  fechamentosData.forEach(f => add(f.id, f.rows, f.extras));
+  const hoje = diaOperacional();
+  if(!fechamentosData.some(f => f.id === hoje)) add(hoje, distData, distExtras);
+  return dias;
+}
+
+function prodGraficoSvg(ym, turno, dias){
+  const n = prodDiasNoMes(ym);
+  const slot = 46, padL = 56, padR = 14, top = 34, ch = 170, base = top + ch;
+  const W = padL + n*slot + padR, H = base + 62;
+  const vals = [];
+  for(let d=1; d<=n; d++){
+    const id = ym + '-' + String(d).padStart(2,'0');
+    const x = dias[id] && dias[id][turno];
+    vals.push(x ? { d, id, ...x } : { d, id, vol:0, sku:0, cargas:0 });
+  }
+  const comDado = vals.filter(v => v.vol > 0);
+  const max = Math.max(1, ...vals.map(v => v.vol));
+  const media = comDado.length ? comDado.reduce((s,v)=>s+v.vol,0) / comDado.length : 0;
+  const melhor = comDado.reduce((m,v) => (!m || v.vol > m.vol) ? v : m, null);
+  const hoje = diaOperacional();
+
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Produtividade ${turno}">`;
+  for(let g=0; g<=4; g++){
+    const y = base - ch*g/4;
+    s += `<line x1="${padL-6}" x2="${W-padR}" y1="${y}" y2="${y}" style="stroke:var(--line)" stroke-width="1"/>`;
+    s += `<text x="${padL-10}" y="${y+4}" text-anchor="end" font-size="10" style="fill:var(--text-dim)">${fmtInt(max*g/4)}</text>`;
+  }
+  vals.forEach((v,i) => {
+    const x = padL + i*slot, bw = slot - 12, bx = x + 6;
+    const h = v.vol > 0 ? Math.max(3, v.vol/max*ch) : 0;
+    const eHoje = v.id === hoje;
+    if(h > 0){
+      const top2 = base - h;
+      const ehMelhor = melhor && melhor.id === v.id;
+      s += `<rect x="${bx}" y="${top2}" width="${bw}" height="${h}" rx="3" style="fill:var(--band)" fill-opacity="${eHoje ? .5 : 1}" ${ehMelhor ? 'stroke="#fff" stroke-width="2"' : ''}><title>${fmtDia(v.id)} · ${turno}: ${fmtInt(v.vol)} volumes · SKU ${v.sku} · ${v.cargas} carga(s)${eHoje ? ' (em andamento)' : ''}</title></rect>`;
+      s += `<text x="${bx+bw/2}" y="${top2-5}" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--text)">${fmtInt(v.vol)}</text>`;
+      if(ehMelhor) s += `<text x="${bx+bw/2}" y="${top2-18}" text-anchor="middle" font-size="12" style="fill:var(--band)">★</text>`;
+    }
+    s += `<text x="${bx+bw/2}" y="${base+15}" text-anchor="middle" font-size="11" ${eHoje ? 'font-weight="700"' : ''} style="fill:${eHoje ? 'var(--band)' : 'var(--text-dim)'}">${v.d}</text>`;
+    if(v.vol > 0){
+      s += `<rect x="${bx}" y="${base+24}" width="${bw}" height="22" rx="4" style="fill:#16384d"/>`;
+      s += `<text x="${bx+bw/2}" y="${base+39}" text-anchor="middle" font-size="13" font-weight="800" style="fill:#7cc7ec">${v.sku}</text>`;
+    } else {
+      s += `<text x="${bx+bw/2}" y="${base+39}" text-anchor="middle" font-size="11" style="fill:var(--line)">·</text>`;
+    }
+  });
+  s += `<text x="${padL-10}" y="${base+15}" text-anchor="end" font-size="10" style="fill:var(--text-dim)">Dia</text>`;
+  s += `<text x="${padL-10}" y="${base+39}" text-anchor="end" font-size="11" font-weight="700" style="fill:#7cc7ec">SKU</text>`;
+  if(media > 0){
+    const ym2 = base - media/max*ch;
+    s += `<line x1="${padL-6}" x2="${W-padR}" y1="${ym2}" y2="${ym2}" stroke="#e2685f" stroke-width="1.5" stroke-dasharray="6 4"/>`;
+    s += `<text x="${W-padR}" y="${ym2-4}" text-anchor="end" font-size="10" font-weight="700" fill="#e2685f">média ${fmtInt(media)}</text>`;
+  }
+  s += '</svg>';
+  return { svg: s, comDado, media, melhor };
+}
+
+function renderProdutividade(){
+  const cont = document.getElementById('prod-container');
+  const inp = document.getElementById('prod-mes');
+  if(!cont || !inp) return;
+  if(!prodMes) prodMes = diaOperacional().slice(0,7);
+  inp.value = prodMes;
+  const dias = prodColetar(prodMes);
+  let html = '';
+  TURNOS.forEach(t => {
+    const g = prodGraficoSvg(prodMes, t, dias);
+    const volMes = g.comDado.reduce((s,v)=>s+v.vol,0);
+    const skuMes = g.comDado.reduce((s,v)=>s+v.sku,0);
+    html += `<div class="prod-turno">
+      <div class="prod-turno-head">
+        <div class="tt">${t}</div>
+        <div class="prod-kpi"><span class="v vol">${fmtInt(volMes)}</span><span class="l">Volume distribuído no mês</span></div>
+        <div class="prod-kpi"><span class="v skuv">${fmtInt(skuMes)}</span><span class="l">SKU no mês</span></div>
+        <div class="prod-kpi"><span class="v">${g.comDado.length}</span><span class="l">Dias com distribuição</span></div>
+        <div class="prod-kpi"><span class="v">${fmtInt(g.media)}</span><span class="l">Média por dia</span></div>
+        <div class="prod-kpi"><span class="v">${g.melhor ? 'dia ' + g.melhor.d + ' · ' + fmtInt(g.melhor.vol) : '—'}</span><span class="l">Melhor dia ★</span></div>
+      </div>
+      ${g.comDado.length ? `<div class="prod-chart">${g.svg}</div>` : '<div class="prod-vazio">Sem distribuição registrada neste turno no mês.</div>'}
+    </div>`;
+  });
+  cont.innerHTML = html;
+}
+
+/* ===================== EXPEDIÇÃO (Status Expedição — só T2) ===================== */
+const EXP_TURNO = 'T2';
+let expedData = { rows: [], resumo: {}, por: '', em: '' };
+
+function expNum(v){
+  if(v === undefined || v === null) return null;
+  let s = String(v).replace(/R\$/gi,'').replace(/\s/g,'');
+  if(!s || !/^-?[\d.,]+$/.test(s)) return null;
+  if(s.includes(',')) s = s.replace(/\./g,'').replace(',','.');
+  else if(/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,'');
+  const n = parseFloat(s);
+  return isNaN(n) ? null : n;
+}
+const EXP_PLACA = /^[A-Z]{3}\d[A-Z0-9]\d{2}$/i;
+function expLimpo(v){ v = String(v||'').trim(); return (v === '-' || v === '—') ? '' : v; }
+
+function parseExpedicaoPaste(raw){
+  const lines = raw.split(/\r?\n/);
+  const rows = [];
+  const mkRow = (destino, placa, turno, status, veiculo, transp, volTok, fatTok) => {
+    const vol = (volTok && !/R\$/i.test(volTok)) ? expNum(volTok) : null;
+    const fat = (vol !== null && fatTok) ? expNum(fatTok) : null;
+    return { destino: destino.trim(), placa: placa.trim().toUpperCase(), turno, status: String(status||'').trim(),
+             veiculo: expLimpo(veiculo), transp: expLimpo(transp), volume: vol, faturamento: fat };
+  };
+  const temTab = lines.some(l => l.includes('\t') && /\tT[1-3]\t/.test(l));
+  if(temTab){
+    // colagem direta do Excel: uma linha por veículo, colunas separadas por TAB
+    lines.forEach(l => {
+      const c = l.split('\t').map(x => x.trim());
+      const k = c.findIndex(x => /^T[1-3]$/.test(x));
+      if(k < 2) return;
+      let placa = '', destino = '';
+      if(EXP_PLACA.test(c[k-1])){ placa = c[k-1]; destino = c[k-2]; }
+      else if(c[k-1]){ destino = c[k-1]; }
+      else { destino = c[k-2]; }
+      if(!destino || destino === '→' || /R\$/.test(destino) || EXP_PLACA.test(destino)) return;
+      rows.push(mkRow(destino, placa, c[k], c[k+1], c[k+2], c[k+3], c[k+4], c[k+5]));
+    });
+  } else {
+    // texto "solto" (uma célula por linha): ancora no TURNO e olha ao redor
+    const t = raw.split(/\r?\n|\t/).map(x => x.trim()).filter(Boolean);
+    for(let j = 2; j < t.length; j++){
+      if(!/^T[1-3]$/.test(t[j])) continue;
+      let placa = '', destino = '';
+      if(EXP_PLACA.test(t[j-1])){ placa = t[j-1]; destino = t[j-2]; }
+      else if(/^(LOJA|CD|FILIAL)\b/i.test(t[j-1])){ destino = t[j-1]; }
+      else continue;
+      if(!destino || destino === '→' || /R\$/.test(destino) || EXP_PLACA.test(destino)) continue;
+      rows.push(mkRow(destino, placa, t[j], t[j+1], t[j+2], t[j+3], t[j+4], t[j+5]));
+    }
+  }
+
+  // resumo (campos que não dá pra calcular das linhas)
+  const tk = raw.split(/\r?\n|\t/).map(x => x.trim()).filter(Boolean);
+  const resumo = {};
+  const iCub = tk.findIndex(x => /^CUBAGEM$/i.test(x));
+  if(iCub >= 0){ const n = expNum(tk[iCub+1]); if(n !== null) resumo.cubagem = n; }
+  const iFF = tk.findIndex(x => /^FATOR FRETE$/i.test(x));
+  if(iFF >= 0){
+    const viz = tk.slice(iFF+1, iFF+8);
+    const rs = viz.find(x => /R\$/.test(x)); if(rs) resumo.fatorFrete = expNum(rs);
+    const pc = viz.find(x => /%$/.test(x)); if(pc) resumo.fatorPct = pc;
+  }
+  const iFilme = tk.findIndex(x => /^FILME UTILIZADO/i.test(x));
+  if(iFilme >= 0){
+    const m = tk[iFilme].match(/FILME UTILIZADO\s*:?\s*([^:\s].*)$/i);
+    if(m) resumo.filme = m[1].trim();
+    else if(tk[iFilme+1] && !/^OBS/i.test(tk[iFilme+1])) resumo.filme = tk[iFilme+1];
+  }
+  const dt = tk.find(x => /^(segunda|terça|quarta|quinta|sexta|sábado|domingo)[^,]*,\s*\d+ de \S+ de \d{4}/i.test(x));
+  if(dt) resumo.dataPlanilha = dt;
+  const hr = tk.find(x => /^\d{2}:\d{2}:\d{2}$/.test(x));
+  if(hr) resumo.horaPlanilha = hr;
+  return { rows, resumo };
+}
+
+function openExpImportModal(){
+  if(!souAdmin()) return;
+  document.getElementById('import-exp-textarea').value = '';
+  document.getElementById('import-exp-modal').classList.add('open');
+}
+function closeExpImportModal(){ document.getElementById('import-exp-modal').classList.remove('open'); }
+
+function importExpFromPaste(){
+  if(!souAdmin()) return;
+  const raw = document.getElementById('import-exp-textarea').value;
+  if(!raw.trim()){ closeExpImportModal(); return; }
+  const p = parseExpedicaoPaste(raw);
+  const doTurno = p.rows.filter(r => r.turno === EXP_TURNO);
+  const outros = p.rows.length - doTurno.length;
+  if(doTurno.length === 0){
+    alert('Não encontrei nenhuma linha do turno T2 para importar. Confira se copiou o bloco "STATUS EXPEDIÇÃO T2" com as colunas DESTINO, PLACA, TURNO, STATUS, VEÍCULO, TRANSP., VOLUME e FATURAMENTO.');
+    return;
+  }
+  expedData = { rows: doTurno, resumo: p.resumo, por: currentUser.nome, em: agoraCurto() };
+  saveExpedicao();
+  closeExpImportModal();
+  renderExpedicao();
+  showToast(`✅ Expedição T2 atualizada: ${doTurno.length} linha(s)${outros > 0 ? ' · '+outros+' de outro turno ignorada(s)' : ''}.`, false);
+}
+
+function limparExpedicao(){
+  if(!souAdmin()) return;
+  if(!confirm('Limpar todo o Status Expedição do painel?')) return;
+  expedData = { rows: [], resumo: {}, por: '', em: '' };
+  saveExpedicao();
+  renderExpedicao();
+}
+
+function expClasseStatus(st){
+  const s = String(st||'').toUpperCase();
+  if(s.includes('HORTI')) return 'horti';
+  if(s.startsWith('CONJUGADO')) return 'conj';
+  if(s.includes('FINALIZ')) return 'fin';
+  if(s.includes('TELA')) return 'tela';
+  return '';
+}
+const fmtBRL = n => (n === null || n === undefined) ? '' : 'R$ ' + Number(n).toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
+
+function saveExpedicao(){} // sobrescrita pelo módulo do Firebase
+
+function renderExpedicao(){
+  const cont = document.getElementById('exp-container');
+  if(!cont || !currentUser) return;
+  const acoes = document.getElementById('exp-actions');
+  if(acoes) acoes.style.display = souAdmin() ? 'flex' : 'none';
+  const rows = (expedData.rows || []).filter(r => r.turno === EXP_TURNO);
+  const placas = new Set(rows.map(r => r.placa).filter(Boolean));
+  const volTot = rows.reduce((s,r) => s + (r.volume || 0), 0);
+  const fatTot = rows.reduce((s,r) => s + (r.faturamento || 0), 0);
+  const rs = expedData.resumo || {};
+
+  document.getElementById('st-exp-veic').textContent = placas.size;
+  document.getElementById('st-exp-lojas').textContent = rows.length;
+  const sub = document.getElementById('exp-sub');
+  sub.textContent = expedData.em ? `Atualizado por ${expedData.por} em ${expedData.em}` : 'Cole o Status Expedição (só o T2 é considerado)';
+
+  if(rows.length === 0){
+    cont.innerHTML = '<div class="fila-empty" style="padding:26px;">Nenhum status de expedição T2 ainda. O Administrador cola o Status Expedição aqui e ele aparece para todos em tempo real.</div>';
+    return;
+  }
+
+  // veículos por tipo (placas distintas) e linhas por status
+  const tipoPorPlaca = {};
+  rows.forEach(r => { if(r.placa && r.veiculo && !tipoPorPlaca[r.placa]) tipoPorPlaca[r.placa] = r.veiculo.toUpperCase(); });
+  const porTipo = {};
+  Object.values(tipoPorPlaca).forEach(t => { porTipo[t] = (porTipo[t]||0) + 1; });
+  const porStatus = {};
+  rows.forEach(r => { const s = r.status || '—'; porStatus[s] = (porStatus[s]||0) + 1; });
+
+  const kpi = (v,l) => `<div class="exp-kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`;
+  let html = `<div class="exp-kpis">
+    ${kpi(placas.size, 'Veículos')}
+    ${kpi(fmtInt(volTot), 'Volume')}
+    ${kpi(fmtBRL(fatTot), 'Faturamento')}
+    ${kpi(rs.cubagem != null ? fmtInt(rs.cubagem) : '—', 'Cubagem')}
+    ${kpi(rs.fatorFrete != null ? fmtBRL(rs.fatorFrete) + (rs.fatorPct ? ' · ' + escapeHtml(rs.fatorPct) : '') : '—', 'Fator frete')}
+  </div>
+  <div class="exp-chips">
+    ${Object.entries(porTipo).map(([t,n]) => `<span class="exp-chip"><b>${n}</b> ${escapeHtml(t)}</span>`).join('')}
+    ${Object.entries(porStatus).map(([s,n]) => `<span class="exp-chip"><span class="exp-st ${expClasseStatus(s)}">${escapeHtml(s)}</span> <b>${n}</b></span>`).join('')}
+  </div>
+  <div class="table-scroll"><table>
+    <thead><tr><th>Destino</th><th>Placa</th><th>Turno</th><th>Status</th><th>Veículo</th><th>Transp.</th><th>Volume</th><th>Faturamento</th></tr></thead>
+    <tbody>
+      ${rows.map(r => `<tr>
+        <td><b>${escapeHtml(r.destino)}</b></td>
+        <td>${escapeHtml(r.placa) || '—'}</td>
+        <td>${escapeHtml(r.turno)}</td>
+        <td><span class="exp-st ${expClasseStatus(r.status)}">${escapeHtml(r.status)}</span></td>
+        <td>${escapeHtml(r.veiculo) || '—'}</td>
+        <td>${escapeHtml(r.transp) || '—'}</td>
+        <td><b>${r.volume != null ? fmtInt(r.volume) : '—'}</b></td>
+        <td>${r.faturamento != null ? fmtBRL(r.faturamento) : '—'}</td>
+      </tr>`).join('')}
+    </tbody>
+    <tfoot><tr><td colspan="6">TOTAL EXPEDIÇÃO ${EXP_TURNO}</td><td>${fmtInt(volTot)}</td><td>${fmtBRL(fatTot)}</td></tr></tfoot>
+  </table></div>
+  <div class="exp-meta">
+    ${rs.dataPlanilha ? `Planilha: <b>${escapeHtml(rs.dataPlanilha)}${rs.horaPlanilha ? ' · ' + escapeHtml(rs.horaPlanilha) : ''}</b><br>` : ''}
+    Filme utilizado: <b>${rs.filme ? escapeHtml(rs.filme) : '—'}</b>
+  </div>`;
+  cont.innerHTML = html;
+}
+
+/* ===================== SOMENTE LEITURA (fora do horário do turno) ===================== */
+const RO_PERMITIDO_ONCLICK = /switchTab|switchDistTab|logout|openQrModal|closeQrModal|copySiteLink|imprimir|toggleMobilePreview|toggleSenhaVisibility|^document\./;
+function roPermitido(el){
+  if(!el) return true;
+  if(el.closest('[data-ro-ok]') || el.closest('.tab-btn')) return true;
+  if(el.id === 'fech-select' || el.closest('#fech-select')) return true;
+  if(el.closest('a[href]')) return true;
+  const alvo = el.closest('[onclick]');
+  if(alvo && RO_PERMITIDO_ONCLICK.test(alvo.getAttribute('onclick') || '')) return true;
+  return false;
+}
+let roUltimoAviso = 0;
+function roBloquear(ev){
+  if(!somenteLeitura()) return;
+  const t = ev.target;
+  if(!t || !t.closest || !t.closest('#app, .modal-overlay')) return;
+  if(roPermitido(t)) return;
+  ev.preventDefault(); ev.stopImmediatePropagation();
+  if(ev.type === 'click' && Date.now() - roUltimoAviso > 2500){
+    roUltimoAviso = Date.now();
+    showToast('🔒 Fora do horário do seu turno: o site está só para consulta. Somente o Administrador altera.', true);
+  }
+}
+['click','change','input','keydown','paste'].forEach(tp => document.addEventListener(tp, roBloquear, true));
+
+function aplicarSomenteLeitura(){
+  const ro = somenteLeitura();
+  document.body.classList.toggle('readonly', ro);
+  const b = document.getElementById('ro-banner');
+  if(b && currentUser){
+    b.textContent = ro
+      ? `🔒 Somente consulta — você entrou no ${currentUser.turno} (${TURNO_HORARIOS[currentUser.turno]}) e agora é horário do ${turnoPorHorario()}. Só o Administrador altera fora do horário do turno.`
+      : '';
+  }
+  document.querySelectorAll('#app input, #app select, #app textarea, .modal-overlay input, .modal-overlay select, .modal-overlay textarea').forEach(el => {
+    if(ro){
+      if(!el.disabled && !el.closest('[data-ro-ok]') && el.id !== 'fech-select'){ el.disabled = true; el.dataset.roLock = '1'; }
+    } else if(el.dataset.roLock){
+      el.disabled = false; delete el.dataset.roLock;
+    }
+  });
+}
+let roAgendado = false;
+new MutationObserver(() => {
+  if(roAgendado) return; roAgendado = true;
+  requestAnimationFrame(() => { roAgendado = false; if(currentUser) aplicarSomenteLeitura(); });
+}).observe(document.body, { childList:true, subtree:true });
+setInterval(() => { if(currentUser){ aplicarSomenteLeitura(); } else { preencherCatalogoTurno(); } }, 30000);
+preencherCatalogoTurno();
 
 updateLoginLockUI();
 
@@ -3725,17 +4215,35 @@ function renderDistClockOnly(){
 
   // ---------- salvar cargas / distribuição ----------
   window.savePiso = function(){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return;
     setDoc(pisoRef, { rows: pisoData }).catch(err => reportError('Erro ao salvar cargas no piso:', err));
   };
   window.saveDist = function(){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return;
     setDoc(distRef, { rows: distData, extras: distExtras }).catch(err => reportError('Erro ao salvar distribuição:', err));
   };
+  // ---------- Expedição (Status Expedição T2) ----------
+  const expedRef = doc(db, 'painelCD', 'expedicao');
+  window.saveExpedicao = function(){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return;
+    setDoc(expedRef, expedData).catch(err => reportError('Erro ao salvar a expedição:', err));
+  };
+  onSnapshot(expedRef, snap => {
+    if(snap.exists()){
+      const d = snap.data();
+      expedData = { rows: d.rows || [], resumo: d.resumo || {}, por: d.por || '', em: d.em || '' };
+      if(currentUser) renderExpedicao();
+    }
+  }, err => reportError('Erro ao ler a expedição:', err));
+
   window.savePlanConfig = function(){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return;
     setDoc(planRef, { stations: planStations }).catch(err => reportError('Erro ao salvar configuração de estações:', err));
   };
   let crossNumChunksConhecido = 0;
 
   window.saveCross = async function(){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return;
     try{
       const chunks = chunkCrossRows(crossRawData);
 
@@ -3869,6 +4377,7 @@ function renderDistClockOnly(){
   };
 
   window.saveFechFoto = async function(dia, turno, img){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return false;
     try{
       const fRef = doc(fechCol, dia);
       const s = await getDoc(fRef);
@@ -3887,6 +4396,7 @@ function renderDistClockOnly(){
     }
   };
   window.removeFechFoto = async function(dia, turno){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return false;
     try{
       await deleteDoc(doc(db, 'fechamentos', dia, 'imagens', turno));
       return true;
@@ -3899,6 +4409,7 @@ function renderDistClockOnly(){
   // ---------- Planejamento ao vivo: carga, qtd. de estações, divisão, filtro ----------
   const planAtivoRef = doc(db, 'painelCD', 'planejamentoAtivo');
   window.savePlanAtivo = function(o){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return;
     setDoc(planAtivoRef, o).catch(err => reportError('Erro ao sincronizar o planejamento:', err));
   };
   onSnapshot(planAtivoRef, snap => {
@@ -3936,10 +4447,12 @@ function renderDistClockOnly(){
     if(currentUser) renderEscalasSelect();
   }, err => reportError('Erro ao ler escalas salvas:', err));
   window.saveEscala = async function(esc){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return false;
     try{ await setDoc(doc(escalasCol, esc.id), esc); return true; }
     catch(err){ reportError('Erro ao salvar a escala:', err); return false; }
   };
   window.deleteEscala = async function(id){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return false;
     try{ await deleteDoc(doc(escalasCol, id)); return true; }
     catch(err){ reportError('Erro ao excluir a escala:', err); return false; }
   };
@@ -3998,7 +4511,7 @@ function renderDistClockOnly(){
   setInterval(() => { if(currentUser) verificarVirada(); }, 1000 * 60 * 5);
 
   // ---------- controle de usuários ----------
-  window.checkAndRegisterUser = async function(nome, celular, role){
+  window.checkAndRegisterUser = async function(nome, celular, role, turno){
     const id = slugifyName(nome);
     const ref = doc(usuariosCol, id);
     try{
@@ -4007,7 +4520,7 @@ function renderDistClockOnly(){
 
       if(statusAtual === 'banido' || statusAtual === 'expulso'){
         await setDoc(doc(solicitacoesCol, id), {
-          nome, celular,
+          nome, celular, turno: turno || '',
           roleSolicitado: role,
           situacaoAtual: statusAtual,
           status: 'pendente',
@@ -4021,7 +4534,7 @@ function renderDistClockOnly(){
       }
 
       await setDoc(ref, {
-        nome, celular, role,
+        nome, celular, role, turno: turno || '',
         status: 'ativo',
         ultimoAcesso: new Date().toLocaleString('pt-BR')
       }, { merge:true });
@@ -4039,7 +4552,7 @@ function renderDistClockOnly(){
     if(!currentUser) return;
     setDoc(doc(usuariosCol, currentUser.id), {
       online: !!online, visto: Date.now(),
-      nome: currentUser.nome, role: currentUser.role, celular: currentUser.celular
+      nome: currentUser.nome, role: currentUser.role, celular: currentUser.celular, turno: currentUser.turno || ''
     }, { merge:true }).catch(()=>{});
   };
   document.addEventListener('visibilitychange', () => setPresence(document.visibilityState === 'visible'));
