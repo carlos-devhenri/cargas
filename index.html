@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CARGAS NO PISO — Painel CD</title>
+<title>Supervisão Operacional — Painel CD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -414,6 +414,54 @@
   .prod-chart{ overflow-x:auto; padding:8px 8px 10px; }
   .prod-vazio{ padding:22px; text-align:center; color:var(--text-dim); font-style:italic; }
 
+
+  /* ---------- EXPEDIÇÃO: PAINEL ÚNICO ---------- */
+  .exp-board{ display:grid; grid-template-columns:300px 1fr; gap:0; }
+  .exp-side{ background:var(--panel-header); border-right:1px solid var(--line); padding:18px 18px 20px; }
+  .exp-donut-wrap{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:16px; }
+  .exp-legend{ display:flex; flex-direction:column; gap:4px; width:100%; font-size:.76rem; }
+  .exp-legend div{ display:flex; align-items:center; gap:8px; }
+  .exp-legend i{ width:11px; height:11px; border-radius:3px; display:inline-block; }
+  .exp-legend b{ margin-left:auto; font-family:'Oswald',sans-serif; color:var(--text); }
+  .exp-side .k{ border-top:1px solid var(--line); padding:10px 0; }
+  .exp-side .k .l{ font-size:.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.08em; }
+  .exp-side .k .v{ font-family:'Oswald',sans-serif; font-size:1.55rem; color:var(--band); font-weight:600; line-height:1.15; }
+  .exp-side .k .s{ font-size:.7rem; color:var(--text-dim); margin-top:2px; }
+  .exp-main{ padding:14px 18px 18px; min-width:0; }
+  .exp-main-head, .exp-line{ display:grid; grid-template-columns:110px 150px 150px minmax(160px,1fr) 130px; gap:12px; align-items:center; }
+  .exp-main-head{ font-size:.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.08em; padding:0 10px 8px; border-bottom:1px solid var(--line); }
+  .exp-line{ padding:10px; border-bottom:1px solid var(--line); border-left:4px solid var(--line); margin-top:6px; background:var(--row-alt); border-radius:3px; }
+  .exp-line.s-fin{ border-left-color:#4fbf7a; } .exp-line.s-conj{ border-left-color:#f2b565; }
+  .exp-line.s-horti{ border-left-color:#7cc7ec; } .exp-line.s-tela{ border-left-color:#e2685f; }
+  .exp-line .dest{ font-family:'Oswald',sans-serif; font-size:1.15rem; font-weight:600; }
+  .exp-line .veic{ font-size:.74rem; color:var(--text-dim); line-height:1.35; }
+  .exp-line .veic b{ color:var(--text); font-size:.82rem; }
+  .exp-bar{ background:var(--bg); border-radius:4px; height:24px; position:relative; overflow:hidden; border:1px solid var(--line); }
+  .exp-bar > span{ display:block; height:100%; background:var(--band); border-radius:3px; }
+  .exp-bar > em{ position:absolute; left:8px; top:0; line-height:22px; font-style:normal; font-weight:800; font-size:.8rem; color:var(--text); text-shadow:0 0 3px #000; }
+  .exp-fat{ text-align:right; font-size:.82rem; font-weight:600; }
+  .exp-main-foot{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:12px 10px 0; font-family:'Oswald',sans-serif; color:var(--band); font-size:1.05rem; }
+  @media (max-width:900px){
+    .exp-board{ grid-template-columns:1fr; } .exp-side{ border-right:none; border-bottom:1px solid var(--line); }
+    .exp-main-head{ display:none; }
+    .exp-line{ grid-template-columns:1fr 1fr; } .exp-line .bar-cell{ grid-column:1 / -1; } .exp-fat{ text-align:left; }
+  }
+  /* ---------- PROGRAMAÇÃO VEÍCULOS LOJA ---------- */
+  .prog-top{ display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; padding:14px 20px; border-bottom:1px solid var(--line); }
+  .prog-chip{ border:1px solid var(--line); background:var(--input-bg); color:var(--text); border-radius:14px; padding:5px 13px; font-size:.78rem; cursor:pointer; font-family:'Inter',sans-serif; }
+  .prog-chip b{ font-family:'Oswald',sans-serif; color:var(--band); margin-left:4px; }
+  .prog-chip.sel{ background:var(--band); color:var(--band-text); border-color:var(--band); } .prog-chip.sel b{ color:var(--band-text); }
+  .prog-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:10px; padding:16px 20px 20px; }
+  .prog-card{ background:var(--row-alt); border:1px solid var(--line); border-left:4px solid var(--line); border-radius:5px; padding:10px 12px; }
+  .prog-card.direta{ border-left-color:#4fbf7a; } .prog-card.horti{ border-left-color:#7cc7ec; }
+  .prog-card .nm{ font-family:'Oswald',sans-serif; font-size:1.1rem; font-weight:600; margin-bottom:8px; }
+  .prog-card .opts{ display:flex; gap:6px; }
+  .prog-opt{ flex:1; border:1px solid var(--line); background:transparent; color:var(--text-dim); border-radius:4px; padding:6px 4px; font-size:.7rem; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif; }
+  .prog-opt:hover{ border-color:var(--text-dim); }
+  .prog-opt.on-direta{ background:#1f4a2e; color:#7ddc9b; border-color:#4fbf7a; }
+  .prog-opt.on-horti{ background:#1d3b4d; color:#7cc7ec; border-color:#7cc7ec; }
+  .prog-card .by{ font-size:.64rem; color:var(--text-dim); margin-top:6px; min-height:1em; }
+
   /* ---------- EXPEDIÇÃO ---------- */
   .exp-kpis{ display:flex; flex-wrap:wrap; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); }
   .exp-kpi{ background:var(--row-alt); border:1px solid var(--line); border-radius:6px; padding:10px 16px; min-width:140px; }
@@ -538,7 +586,7 @@
 <div id="login-screen">
   <div class="login-card">
     <div class="login-band">
-      <h1>CARGAS NO PISO</h1>
+      <h1>SUPERVISÃO OPERACIONAL</h1>
       <p>Setores: Recebimento · Distribuição</p>
     </div>
     <div class="login-body">
@@ -584,7 +632,7 @@
     <div class="brand">
       <div class="dot"></div>
       <div>
-        <h1>CARGAS NO PISO</h1>
+        <h1>SUPERVISÃO OPERACIONAL</h1>
         <div class="who">Olá, <b id="who-name"></b> · Recebimento · Distribuição · <span class="tag" id="who-role"></span></div>
       </div>
     </div>
@@ -1019,6 +1067,10 @@
   <!-- fim da aba "Fechamentos" -->
 
   <div id="tab-exp" style="display:none;">
+    <div class="tabnav" id="exp-subnav" style="margin-bottom:10px;">
+      <button class="tab-btn active" id="exp-sub-btn-status" onclick="switchExpSub('status')">Status Expedição T2</button>
+      <button class="tab-btn" id="exp-sub-btn-prog" onclick="switchExpSub('prog')">Programação Veículos Loja</button>
+    </div>
     <section class="panel" id="panel-exp">
       <div class="panel-header">
         <div class="title-block">
@@ -1035,6 +1087,30 @@
         <button class="btn btn-danger btn-sm" onclick="limparExpedicao()">🗑 Limpar expedição</button>
       </div>
       <div id="exp-container"></div>
+    </section>
+    <section class="panel" id="panel-exp-prog" style="display:none;">
+      <div class="panel-header">
+        <div class="title-block">
+          <h2>PROGRAMAÇÃO VEÍCULOS LOJA</h2>
+          <span class="sub">Marque cada loja como viagem direta ou viagem com o Horti</span>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="n" id="st-prog-direta">0</div><div class="l">Direta</div></div>
+          <div class="stat"><div class="n" id="st-prog-horti">0</div><div class="l">Com Horti</div></div>
+          <div class="stat"><div class="n" id="st-prog-sem">0</div><div class="l">Sem programação</div></div>
+        </div>
+      </div>
+      <div class="prog-top no-print">
+        <button class="prog-chip sel" id="prog-f-todas" onclick="progFiltro='todas'; renderExpProg();">Todas<b id="pf-todas">0</b></button>
+        <button class="prog-chip" id="prog-f-direta" onclick="progFiltro='direta'; renderExpProg();">Direta<b id="pf-direta">0</b></button>
+        <button class="prog-chip" id="prog-f-horti" onclick="progFiltro='horti'; renderExpProg();">Com Horti<b id="pf-horti">0</b></button>
+        <button class="prog-chip" id="prog-f-sem" onclick="progFiltro='sem'; renderExpProg();">Sem programação<b id="pf-sem">0</b></button>
+        <span style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+          <input type="text" id="prog-nova-loja" placeholder="Nova loja (ex.: 63)" style="width:150px;">
+          <button class="btn btn-ghost btn-sm" onclick="addProgLoja()">+ Adicionar loja</button>
+        </span>
+      </div>
+      <div class="prog-grid" id="prog-grid"></div>
     </section>
   </div>
   <!-- fim da aba "Expedição" -->
@@ -3702,7 +3778,7 @@ function notifyDistribuicao(row){
   playBeep();
   if(navigator.vibrate) navigator.vibrate([200,100,200,100,200]);
   if('Notification' in window && Notification.permission === 'granted'){
-    try{ new Notification('CARGAS NO PISO', { body: msg }); } catch(e){}
+    try{ new Notification('SUPERVISÃO OPERACIONAL', { body: msg }); } catch(e){}
   }
 }
 
@@ -3714,7 +3790,7 @@ function notifySolicitacaoAcesso(s){
   playBeep();
   if(navigator.vibrate) navigator.vibrate([200,100,200,100,200]);
   if('Notification' in window && Notification.permission === 'granted'){
-    try{ new Notification('Pedido de acesso — CARGAS NO PISO', { body: msg }); } catch(e){}
+    try{ new Notification('Pedido de acesso — SUPERVISÃO OPERACIONAL', { body: msg }); } catch(e){}
   }
 }
 
@@ -4053,55 +4129,137 @@ function renderExpedicao(){
 
   document.getElementById('st-exp-veic').textContent = placas.size;
   document.getElementById('st-exp-lojas').textContent = rows.length;
-  const sub = document.getElementById('exp-sub');
-  sub.textContent = expedData.em ? `Atualizado por ${expedData.por} em ${expedData.em}` : 'Cole o Status Expedição (só o T2 é considerado)';
+  document.getElementById('exp-sub').textContent = expedData.em ? `Atualizado por ${expedData.por} em ${expedData.em}` : 'Cole o Status Expedição (só o T2 é considerado)';
+  renderExpProg();
 
   if(rows.length === 0){
     cont.innerHTML = '<div class="fila-empty" style="padding:26px;">Nenhum status de expedição T2 ainda. O Administrador cola o Status Expedição aqui e ele aparece para todos em tempo real.</div>';
     return;
   }
 
-  // veículos por tipo (placas distintas) e linhas por status
+  // cubagem = volume total ÷ qtd de carros (linhas) com loja FINALIZADA
+  const finalizados = rows.filter(r => expClasseStatus(r.status) === 'fin').length;
+  const cubagem = finalizados > 0 ? volTot / finalizados : null;
+
+  const cores = { fin:'#4fbf7a', conj:'#f2b565', horti:'#7cc7ec', tela:'#e2685f', '':'#8f99a8' };
+  const porStatus = {};
+  rows.forEach(r => { const s = r.status || '—'; porStatus[s] = (porStatus[s]||0) + 1; });
   const tipoPorPlaca = {};
   rows.forEach(r => { if(r.placa && r.veiculo && !tipoPorPlaca[r.placa]) tipoPorPlaca[r.placa] = r.veiculo.toUpperCase(); });
   const porTipo = {};
   Object.values(tipoPorPlaca).forEach(t => { porTipo[t] = (porTipo[t]||0) + 1; });
-  const porStatus = {};
-  rows.forEach(r => { const s = r.status || '—'; porStatus[s] = (porStatus[s]||0) + 1; });
 
-  const kpi = (v,l) => `<div class="exp-kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`;
-  let html = `<div class="exp-kpis">
-    ${kpi(placas.size, 'Veículos')}
-    ${kpi(fmtInt(volTot), 'Volume')}
-    ${kpi(fmtBRL(fatTot), 'Faturamento')}
-    ${kpi(rs.cubagem != null ? fmtInt(rs.cubagem) : '—', 'Cubagem')}
-    ${kpi(rs.fatorFrete != null ? fmtBRL(rs.fatorFrete) + (rs.fatorPct ? ' · ' + escapeHtml(rs.fatorPct) : '') : '—', 'Fator frete')}
-  </div>
-  <div class="exp-chips">
-    ${Object.entries(porTipo).map(([t,n]) => `<span class="exp-chip"><b>${n}</b> ${escapeHtml(t)}</span>`).join('')}
-    ${Object.entries(porStatus).map(([s,n]) => `<span class="exp-chip"><span class="exp-st ${expClasseStatus(s)}">${escapeHtml(s)}</span> <b>${n}</b></span>`).join('')}
-  </div>
-  <div class="table-scroll"><table>
-    <thead><tr><th>Destino</th><th>Placa</th><th>Turno</th><th>Status</th><th>Veículo</th><th>Transp.</th><th>Volume</th><th>Faturamento</th></tr></thead>
-    <tbody>
-      ${rows.map(r => `<tr>
-        <td><b>${escapeHtml(r.destino)}</b></td>
-        <td>${escapeHtml(r.placa) || '—'}</td>
-        <td>${escapeHtml(r.turno)}</td>
-        <td><span class="exp-st ${expClasseStatus(r.status)}">${escapeHtml(r.status)}</span></td>
-        <td>${escapeHtml(r.veiculo) || '—'}</td>
-        <td>${escapeHtml(r.transp) || '—'}</td>
-        <td><b>${r.volume != null ? fmtInt(r.volume) : '—'}</b></td>
-        <td>${r.faturamento != null ? fmtBRL(r.faturamento) : '—'}</td>
-      </tr>`).join('')}
-    </tbody>
-    <tfoot><tr><td colspan="6">TOTAL EXPEDIÇÃO ${EXP_TURNO}</td><td>${fmtInt(volTot)}</td><td>${fmtBRL(fatTot)}</td></tr></tfoot>
-  </table></div>
-  <div class="exp-meta">
-    ${rs.dataPlanilha ? `Planilha: <b>${escapeHtml(rs.dataPlanilha)}${rs.horaPlanilha ? ' · ' + escapeHtml(rs.horaPlanilha) : ''}</b><br>` : ''}
-    Filme utilizado: <b>${rs.filme ? escapeHtml(rs.filme) : '—'}</b>
+  // rosca de status
+  const R = 52, C = 2*Math.PI*R; let off = 0, arcs = '';
+  Object.entries(porStatus).forEach(([s,n]) => {
+    const len = n/rows.length*C;
+    arcs += `<circle cx="70" cy="70" r="${R}" fill="none" stroke="${cores[expClasseStatus(s)]}" stroke-width="20" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"><title>${escapeHtml(s)}: ${n}</title></circle>`;
+    off += len;
+  });
+  const donut = `<svg viewBox="0 0 140 140" width="150" height="150" role="img" aria-label="Lojas por status">
+    <circle cx="70" cy="70" r="${R}" fill="none" style="stroke:var(--line)" stroke-width="20"/>${arcs}
+    <text x="70" y="68" text-anchor="middle" font-size="26" font-weight="700" style="fill:var(--text)" font-family="Oswald,sans-serif">${rows.length}</text>
+    <text x="70" y="84" text-anchor="middle" font-size="9" style="fill:var(--text-dim)">LOJAS</text></svg>`;
+  const legenda = Object.entries(porStatus).map(([s,n]) => `<div><i style="background:${cores[expClasseStatus(s)]}"></i>${escapeHtml(s)}<b>${n}</b></div>`).join('');
+
+  const maxVol = Math.max(1, ...rows.map(r => r.volume || 0));
+  const linhas = rows.map(r => {
+    const cl = expClasseStatus(r.status);
+    const pct = r.volume ? Math.max(4, r.volume/maxVol*100) : 0;
+    return `<div class="exp-line s-${cl || 'x'}">
+      <div class="dest">${escapeHtml(r.destino)}</div>
+      <div class="veic"><b>${escapeHtml(r.placa) || 'sem placa'}</b><br>${escapeHtml(r.veiculo) || '—'} · ${escapeHtml(r.transp) || '—'}</div>
+      <div><span class="exp-st ${cl}">${escapeHtml(r.status)}</span></div>
+      <div class="bar-cell"><div class="exp-bar"><span style="width:${pct}%"></span><em>${r.volume != null ? fmtInt(r.volume) : 'sem volume'}</em></div></div>
+      <div class="exp-fat">${r.faturamento != null ? fmtBRL(r.faturamento) : '—'}</div>
+    </div>`;
+  }).join('');
+
+  cont.innerHTML = `<div class="exp-board">
+    <aside class="exp-side">
+      <div class="exp-donut-wrap">${donut}<div class="exp-legend">${legenda}</div></div>
+      <div class="k"><div class="l">Veículos</div><div class="v">${placas.size}</div><div class="s">${Object.entries(porTipo).map(([t,n]) => n+' '+escapeHtml(t)).join(' · ') || '—'}</div></div>
+      <div class="k"><div class="l">Volume</div><div class="v">${fmtInt(volTot)}</div></div>
+      <div class="k"><div class="l">Faturamento</div><div class="v" style="font-size:1.25rem;">${fmtBRL(fatTot)}</div></div>
+      <div class="k"><div class="l">Cubagem</div><div class="v">${cubagem !== null ? fmtInt(cubagem) : '—'}</div><div class="s">${cubagem !== null ? fmtInt(volTot) + ' ÷ ' + finalizados + ' carro(s) finalizado(s)' : 'sem loja finalizada'}</div></div>
+      <div class="k"><div class="l">Fator frete</div><div class="v" style="font-size:1.25rem;">${rs.fatorFrete != null ? fmtBRL(rs.fatorFrete) + (rs.fatorPct ? ' · ' + escapeHtml(rs.fatorPct) : '') : '—'}</div></div>
+      <div class="k"><div class="l">Filme utilizado</div><div class="v" style="font-size:1.25rem;">${rs.filme ? escapeHtml(rs.filme) : '—'}</div>${rs.dataPlanilha ? `<div class="s">${escapeHtml(rs.dataPlanilha)}${rs.horaPlanilha ? ' · ' + escapeHtml(rs.horaPlanilha) : ''}</div>` : ''}</div>
+    </aside>
+    <div class="exp-main">
+      <div class="exp-main-head"><div>Destino</div><div>Placa · Veículo</div><div>Status</div><div>Volume</div><div style="text-align:right">Faturamento</div></div>
+      ${linhas}
+      <div class="exp-main-foot"><span>TOTAL EXPEDIÇÃO ${EXP_TURNO}</span><span>${fmtInt(volTot)} volumes · ${fmtBRL(fatTot)}</span></div>
+    </div>
   </div>`;
-  cont.innerHTML = html;
+}
+
+/* ===================== PROGRAMAÇÃO VEÍCULOS LOJA ===================== */
+const PROG_LOJAS_BASE = ['01','02','03','04','06','09','11','12','13','14','15','16','17','19','20','22','23','24','26','27','28','29','31','34','38','39','45','47','52','53','57','59','61'].map(n => 'LOJA ' + n);
+let progData = {};          // { 'LOJA 23': { tipo:'direta'|'horti'|'', por, em } }
+let progFiltro = 'todas';
+let expSub = 'status';
+function normLoja(n){ return String(n||'').trim().toUpperCase().replace(/\s+/g,' ').replace(/^LOJA\s*0*(\d+)$/, (m,d) => 'LOJA ' + d.padStart(2,'0')); }
+function switchExpSub(nome){
+  expSub = nome;
+  document.getElementById('panel-exp').style.display = nome === 'status' ? 'block' : 'none';
+  document.getElementById('panel-exp-prog').style.display = nome === 'prog' ? 'block' : 'none';
+  document.getElementById('exp-sub-btn-status').classList.toggle('active', nome === 'status');
+  document.getElementById('exp-sub-btn-prog').classList.toggle('active', nome === 'prog');
+  if(nome === 'prog') renderExpProg();
+}
+function saveProgLoja(nome, val){} // sobrescrita pelo módulo do Firebase
+function progLojasLista(){
+  const set = new Set(PROG_LOJAS_BASE);
+  Object.keys(progData).forEach(n => set.add(normLoja(n)));
+  (expedData.rows || []).forEach(r => { if(/^LOJA\b/i.test(r.destino)) set.add(normLoja(r.destino)); });
+  return [...set].sort((a,b) => a.localeCompare(b, 'pt-BR', { numeric:true }));
+}
+function setProgLoja(nome, tipo){
+  if(!currentUser || currentUser.role === 'operador') return;
+  const atual = (progData[nome] && progData[nome].tipo) || '';
+  const novo = atual === tipo ? '' : tipo; // clicar de novo na opção marcada desmarca
+  const val = { tipo: novo, por: currentUser.nome, em: agoraCurto() };
+  progData[nome] = val;
+  saveProgLoja(nome, val);
+  renderExpProg();
+}
+function addProgLoja(){
+  if(!currentUser || currentUser.role === 'operador') return;
+  const inp = document.getElementById('prog-nova-loja');
+  let nome = inp.value.trim();
+  if(!nome) return;
+  if(/^\d+$/.test(nome)) nome = 'LOJA ' + nome;
+  nome = normLoja(nome);
+  if(!progData[nome]){ progData[nome] = { tipo:'', por:'', em:'' }; saveProgLoja(nome, progData[nome]); }
+  inp.value = '';
+  renderExpProg();
+}
+function renderExpProg(){
+  const grid = document.getElementById('prog-grid');
+  if(!grid || !currentUser) return;
+  const todas = progLojasLista();
+  const tipoDe = n => (progData[n] && progData[n].tipo) || '';
+  const nDir = todas.filter(n => tipoDe(n) === 'direta').length;
+  const nHor = todas.filter(n => tipoDe(n) === 'horti').length;
+  const nSem = todas.length - nDir - nHor;
+  const set = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+  set('st-prog-direta', nDir); set('st-prog-horti', nHor); set('st-prog-sem', nSem);
+  set('pf-todas', todas.length); set('pf-direta', nDir); set('pf-horti', nHor); set('pf-sem', nSem);
+  ['todas','direta','horti','sem'].forEach(f => { const b = document.getElementById('prog-f-'+f); if(b) b.classList.toggle('sel', progFiltro === f); });
+  const vis = todas.filter(n => progFiltro === 'todas' || (progFiltro === 'sem' ? tipoDe(n) === '' : tipoDe(n) === progFiltro));
+  if(vis.length === 0){ grid.innerHTML = '<div class="fila-empty" style="grid-column:1/-1;">Nenhuma loja neste filtro.</div>'; return; }
+  grid.innerHTML = vis.map(n => {
+    const t = tipoDe(n), d = progData[n] || {};
+    const arg = encodeURIComponent(n);
+    return `<div class="prog-card ${t}">
+      <div class="nm">${escapeHtml(n)}</div>
+      <div class="opts">
+        <button class="prog-opt ${t === 'direta' ? 'on-direta' : ''}" onclick="setProgLoja(decodeURIComponent('${arg}'),'direta')">Para viagem direta</button>
+        <button class="prog-opt ${t === 'horti' ? 'on-horti' : ''}" onclick="setProgLoja(decodeURIComponent('${arg}'),'horti')">Para viagem com o Horti</button>
+      </div>
+      <div class="by">${t && d.por ? '👤 ' + escapeHtml(d.por) + ' · ' + escapeHtml(d.em || '') : ''}</div>
+    </div>`;
+  }).join('');
 }
 
 /* ===================== SOMENTE LEITURA (fora do horário do turno) ===================== */
@@ -4235,6 +4393,19 @@ function renderDistClockOnly(){
       if(currentUser) renderExpedicao();
     }
   }, err => reportError('Erro ao ler a expedição:', err));
+
+  // ---------- Programação Veículos Loja ----------
+  const progRef = doc(db, 'painelCD', 'progLojas');
+  window.saveProgLoja = function(nome, val){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return;
+    setDoc(progRef, { lojas: { [nome]: val } }, { merge: true }).catch(err => reportError('Erro ao salvar a programação:', err));
+  };
+  onSnapshot(progRef, snap => {
+    if(snap.exists()){
+      progData = snap.data().lojas || {};
+      if(currentUser) renderExpProg();
+    }
+  }, err => reportError('Erro ao ler a programação de lojas:', err));
 
   window.savePlanConfig = function(){
     if(typeof somenteLeitura === 'function' && somenteLeitura()) return;
