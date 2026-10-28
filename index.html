@@ -596,6 +596,222 @@
     #piso-print-area tr.pp-grp td{ background:#ddd !important; font-weight:700; text-transform:uppercase; font-size:11px; }
     #piso-print-area tfoot td{ background:#eee !important; font-weight:700; font-family:Arial,sans-serif; border-top:2px solid #000; }
   }
+
+  /* ============================================================
+     NOVO VISUAL — CARGAS NO PISO (tema claro, só visual)
+     Ativado por body.piso-view quando a aba "Cargas no Piso" está aberta
+     ============================================================ */
+  body.piso-view{ background:#f2efe7; }
+  body.piso-view #app{
+    --bg:#f2efe7; --panel:#ffffff; --panel-header:#14171c; --band:#e3b23c; --band-text:#14171c;
+    --text:#1b1e24; --text-dim:#6b707a; --line:#e3ded1;
+    --ok-bg:#d7f0df; --ok-text:#1d6b40; --warn-bg:#fde6bd; --warn-text:#8a5a0c; --danger:#b3302a;
+    --row-alt:#faf8f3; --input-bg:#ffffff; --neutral-text:#4b5260; --info-text:#17639c;
+    --partial-text:#b0502a; --distpartial-text:#0f7a73; --confer-text:#7a3fb8;
+    color:var(--text);
+  }
+
+  /* barra superior (continua escura) */
+  body.piso-view #topbar{ background:#14171c; border-bottom:none; color:#fff; padding:13px 28px; }
+  body.piso-view #topbar .brand{ gap:12px; }
+  body.piso-view #topbar h1{ font-size:1.2rem; font-weight:700; color:#fff; text-transform:uppercase; letter-spacing:.01em; line-height:1.15; }
+  body.piso-view #topbar .who{ color:#aab1bd; }
+  body.piso-view #topbar .who b{ color:#fff; }
+  body.piso-view #topbar .tag{
+    background:transparent; border:none; padding:0; text-transform:none; letter-spacing:0;
+    font-weight:500; font-size:.78rem; color:#aab1bd;
+  }
+  body.piso-view #topbar .btn-ghost{
+    color:#fff; border:1px solid #3a414d; background:transparent; padding:11px 16px; font-size:.85rem; border-radius:3px;
+  }
+  body.piso-view #topbar .btn-ghost:hover{ border-color:#8f99a8; }
+
+  /* abas */
+  body.piso-view #tabnav{
+    max-width:none; margin:0; gap:0; background:#fff; border-bottom:1px solid #e3ded1;
+    padding:0 max(28px, calc((100% - 1400px) / 2 + 28px));
+  }
+  body.piso-view #tabnav .tab-btn{
+    color:#4b5260; font-size:.9rem; padding:17px 21px 14px; border-bottom:3px solid transparent;
+  }
+  body.piso-view #tabnav .tab-btn:hover{ color:#14171c; }
+  body.piso-view #tabnav .tab-btn.active{ color:#14171c; border-bottom-color:#e3b23c; }
+  body.piso-view main{ padding-top:34px; }
+
+  /* cabeçalho da página */
+  .piso-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin:0 0 22px; }
+  .piso-head h2{
+    font-family:'Oswald',sans-serif; font-weight:700; font-size:2.5rem; line-height:1.05; margin:0;
+    color:#14171c; letter-spacing:.01em; text-transform:uppercase;
+  }
+  .piso-date{ font-size:.92rem; color:#6b707a; margin-top:7px; }
+  .piso-print-btn{
+    display:inline-flex; align-items:center; gap:9px; background:#14171c; color:#fff; border:none; border-radius:3px;
+    padding:14px 24px; font-family:'Oswald',sans-serif; font-weight:600; font-size:.95rem; cursor:pointer;
+  }
+  .piso-print-btn svg{ width:17px; height:17px; }
+  .piso-print-btn:hover{ filter:brightness(1.25); }
+
+  /* cartões de indicadores */
+  .piso-kpis{ display:grid; grid-template-columns:repeat(5, 1fr); gap:16px; margin-bottom:24px; }
+  .kpi{
+    background:#fff; border:1px solid #e3ded1; border-radius:4px; padding:18px 18px 16px;
+    display:flex; flex-direction:column; min-height:140px; min-width:0;
+  }
+  .kpi-l{ font-size:.68rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:#4b5260; }
+  .kpi-n{ font-family:'Oswald',sans-serif; font-weight:700; font-size:2.45rem; line-height:1.1; margin:6px 0 2px; color:#14171c; }
+  .kpi-s{ font-size:.8rem; color:#6b707a; line-height:1.3; margin-bottom:12px; }
+  .kpi-bar{ margin-top:auto; height:5px; background:#ebe5d4; border-radius:3px; overflow:hidden; }
+  .kpi-bar i{ display:block; height:100%; width:0; background:#e3b23c; border-radius:3px; transition:width .3s ease; }
+  .kpi-crit.on{ background:#fde9e6; border-color:#eab0aa; }
+  .kpi-crit.on .kpi-l, .kpi-crit.on .kpi-n, .kpi-crit.on .kpi-s{ color:#a42a24; }
+  @media (max-width:1100px){ .piso-kpis{ grid-template-columns:repeat(3, 1fr); } }
+  @media (max-width:720px){
+    .piso-kpis{ grid-template-columns:repeat(2, 1fr); gap:10px; }
+    .piso-head h2{ font-size:1.9rem; }
+    body.piso-view #topbar{ padding:12px 16px; }
+    body.piso-view #tabnav{ padding:0 16px; }
+    body.piso-view #tabnav .tab-btn{ padding:14px 14px 12px; }
+  }
+
+  /* filtros de status */
+  .piso-chips{ display:flex; flex-wrap:wrap; gap:12px; margin-bottom:14px; }
+  .piso-chip{
+    cursor:pointer; border:1px solid #d9d3c3; background:#fff; color:#14171c; border-radius:999px;
+    padding:10px 16px; font-family:'Inter',sans-serif; font-weight:600; font-size:.82rem;
+    display:inline-flex; gap:8px; align-items:center;
+  }
+  .piso-chip b{ font-family:'Oswald',sans-serif; font-weight:600; color:#8a8f98; }
+  .piso-chip:hover{ border-color:#14171c; }
+  .piso-chip.on{ background:#14171c; border-color:#14171c; color:#fff; }
+  .piso-chip.on b{ color:#fff; }
+
+  /* busca + ações */
+  .piso-toolbar{ display:flex; justify-content:flex-end; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+  .piso-search{ display:flex; align-items:center; gap:12px; }
+  .piso-search label{ font-size:.72rem; font-weight:700; letter-spacing:.06em; color:#6b707a; text-transform:uppercase; }
+  .piso-search input{
+    width:210px; padding:11px 14px; border:1px solid #d9d3c3; border-radius:3px; background:#fff;
+    font-size:.9rem; font-family:'Inter',sans-serif; color:#14171c;
+  }
+  .piso-search input:focus{ outline:2px solid #e3b23c; outline-offset:0; }
+  .piso-actions{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .pbtn{
+    cursor:pointer; border:1px solid #d9d3c3; background:#fff; color:#14171c; border-radius:3px;
+    padding:11px 17px; font-family:'Oswald',sans-serif; font-weight:600; font-size:.88rem; letter-spacing:.02em;
+  }
+  .pbtn:hover{ border-color:#14171c; }
+  .pbtn-primary{ background:#e3b23c; border-color:#d6a532; }
+  .pbtn-primary:hover{ filter:brightness(1.06); border-color:#d6a532; }
+  .pbtn-danger{ color:#b3302a; border-color:#e3b3ae; }
+  .pbtn-danger:hover{ border-color:#b3302a; }
+
+  /* tabela */
+  .piso-card{ background:#fff; border:1px solid #d9d3c3; border-radius:4px; overflow:hidden; box-shadow:0 1px 2px rgba(20,23,28,.05); margin-bottom:28px; }
+  table.piso-table{ font-size:.88rem; min-width:1180px; }
+  body.piso-view .piso-table thead th{
+    background:#14171c; color:#fff; font-size:.66rem; letter-spacing:.09em; padding:17px 12px; font-weight:700;
+  }
+  body.piso-view .piso-table tbody td{ padding:13px 12px; border-bottom:1px solid #e8e3d6; background:transparent; }
+  body.piso-view .piso-table tbody tr{ background:#fff; }
+  body.piso-view .piso-table tbody tr:nth-child(even){ background:#fff; }
+  body.piso-view .piso-table tbody tr:hover{ background:#fbf9f2; }
+  body.piso-view .piso-table tr.piso-row-pend,
+  body.piso-view .piso-table tr.piso-row-ok{ box-shadow:none; }
+  body.piso-view .piso-table tr.piso-row-prio{ box-shadow:none !important; background:#fde9e6 !important; }
+
+  body.piso-view .piso-table tr.piso-group-header td{
+    background:#f6f2e6; padding:14px 16px; font-family:'Oswald',sans-serif; font-weight:700; font-size:.8rem;
+    letter-spacing:.06em; border-bottom:1px solid #e3ded1;
+  }
+  body.piso-view .piso-table tr.piso-group-header.grp-pend td{ color:#7a5b0e; border-bottom:1px solid #e3ded1; }
+  body.piso-view .piso-table tr.piso-group-header.grp-ok td{ color:#1d6b40; border-bottom:1px solid #1d6b40; }
+
+  .piso-table td.c-flag{ width:34px; padding-right:0 !important; color:#b3302a; }
+  .piso-table td.c-flag svg{ width:18px; height:18px; display:block; }
+  .piso-table .txt{ display:block; line-height:1.3; }
+  .piso-table .dash{ color:#8a8f98; }
+  .piso-table .c-doca .txt, .piso-table .c-doca input{ font-weight:700; }
+  .piso-table .c-carga .txt, .piso-table .c-carga input{ color:#8a8f98; font-weight:500; }
+  .piso-table .c-forn .txt, .piso-table .c-forn input{ font-weight:700; }
+  .piso-table .c-forn{ min-width:230px; }
+  .piso-table .c-d1 .txt, .piso-table .c-d1 input{ font-weight:700; }
+  .piso-table .c-d1.d1-neg .txt, .piso-table .c-d1.d1-neg input{ color:#b3302a; }
+  .piso-table .c-prod{ min-width:90px; }
+  .piso-table .c-obs{ min-width:150px; color:#4b5260; }
+  .piso-table .c-dep .txt, .piso-table .c-dep input{ color:#6b707a; font-size:.82rem; }
+
+  .piso-table .vol-wrap{ display:flex; align-items:center; gap:12px; min-width:170px; }
+  .piso-table .vbar{ flex:0 0 88px; height:6px; background:#ebe5d4; border-radius:3px; overflow:hidden; }
+  .piso-table .vbar i{ display:block; height:100%; background:#e3b23c; border-radius:3px; }
+  .piso-table .vol-num{ margin-left:auto; text-align:right; min-width:52px; font-family:'Oswald',sans-serif; font-weight:700; font-size:1.05rem; }
+  .piso-table .sku-num{ font-family:'Oswald',sans-serif; font-weight:700; font-size:1.05rem; }
+
+  /* campos editáveis (admin) discretos */
+  body.piso-view .piso-table td input[type=text],
+  body.piso-view .piso-table td input[type=number]{
+    background:transparent; border:1px solid transparent; padding:6px 7px; border-radius:3px; font-size:.88rem; color:inherit;
+  }
+  body.piso-view .piso-table td input:hover{ border-color:#cfc8b4; background:#fff; }
+  body.piso-view .piso-table td input:focus{ background:#fff; }
+  .piso-table .c-doca{ min-width:64px; }
+  .piso-table .c-carga{ min-width:96px; }
+  .piso-table .c-lib{ min-width:118px; }
+  .piso-table .c-dep{ min-width:110px; }
+  body.piso-view .piso-table td input:focus{ outline:2px solid #e3b23c; outline-offset:0; }
+  .piso-table input.in-d1{ width:58px; }
+  .piso-table input.in-vol{ width:82px; text-align:right; }
+  .piso-table input.in-sku{ width:60px; }
+
+  /* status em pílula */
+  .pill, body.piso-view .piso-table select.status-select{
+    display:inline-block; padding:6px 11px; border-radius:3px; font-size:.76rem; font-weight:700; line-height:1.25; max-width:190px;
+  }
+  body.piso-view .piso-table select.status-select{
+    border:none !important; padding:7px 8px; width:auto; cursor:pointer; font-family:'Inter',sans-serif;
+  }
+  body.piso-view .piso-table .st-aguardando{ background:#e4e6eb; color:#454c5a; }
+  body.piso-view .piso-table .st-pendente{ background:#fde6bd; color:#7a4f08; }
+  body.piso-view .piso-table .st-processo{ background:#d3e8f9; color:#14578a; }
+  body.piso-view .piso-table .st-parcial-etq{ background:#fcd9c6; color:#9a4421; }
+  body.piso-view .piso-table .st-etiquetada{ background:#d3f0de; color:#176339; }
+  body.piso-view .piso-table .st-parcial-dist{ background:#cdeeea; color:#0b6862; }
+  body.piso-view .piso-table .st-conferencia{ background:#e6d9f6; color:#6a34a8; }
+  body.piso-view .piso-table .st-nao-analisado{ background:#f8d7d4; color:#a42a24; }
+
+  /* sinalizações */
+  body.piso-view .prio-note{ background:#fde9e6; color:#a42a24; border-color:#eab0aa; }
+  body.piso-view .btn-prio{ color:#fff; }
+  body.piso-view .btn-ok{ color:#fff; }
+  body.piso-view .crit-badge{ color:#fff; }
+  body.piso-view .marca-ok{ color:#1d6b40; }
+
+  /* rodapé de totais */
+  body.piso-view .piso-table tfoot td{
+    background:#14171c; color:#fff; border-top:none; padding:18px 12px; font-family:'Oswald',sans-serif;
+    font-size:1.05rem; letter-spacing:.02em;
+  }
+  body.piso-view .piso-table tfoot td:first-child{ padding-left:16px; }
+  body.piso-view .piso-table tfoot td.t-num{ color:#e3b23c; font-size:1.25rem; }
+  body.piso-view .piso-table tfoot td.t-vol{ text-align:right; }
+
+  /* demais painéis da aba (fila, distribuição, usuários) acompanham o tema claro */
+  body.piso-view #tab-piso .panel{ border-color:#d9d3c3; }
+  body.piso-view #tab-piso .panel-header{ background:#f6f2e6; color:#14171c; border-bottom:1px solid #e3ded1; }
+  body.piso-view #tab-piso .panel-header h2{ color:#14171c; }
+  body.piso-view #tab-piso tbody tr:hover{ background:#fbf9f2; }
+  body.piso-view #tab-piso tbody tr.clickable-row:hover{ background:#fbf9f2; }
+  body.piso-view #tab-piso tfoot td{ color:#fff; }
+  body.piso-view #tab-piso .panel-footer-actions{ background:#f6f2e6; }
+  body.piso-view #tab-piso .fila-card .stat .n,
+  body.piso-view #tab-piso .summary-cards .card .n,
+  body.piso-view #tab-piso .resumo-turno-block h3,
+  body.piso-view #tab-piso .prod-head h3{ color:#14171c; }
+  body.piso-view #tab-piso .dist-por{ color:#7a5b0e; }
+  body.piso-view #tab-piso .dist-tabnav .tab-btn.active{ color:#14171c; }
+  body.piso-view #tab-piso .status-banido{ background:#f8d7d4; }
+  body.piso-view #tab-piso .tab-btn{ color:#4b5260; }
+  body.piso-view #tab-piso .tab-btn.active{ color:#14171c; }
 </style>
 </head>
 <body>
@@ -714,45 +930,86 @@
       </div>
     </section>
 
-    <!-- PANEL 1: CARGAS NO PISO -->
-    <section class="panel" id="panel-piso">
-      <div class="panel-header">
-        <div class="title-block">
+    <!-- PANEL 1: CARGAS NO PISO (novo visual) -->
+    <section id="panel-piso" class="piso-page">
+      <div class="piso-head">
+        <div>
           <h2 contenteditable="false" id="titulo-piso">CARGAS NO PISO</h2>
-          <span class="sub" id="data-piso"></span>
+          <div class="piso-date" id="data-piso"></div>
         </div>
-        <div class="stat-row">
-          <button class="btn btn-ghost btn-sm no-print" style="align-self:center;" onclick="imprimirCargasPiso()">🖨 Imprimir</button>
-          <div class="stat"><div class="n" id="st-total-cargas">0</div><div class="l">Total de cargas</div></div>
-          <div class="stat"><div class="n" id="st-cargas-etq">0</div><div class="l">Etiquetadas</div></div>
-          <div class="stat"><div class="n" id="st-vol-etq">0</div><div class="l">Volumes (etiq.)</div></div>
-          <div class="stat"><div class="n" id="st-sku-etq">0</div><div class="l">SKU (etiq.)</div></div>
+        <button class="piso-print-btn no-print" onclick="imprimirCargasPiso()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/></svg>
+          Imprimir
+        </button>
+      </div>
+
+      <div class="piso-kpis">
+        <div class="kpi">
+          <div class="kpi-l">Cargas no piso</div>
+          <div class="kpi-n" id="st-total-cargas">0</div>
+          <div class="kpi-s" id="kpi-cargas-sub"></div>
+          <div class="kpi-bar"><i id="kpi-cargas-bar"></i></div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-l">Volumes etiquetados</div>
+          <div class="kpi-n" id="st-vol-etq">0</div>
+          <div class="kpi-s" id="kpi-vol-sub"></div>
+          <div class="kpi-bar"><i id="kpi-vol-bar"></i></div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-l">SKU etiquetados</div>
+          <div class="kpi-n" id="st-sku-etq">0</div>
+          <div class="kpi-s" id="kpi-sku-sub"></div>
+          <div class="kpi-bar"><i id="kpi-sku-bar"></i></div>
+        </div>
+        <div class="kpi kpi-crit" id="kpi-crit">
+          <div class="kpi-l">Cargas críticas</div>
+          <div class="kpi-n" id="kpi-crit-n">0</div>
+          <div class="kpi-s">3 dias ou mais no D-1</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-l">Prioridades</div>
+          <div class="kpi-n" id="kpi-prio-n">0</div>
+          <div class="kpi-s">sinalizadas pelo supervisor</div>
         </div>
       </div>
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Produtivo</th><th>Doca</th><th>Carga</th><th>Fornecedor</th><th>Liberação</th>
-              <th>D-1</th><th>Volume</th><th>SKU</th><th>Departamento</th><th>Status</th><th>Obs.</th><th>Sinalizações</th><th></th>
-            </tr>
-          </thead>
-          <tbody id="tbody-piso"></tbody>
-          <tfoot>
-            <tr>
-              <td colspan="6">VOLUME TOTAL</td>
-              <td id="ft-vol-total">0</td>
-              <td id="ft-sku-total">0</td>
-              <td colspan="5"></td>
-            </tr>
-          </tfoot>
-        </table>
+
+      <div class="piso-chips no-print" id="piso-chips"></div>
+
+      <div class="piso-toolbar no-print">
+        <div class="piso-search" data-ro-ok>
+          <label for="piso-busca">Buscar</label>
+          <input type="search" id="piso-busca" placeholder="Carga ou fornecedor" autocomplete="off" oninput="setPisoBusca(this.value)">
+        </div>
+        <div class="piso-actions" id="piso-actions" style="display:none;">
+          <button class="pbtn" id="btn-colar-piso" onclick="openImportModal()">Colar da planilha</button>
+          <button class="pbtn" id="btn-foto-piso" onclick="openPhotoImportModal()">Preencher por foto</button>
+          <button class="pbtn pbtn-primary" id="btn-add-piso" onclick="addPisoRow()">+ Adicionar carga</button>
+          <button class="pbtn pbtn-danger" id="btn-limpar-piso" onclick="limparCargasNoPiso()">🗑 Limpar cargas no piso</button>
+        </div>
       </div>
-      <div class="panel-footer-actions" id="piso-actions" style="display:none;">
-        <button class="btn btn-ghost btn-sm" id="btn-add-piso" onclick="addPisoRow()">+ Adicionar carga</button>
-        <button class="btn btn-ghost btn-sm" id="btn-colar-piso" onclick="openImportModal()">Colar da planilha (Excel)</button>
-        <button class="btn btn-ghost btn-sm" id="btn-foto-piso" onclick="openPhotoImportModal()">📷 Preencher por foto</button>
-        <button class="btn btn-danger btn-sm" id="btn-limpar-piso" style="margin-left:auto;" onclick="limparCargasNoPiso()">🗑 Limpar cargas no piso</button>
+
+      <div class="piso-card">
+        <div class="table-scroll">
+          <table class="piso-table">
+            <thead>
+              <tr>
+                <th></th><th>Doca</th><th>Carga</th><th>Fornecedor</th><th>Liberação</th>
+                <th>D-1</th><th>Volume</th><th>SKU</th><th>Status</th><th>Produtivo</th><th>Obs.</th>
+                <th>Departamento</th><th>Sinalizações</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="tbody-piso"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="6">VOLUME TOTAL</td>
+                <td id="ft-vol-total" class="t-num t-vol">0</td>
+                <td id="ft-sku-total" class="t-num">0</td>
+                <td colspan="6"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -1677,6 +1934,7 @@ function podeVerFechamentos(){
 function switchTab(name){
   if(currentUser && currentUser.role === 'operador') name = 'piso'; // operador só tem a aba de cargas no piso
   if(name === 'fech' && !podeVerFechamentos()) name = 'piso';
+  document.body.classList.toggle('piso-view', name === 'piso'); // novo visual (tema claro) só na aba Cargas no Piso
   ['piso','cross','plan','fech','exp'].forEach(n => {
     document.getElementById('tab-'+n).style.display = name === n ? 'block' : 'none';
     document.getElementById('tab-btn-'+n).classList.toggle('active', name === n);
@@ -1688,6 +1946,7 @@ function switchTab(name){
 
 function forceLogout(motivo){
   currentUser = null;
+  document.body.classList.remove('piso-view');
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('in-senha').value = '';
@@ -1743,7 +2002,7 @@ function agoraCurto(){
 function buildPisoGroupHeaderRow(label, kind){
   const tr = document.createElement('tr');
   tr.className = 'piso-group-header ' + (kind === 'ok' ? 'grp-ok' : 'grp-pend');
-  tr.innerHTML = `<td colspan="13">${label}</td>`;
+  tr.innerHTML = `<td colspan="14">${label}</td>`;
   return tr;
 }
 
@@ -1767,27 +2026,77 @@ function buildSinalizacoesHtml(row, i, perm){
   return html;
 }
 
-function buildPisoRow(row, i, perm){
+/* ----- filtros visuais da tabela (status + busca) ----- */
+let pisoFiltroStatus = '';
+let pisoBusca = '';
+const PISO_CHIP_LABELS = {
+  'NÃO ANALISADO': 'Não analisado',
+  'AGUARDANDO IMPRESSÃO': 'Aguardando impressão',
+  'PENDENTE DE ETIQUETAGEM': 'Pendente',
+  'EM PROCESSO DE ETIQUETAGEM': 'Em processo',
+  'PARCIALMENTE ETIQUETADA': 'Parcial',
+  'CARGA ETIQUETADA': 'Etiquetada',
+  'PARCIALMENTE DISTRIBUIDA': 'Parc. distribuída',
+  'EM CONFERÊNCIA': 'Em conferência'
+};
+function setPisoFiltro(st){
+  pisoFiltroStatus = (st && pisoFiltroStatus === st) ? '' : (st || '');
+  renderPiso();
+}
+function setPisoBusca(v){
+  pisoBusca = String(v || '').trim().toLowerCase();
+  renderPiso();
+}
+
+const PISO_FLAG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>';
+function pisoTxt(v){
+  const t = String(v == null ? '' : v).trim();
+  return t ? escapeHtml(t) : '<span class="dash">—</span>';
+}
+
+function buildPisoRow(row, i, perm, maxVol){
   const canEditAll = perm.editAll, canMarkStatus = perm.markStatus;
   const tr = document.createElement('tr');
   tr.className = row.prioridade ? 'piso-row-prio' : (row.status === 'CARGA ETIQUETADA' ? 'piso-row-ok' : 'piso-row-pend');
-  tr.innerHTML = `
-    <td><input type="text" value="${escapeHtml(row.produtivo)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'produtivo',this.value)"></td>
-    <td><input type="text" value="${escapeHtml(row.doca)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'doca',this.value)"></td>
-    <td><input type="text" value="${escapeHtml(row.carga)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'carga',this.value)"></td>
-    <td><input type="text" value="${escapeHtml(row.fornecedor)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'fornecedor',this.value)"></td>
-    <td><input type="text" value="${escapeHtml(row.liberacao)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'liberacao',this.value)"></td>
-    <td><input type="number" value="${row.d1}" ${canEditAll?'':'disabled'} style="width:56px" onchange="updatePiso(${i},'d1',Number(this.value))"></td>
-    <td><input type="number" value="${row.volume}" ${canEditAll?'':'disabled'} style="width:76px" onchange="updatePiso(${i},'volume',Number(this.value))"></td>
-    <td><input type="number" value="${row.sku}" ${canEditAll?'':'disabled'} style="width:56px" onchange="updatePiso(${i},'sku',Number(this.value))"></td>
-    <td><input type="text" value="${escapeHtml(row.departamento)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'departamento',this.value)"></td>
-    <td>
-      <select class="status-select ${statusSlug(row.status)}" ${canMarkStatus?'':'disabled'} onchange="updatePiso(${i},'status',this.value)">
+
+  const campoTxt = (field) => canEditAll
+    ? `<input type="text" value="${escapeHtml(row[field])}" onchange="updatePiso(${i},'${field}',this.value)">`
+    : `<span class="txt">${pisoTxt(row[field])}</span>`;
+  const campoNum = (field, cls, fmt) => canEditAll
+    ? `<input type="number" class="${cls}" value="${row[field]}" onchange="updatePiso(${i},'${field}',Number(this.value))">`
+    : `<span class="txt">${fmt ? fmtInt(row[field] || 0) : (row[field] == null ? 0 : row[field])}</span>`;
+
+  const vol = Number(row.volume || 0);
+  let pct = maxVol > 0 ? (vol / maxVol) * 100 : 0;
+  if(vol > 0 && pct < 2) pct = 2;
+  const d1neg = Number(row.d1) < 0 || cargaCritica(row);
+
+  const slug = statusSlug(row.status);
+  const statusHtml = canMarkStatus
+    ? `<select class="status-select ${slug}" onchange="updatePiso(${i},'status',this.value)">
         ${STATUS_LIST.map(s => `<option value="${s}" ${row.status===s?'selected':''}>${STATUS_LABELS[s]}</option>`).join('')}
-      </select>
+      </select>`
+    : `<span class="pill ${slug}">${escapeHtml(STATUS_LABELS[row.status] || row.status || '')}</span>`;
+
+  tr.innerHTML = `
+    <td class="c-flag">${row.prioridade ? `<span title="${escapeHtml(row.prioridade.nota)}">${PISO_FLAG_SVG}</span>` : ''}</td>
+    <td class="c-doca">${campoTxt('doca')}</td>
+    <td class="c-carga">${campoTxt('carga')}</td>
+    <td class="c-forn">${campoTxt('fornecedor')}</td>
+    <td class="c-lib">${campoTxt('liberacao')}</td>
+    <td class="c-d1 ${d1neg ? 'd1-neg' : ''}">${campoNum('d1', 'in-d1', false)}</td>
+    <td class="c-vol">
+      <div class="vol-wrap">
+        <div class="vbar"><i style="width:${pct.toFixed(1)}%"></i></div>
+        <div class="vol-num">${campoNum('volume', 'in-vol', true)}</div>
+      </div>
     </td>
-    <td><input type="text" value="${escapeHtml(row.obs)}" ${canEditAll?'':'disabled'} onchange="updatePiso(${i},'obs',this.value)"></td>
-    <td>${buildSinalizacoesHtml(row, i, perm)}</td>
+    <td class="c-sku sku-num">${campoNum('sku', 'in-sku', false)}</td>
+    <td class="c-status">${statusHtml}</td>
+    <td class="c-prod">${campoTxt('produtivo')}</td>
+    <td class="c-obs">${campoTxt('obs')}</td>
+    <td class="c-dep">${campoTxt('departamento')}</td>
+    <td class="c-sin">${buildSinalizacoesHtml(row, i, perm)}</td>
     <td>${canEditAll ? `<button class="btn btn-danger" onclick="removePisoRow(${i})">Remover</button>` : ''}</td>
   `;
   return tr;
@@ -1810,43 +2119,82 @@ function renderPiso(){
   const visiveis = pisoData
     .map((row, i) => ({ row, i }))
     .filter(({ row }) => !permitidos || permitidos.includes(row.status));
+  const rowsVis = visiveis.map(v => v.row);
 
-  if(visiveis.length === 0){
-    const msg = permitidos ? 'Nenhuma carga pendente no momento.' : 'Nenhuma carga no piso.';
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="13">${msg}</td></tr>`;
+  // filtros (chip de status + busca) — só afetam o que aparece na tabela
+  if(pisoFiltroStatus && !rowsVis.some(r => r.status === pisoFiltroStatus)) pisoFiltroStatus = '';
+  let lista = visiveis;
+  if(pisoFiltroStatus) lista = lista.filter(v => v.row.status === pisoFiltroStatus);
+  if(pisoBusca) lista = lista.filter(v => (String(v.row.carga || '') + ' ' + String(v.row.fornecedor || '')).toLowerCase().includes(pisoBusca));
+
+  const maxVol = rowsVis.reduce((m, r) => Math.max(m, Number(r.volume || 0)), 0);
+
+  if(lista.length === 0){
+    const msg = visiveis.length === 0
+      ? (permitidos ? 'Nenhuma carga pendente no momento.' : 'Nenhuma carga no piso.')
+      : 'Nenhuma carga encontrada para o filtro.';
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="14">${msg}</td></tr>`;
   } else {
     const porPrio = (a, b) => (b.row.prioridade ? 1 : 0) - (a.row.prioridade ? 1 : 0); // prioridades no topo
     const naoEtq = [];
     const etq = [];
-    visiveis.forEach(v => (v.row.status === 'CARGA ETIQUETADA' ? etq : naoEtq).push(v));
+    lista.forEach(v => (v.row.status === 'CARGA ETIQUETADA' ? etq : naoEtq).push(v));
     naoEtq.sort(porPrio); etq.sort(porPrio);
 
     if(naoEtq.length){
       tbody.appendChild(buildPisoGroupHeaderRow(`NÃO ETIQUETADAS — ${naoEtq.length}`, 'pend'));
-      naoEtq.forEach(({row,i}) => tbody.appendChild(buildPisoRow(row, i, perm)));
+      naoEtq.forEach(({row,i}) => tbody.appendChild(buildPisoRow(row, i, perm, maxVol)));
     }
     if(etq.length){
       tbody.appendChild(buildPisoGroupHeaderRow(`ETIQUETADAS — ${etq.length}`, 'ok'));
-      etq.forEach(({row,i}) => tbody.appendChild(buildPisoRow(row, i, perm)));
+      etq.forEach(({row,i}) => tbody.appendChild(buildPisoRow(row, i, perm, maxVol)));
     }
   }
 
-  const rowsVis = visiveis.map(v => v.row);
+  // chips de status
+  const counts = {};
+  rowsVis.forEach(r => { counts[r.status] = (counts[r.status] || 0) + 1; });
+  const chips = [`<button class="piso-chip ${pisoFiltroStatus === '' ? 'on' : ''}" onclick="setPisoFiltro('')">Todas <b>${rowsVis.length}</b></button>`];
+  STATUS_LIST.forEach(st => {
+    if(counts[st]) chips.push(`<button class="piso-chip ${pisoFiltroStatus === st ? 'on' : ''}" onclick="setPisoFiltro('${st}')">${PISO_CHIP_LABELS[st] || st} <b>${counts[st]}</b></button>`);
+  });
+  document.getElementById('piso-chips').innerHTML = chips.join('');
+
+  // indicadores
   const etqRows = rowsVis.filter(r => r.status === 'CARGA ETIQUETADA');
   const volEtq = etqRows.reduce((s,r)=>s+Number(r.volume||0),0);
   const skuEtq = etqRows.reduce((s,r)=>s+Number(r.sku||0),0);
-  const volTotal = rowsVis.reduce((s,r)=>s+Number(r.volume||0),0);
-  const skuTotal = rowsVis.reduce((s,r)=>s+Number(r.sku||0),0);
+  const volAll = rowsVis.reduce((s,r)=>s+Number(r.volume||0),0);
+  const skuAll = rowsVis.reduce((s,r)=>s+Number(r.sku||0),0);
+  const pctDe = (a, b) => b > 0 ? Math.round((a / b) * 100) : 0;
+  const setTxt = (id, t) => { const el = document.getElementById(id); if(el) el.textContent = t; };
+  const setBar = (id, p) => { const el = document.getElementById(id); if(el) el.style.width = p + '%'; };
 
-  document.getElementById('st-total-cargas').textContent = rowsVis.length;
-  document.getElementById('st-cargas-etq').textContent = etqRows.length;
-  document.getElementById('st-vol-etq').textContent = fmtInt(volEtq);
-  document.getElementById('st-sku-etq').textContent = skuEtq;
-  document.getElementById('ft-vol-total').textContent = fmtInt(volTotal);
-  document.getElementById('ft-sku-total').textContent = skuTotal;
+  setTxt('st-total-cargas', rowsVis.length);
+  setTxt('kpi-cargas-sub', `${etqRows.length} etiquetadas · ${rowsVis.length - etqRows.length} não etiquetadas`);
+  setBar('kpi-cargas-bar', pctDe(etqRows.length, rowsVis.length));
+
+  setTxt('st-vol-etq', fmtInt(volEtq));
+  setTxt('kpi-vol-sub', `de ${fmtInt(volAll)} no piso · ${pctDe(volEtq, volAll)}%`);
+  setBar('kpi-vol-bar', pctDe(volEtq, volAll));
+
+  setTxt('st-sku-etq', fmtInt(skuEtq));
+  setTxt('kpi-sku-sub', `de ${fmtInt(skuAll)} no piso · ${pctDe(skuEtq, skuAll)}%`);
+  setBar('kpi-sku-bar', pctDe(skuEtq, skuAll));
+
+  const nCrit = rowsVis.filter(r => cargaCritica(r)).length;
+  setTxt('kpi-crit-n', nCrit);
+  const kc = document.getElementById('kpi-crit');
+  if(kc) kc.classList.toggle('on', nCrit > 0);
+  setTxt('kpi-prio-n', rowsVis.filter(r => r.prioridade).length);
+
+  // rodapé: total do que está sendo exibido na tabela
+  const rowsTab = lista.map(v => v.row);
+  setTxt('ft-vol-total', fmtInt(rowsTab.reduce((s,r)=>s+Number(r.volume||0),0)));
+  setTxt('ft-sku-total', fmtInt(rowsTab.reduce((s,r)=>s+Number(r.sku||0),0)));
 
   const { curto, extenso } = todayLabel();
-  document.getElementById('data-piso').textContent = `${curto} · ${extenso}`;
+  setTxt('data-piso', `${curto} · ${extenso}`);
 }
 
 function cargaJaDistribuida(cargaNum){
