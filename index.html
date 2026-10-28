@@ -8,21 +8,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#12151a;
-    --panel:#1c222b;
-    --panel-header:#0d1015;
+    --bg:#0b1d15;
+    --panel:#12291f;
+    --panel-header:#08170f;
     --band:#e3b23c;
-    --band-text:#12151a;
-    --text:#eef1f5;
-    --text-dim:#8f99a8;
-    --line:#2b323c;
+    --band-text:#0b1d15;
+    --text:#e9f3ed;
+    --text-dim:#8fb1a0;
+    --line:#24493a;
     --ok-bg:#204d3a;
     --ok-text:#7fe0ab;
     --warn-bg:#4d3a20;
     --warn-text:#f2b565;
     --danger:#e2685f;
-    --row-alt:#20262f;
-    --input-bg:#151a20;
+    --row-alt:#17332a;
+    --input-bg:#0e2119;
     --neutral-text:#aab3c0;
     --info-text:#6ec3ff;
     --partial-text:#f2935a;
@@ -48,8 +48,8 @@
     justify-content:center;
     padding:24px;
     background:
-      radial-gradient(circle at 20% 20%, #1b222c 0%, transparent 55%),
-      radial-gradient(circle at 80% 80%, #201a12 0%, transparent 55%),
+      radial-gradient(circle at 20% 20%, #123326 0%, transparent 55%),
+      radial-gradient(circle at 80% 80%, #1f2410 0%, transparent 55%),
       var(--bg);
   }
   .login-card{
@@ -126,7 +126,7 @@
     background:var(--input-bg); border:1px solid var(--line); color:var(--text-dim);
   }
 
-  main{max-width:1400px; margin:0 auto; padding:24px 28px 80px;}
+  main{max-width:none; margin:0 auto; padding:24px 36px 80px;}
 
   .panel{
     background:var(--panel);
@@ -157,7 +157,7 @@
   }
   tbody td{padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:middle;}
   tbody tr:nth-child(even){background:var(--row-alt);}
-  tbody tr:hover{background:#262d38;}
+  tbody tr:hover{background:#1e3f33;}
   tfoot td{
     background:var(--panel-header); font-weight:700; padding:10px;
     border-top:2px solid var(--band); font-family:'Oswald',sans-serif;
@@ -227,7 +227,7 @@
 
   tbody tr.marcando{ opacity:.2; transition:opacity .35s ease; pointer-events:none; }
   tbody tr.clickable-row{ cursor:pointer; }
-  tbody tr.clickable-row:hover{ background:#2c3542; outline:1px dashed var(--band); outline-offset:-2px; }
+  tbody tr.clickable-row:hover{ background:#234a3b; outline:1px dashed var(--band); outline-offset:-2px; }
 
   .fila-grid{
     display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr));
@@ -284,7 +284,7 @@
 
   /* ---------- ABAS ---------- */
   .tabnav{
-    display:flex; gap:6px; padding:0 28px; max-width:1400px; margin:0 auto;
+    display:flex; gap:6px; padding:0 36px; max-width:none; margin:0 auto;
     border-bottom:1px solid var(--line); flex-wrap:wrap;
   }
   .tab-btn{
@@ -409,7 +409,7 @@
   .prod-kpi{ display:flex; flex-direction:column; }
   .prod-kpi .v{ font-family:'Oswald',sans-serif; font-size:1.35rem; font-weight:600; line-height:1.1; }
   .prod-kpi .v.vol{ color:var(--band); font-size:1.8rem; }
-  .prod-kpi .v.skuv{ color:#7cc7ec; }
+  .prod-kpi .v.skuv{ color:#8ff0c0; }
   .prod-kpi .l{ font-size:.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.07em; }
   .prod-chart{ overflow-x:auto; padding:8px 8px 10px; }
   .prod-vazio{ padding:22px; text-align:center; color:var(--text-dim); font-style:italic; }
@@ -432,7 +432,7 @@
   .exp-main-head{ font-size:.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.08em; padding:0 10px 8px; border-bottom:1px solid var(--line); }
   .exp-line{ padding:10px; border-bottom:1px solid var(--line); border-left:4px solid var(--line); margin-top:6px; background:var(--row-alt); border-radius:3px; }
   .exp-line.s-fin{ border-left-color:#4fbf7a; } .exp-line.s-conj{ border-left-color:#f2b565; }
-  .exp-line.s-horti{ border-left-color:#7cc7ec; } .exp-line.s-tela{ border-left-color:#e2685f; }
+  .exp-line.s-horti{ border-left-color:#8ff0c0; } .exp-line.s-tela{ border-left-color:#e2685f; }
   .exp-line .dest{ font-family:'Oswald',sans-serif; font-size:1.15rem; font-weight:600; }
   .exp-line .veic{ font-size:.74rem; color:var(--text-dim); line-height:1.35; }
   .exp-line .veic b{ color:var(--text); font-size:.82rem; }
@@ -453,13 +453,13 @@
   .prog-chip.sel{ background:var(--band); color:var(--band-text); border-color:var(--band); } .prog-chip.sel b{ color:var(--band-text); }
   .prog-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:10px; padding:16px 20px 20px; }
   .prog-card{ background:var(--row-alt); border:1px solid var(--line); border-left:4px solid var(--line); border-radius:5px; padding:10px 12px; }
-  .prog-card.direta{ border-left-color:#4fbf7a; } .prog-card.horti{ border-left-color:#7cc7ec; }
+  .prog-card.direta{ border-left-color:#4fbf7a; } .prog-card.horti{ border-left-color:#8ff0c0; }
   .prog-card .nm{ font-family:'Oswald',sans-serif; font-size:1.1rem; font-weight:600; margin-bottom:8px; }
   .prog-card .opts{ display:flex; gap:6px; }
   .prog-opt{ flex:1; border:1px solid var(--line); background:transparent; color:var(--text-dim); border-radius:4px; padding:6px 4px; font-size:.7rem; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif; }
   .prog-opt:hover{ border-color:var(--text-dim); }
   .prog-opt.on-direta{ background:#1f4a2e; color:#7ddc9b; border-color:#4fbf7a; }
-  .prog-opt.on-horti{ background:#1d3b4d; color:#7cc7ec; border-color:#7cc7ec; }
+  .prog-opt.on-horti{ background:#1d3b4d; color:#8ff0c0; border-color:#8ff0c0; }
   .prog-card .by{ font-size:.64rem; color:var(--text-dim); margin-top:6px; min-height:1em; }
 
   /* ---------- EXPEDIÇÃO ---------- */
@@ -470,10 +470,10 @@
   .exp-chips{ display:flex; flex-wrap:wrap; gap:8px; padding:12px 20px 0; }
   .exp-chip{ border:1px solid var(--line); border-radius:14px; padding:3px 11px; font-size:.76rem; background:var(--input-bg); }
   .exp-chip b{ font-family:'Oswald',sans-serif; color:var(--band); }
-  .exp-st{ display:inline-block; padding:3px 10px; border-radius:10px; font-size:.72rem; font-weight:700; background:#2b323c; color:var(--text); white-space:nowrap; }
+  .exp-st{ display:inline-block; padding:3px 10px; border-radius:10px; font-size:.72rem; font-weight:700; background:#24493a; color:var(--text); white-space:nowrap; }
   .exp-st.fin{ background:#1f4a2e; color:#7ddc9b; }
   .exp-st.conj{ background:#4d3a20; color:#f2b565; }
-  .exp-st.horti{ background:#1d3b4d; color:#7cc7ec; }
+  .exp-st.horti{ background:#1d3b4d; color:#8ff0c0; }
   .exp-st.tela{ background:#4a1f1f; color:#e2685f; }
   .exp-meta{ padding:12px 20px 16px; font-size:.8rem; color:var(--text-dim); line-height:1.7; }
   .exp-meta b{ color:var(--text); }
@@ -601,9 +601,9 @@
      NOVO VISUAL — CARGAS NO PISO (tema claro, só visual)
      Ativado por body.piso-view quando a aba "Cargas no Piso" está aberta
      ============================================================ */
-  body.piso-view{ background:#f2efe7; }
+  body.piso-view{ background:#0c2218; }
   body.piso-view #app{
-    --bg:#f2efe7; --panel:#ffffff; --panel-header:#14171c; --band:#e3b23c; --band-text:#14171c;
+    --bg:#0c2218; --panel:#ffffff; --panel-header:#14171c; --band:#e3b23c; --band-text:#14171c;
     --text:#1b1e24; --text-dim:#6b707a; --line:#e3ded1;
     --ok-bg:#d7f0df; --ok-text:#1d6b40; --warn-bg:#fde6bd; --warn-text:#8a5a0c; --danger:#b3302a;
     --row-alt:#faf8f3; --input-bg:#ffffff; --neutral-text:#4b5260; --info-text:#17639c;
@@ -624,7 +624,7 @@
   body.piso-view #topbar .btn-ghost{
     color:#fff; border:1px solid #3a414d; background:transparent; padding:11px 16px; font-size:.85rem; border-radius:3px;
   }
-  body.piso-view #topbar .btn-ghost:hover{ border-color:#8f99a8; }
+  body.piso-view #topbar .btn-ghost:hover{ border-color:#8fb1a0; }
 
   /* abas */
   body.piso-view #tabnav{
@@ -721,7 +721,7 @@
   body.piso-view .piso-table tr.piso-row-prio{ box-shadow:none !important; background:#fde9e6 !important; }
 
   body.piso-view .piso-table tr.piso-group-header td{
-    background:#f6f2e6; padding:14px 16px; font-family:'Oswald',sans-serif; font-weight:700; font-size:.8rem;
+    background:#e8f2ec; padding:14px 16px; font-family:'Oswald',sans-serif; font-weight:700; font-size:.8rem;
     letter-spacing:.06em; border-bottom:1px solid #e3ded1;
   }
   body.piso-view .piso-table tr.piso-group-header.grp-pend td{ color:#7a5b0e; border-bottom:1px solid #e3ded1; }
@@ -797,12 +797,12 @@
 
   /* demais painéis da aba (fila, distribuição, usuários) acompanham o tema claro */
   body.piso-view #tab-piso .panel{ border-color:#d9d3c3; }
-  body.piso-view #tab-piso .panel-header{ background:#f6f2e6; color:#14171c; border-bottom:1px solid #e3ded1; }
+  body.piso-view #tab-piso .panel-header{ background:#e8f2ec; color:#14171c; border-bottom:1px solid #e3ded1; }
   body.piso-view #tab-piso .panel-header h2{ color:#14171c; }
   body.piso-view #tab-piso tbody tr:hover{ background:#fbf9f2; }
   body.piso-view #tab-piso tbody tr.clickable-row:hover{ background:#fbf9f2; }
   body.piso-view #tab-piso tfoot td{ color:#fff; }
-  body.piso-view #tab-piso .panel-footer-actions{ background:#f6f2e6; }
+  body.piso-view #tab-piso .panel-footer-actions{ background:#e8f2ec; }
   body.piso-view #tab-piso .fila-card .stat .n,
   body.piso-view #tab-piso .summary-cards .card .n,
   body.piso-view #tab-piso .resumo-turno-block h3,
@@ -814,31 +814,31 @@
   body.piso-view #tab-piso .tab-btn.active{ color:#14171c; }
 
   /* ============ V2: tela cheia, cartões em 2 colunas, cenário azul-marinho ============ */
-  body.piso-view{ background:linear-gradient(180deg,#0d1f3f 0,#12294f 45%,#0e2244 100%) fixed; min-height:100vh; }
+  body.piso-view{ background:linear-gradient(180deg,#0c2218 0,#103223 45%,#0b2016 100%) fixed; min-height:100vh; }
   body.piso-view main{ max-width:none; padding:28px 36px 80px; }
-  body.piso-view #topbar{ background:#071327; }
-  body.piso-view #tabnav{ background:#0b1a36; border-bottom:1px solid #1d3560; padding:0 36px; }
-  body.piso-view #tabnav .tab-btn{ color:#a9b8d4; }
+  body.piso-view #topbar{ background:#06140e; }
+  body.piso-view #tabnav{ background:#0a1c14; border-bottom:1px solid #1f4a37; padding:0 36px; }
+  body.piso-view #tabnav .tab-btn{ color:#a8cbb8; }
   body.piso-view #tabnav .tab-btn:hover{ color:#fff; }
   body.piso-view #tabnav .tab-btn.active{ color:#fff; border-bottom-color:#e3b23c; }
   .piso-head h2{ color:#fff; }
-  .piso-date{ color:#a9b8d4; }
-  .piso-print-btn{ background:#e3b23c; color:#0b1a36; }
+  .piso-date{ color:#a8cbb8; }
+  .piso-print-btn{ background:#e3b23c; color:#0a1c14; }
   .kpi{ border-top:4px solid #e3b23c; box-shadow:0 2px 8px rgba(0,0,0,.25); }
   .piso-kpis .kpi:nth-child(1){ border-top-color:#4a8fe8; }
   .piso-kpis .kpi:nth-child(3){ border-top-color:#34b88a; }
   .piso-kpis .kpi:nth-child(4){ border-top-color:#e2685f; }
   .piso-kpis .kpi:nth-child(5){ border-top-color:#9a7be0; }
-  .piso-chip{ background:rgba(255,255,255,.07); border-color:#2a4678; color:#dbe6fa; }
-  .piso-chip b{ color:#8fa6cc; }
+  .piso-chip{ background:rgba(255,255,255,.07); border-color:#2f6049; color:#e0f2e8; }
+  .piso-chip b{ color:#8fb9a3; }
   .piso-chip:hover{ border-color:#e3b23c; }
-  .piso-chip.on{ background:#e3b23c; border-color:#e3b23c; color:#0b1a36; }
-  .piso-chip.on b{ color:#0b1a36; }
-  .piso-search label{ color:#a9b8d4; }
-  body.piso-view #tab-piso .panel{ border-color:#27406d; box-shadow:0 2px 8px rgba(0,0,0,.25); }
-  body.piso-view #tab-piso .panel-header{ background:#dfe8f7; border-bottom-color:#c5d3ea; }
-  body.piso-view #tab-piso .dist-tabnav{ border-bottom-color:#27406d; }
-  body.piso-view #tab-piso .dist-tabnav .tab-btn{ color:#a9b8d4; }
+  .piso-chip.on{ background:#e3b23c; border-color:#e3b23c; color:#0a1c14; }
+  .piso-chip.on b{ color:#0a1c14; }
+  .piso-search label{ color:#a8cbb8; }
+  body.piso-view #tab-piso .panel{ border-color:#2a5a45; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+  body.piso-view #tab-piso .panel-header{ background:#dcebe2; border-bottom-color:#bcd6c8; }
+  body.piso-view #tab-piso .dist-tabnav{ border-bottom-color:#2a5a45; }
+  body.piso-view #tab-piso .dist-tabnav .tab-btn{ color:#a8cbb8; }
   body.piso-view #tab-piso .dist-tabnav .tab-btn:hover{ color:#fff; }
   body.piso-view #tab-piso .dist-tabnav .tab-btn.active{ color:#fff; border-bottom-color:#e3b23c; }
   @media (max-width:720px){ body.piso-view main{ padding:16px; } body.piso-view #tabnav{ padding:0 12px; } }
@@ -852,7 +852,7 @@
   }
   .piso-grp.grp-pend{ color:#f4cc63; border-left:5px solid #e3b23c; }
   .piso-grp.grp-ok{ color:#82e3b0; border-left:5px solid #34b88a; }
-  .piso-empty{ grid-column:1/-1; text-align:center; padding:26px; color:#a9b8d4; font-style:italic; }
+  .piso-empty{ grid-column:1/-1; text-align:center; padding:26px; color:#a8cbb8; font-style:italic; }
   .pc{
     background:#fff; border-radius:5px; border-left:5px solid #e3b23c; padding:14px 16px 12px;
     display:flex; flex-direction:column; gap:11px; min-width:0; box-shadow:0 2px 6px rgba(0,0,0,.3); color:#1b1e24;
@@ -901,12 +901,12 @@
   .pc .prio-note{ margin-bottom:0; }
 
   .piso-total{
-    display:flex; align-items:baseline; gap:10px; background:#071327; color:#fff; border-radius:5px; border:1px solid #1d3560;
+    display:flex; align-items:baseline; gap:10px; background:#06140e; color:#fff; border-radius:5px; border:1px solid #1f4a37;
     padding:16px 22px; font-family:'Oswald',sans-serif; margin-bottom:28px; flex-wrap:wrap;
   }
   .piso-total .tl{ font-size:1.05rem; letter-spacing:.03em; margin-right:auto; }
   .piso-total .t-num{ color:#e3b23c; font-size:1.55rem; font-weight:700; }
-  .piso-total .t-lbl{ font-size:.72rem; color:#a9b8d4; text-transform:uppercase; letter-spacing:.06em; margin-right:16px; }
+  .piso-total .t-lbl{ font-size:.72rem; color:#a8cbb8; text-transform:uppercase; letter-spacing:.06em; margin-right:16px; }
 
   /* aviso de média do turno */
   .aviso-media{ padding:11px 20px; font-size:.86rem; font-weight:600; border-bottom:1px solid #e3ded1; line-height:1.4; }
@@ -935,6 +935,56 @@
     body[data-print-target="prod"] .prod-chart{ overflow:visible; }
     body[data-print-target="prod"] .prod-chart svg{ width:100%; height:auto; }
   }
+
+  /* ============ V3: cartão compacto + logo do fornecedor + tema verde-escuro ============ */
+  .piso-grid{ gap:10px; }
+  @media (min-width:2100px){ .piso-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); } }
+  .pc{ padding:9px 12px 8px; gap:6px; border-left-width:4px; }
+  .pc-main{ display:grid; grid-template-columns:46px minmax(0,1fr) auto auto; gap:12px; align-items:center; }
+  .pc-logo{
+    width:46px; height:46px; border-radius:8px; border:1px solid #d6e3db; background:#fff; padding:0; overflow:hidden;
+    display:flex; align-items:center; justify-content:center; position:relative; flex:0 0 auto;
+    font-family:'Oswald',sans-serif; font-weight:700; font-size:1.05rem; color:#fff; letter-spacing:.02em;
+  }
+  .pc-logo img{ width:100%; height:100%; object-fit:contain; background:#fff; display:block; }
+  button.pc-logo{ cursor:pointer; }
+  button.pc-logo:hover::after{
+    content:'📷'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.5); font-size:1.05rem;
+  }
+  .pc-info{ min-width:0; }
+  .pc-forn{ font-weight:700; font-size:.98rem; display:flex; gap:6px; align-items:center; min-width:0; line-height:1.25; }
+  .pc-forn .nm{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  .pc-flag{ margin:0; }
+  .pc-flag svg{ width:16px; height:16px; }
+  .pc-meta{ display:flex; flex-wrap:wrap; gap:1px 13px; font-size:.78rem; color:#33403a; margin-top:2px; }
+  .pc-meta i{ font-style:normal; color:#7a8a82; font-size:.6rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-right:4px; }
+  .pc-meta .d1n{ color:#b3302a; font-weight:700; }
+  .pc-obs{ font-size:.75rem; color:#58655e; margin-top:2px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .pc-nums{ text-align:right; line-height:1.1; }
+  .pc-vnum{ font-family:'Oswald',sans-serif; font-weight:700; font-size:1.35rem; }
+  .pc-sku{ font-size:.7rem; color:#6b7a72; font-weight:600; }
+  .pc-status{ max-width:none; flex:none; }
+  .pc-bar{ height:4px; background:#e3ece6; border-radius:2px; overflow:hidden; }
+  .pc-bar i{ display:block; height:100%; background:#e3b23c; border-radius:2px; }
+  .pc-foot{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; border-top:1px solid #e3ece6; padding-top:6px; }
+  .pc-foot .btn{ padding:3px 9px; font-size:.68rem; }
+  .pc-foot .marca-label{ margin:0; font-size:.72rem; }
+  .pc-foot .marca-ok{ margin:0; font-size:.68rem; }
+  .pc-foot .prio-note{ min-width:0; padding:3px 7px; margin:0; }
+  .pc-foot .pc-editbtn{ margin-left:auto; }
+  .pc-edit{ display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:8px 12px; padding-top:8px; border-top:1px dashed #cfdcd4; }
+  .pc-ef label{ display:block; font-size:.6rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:#7a8a82; margin-bottom:2px; }
+  .pc-ef.span2{ grid-column:span 2; }
+  .pc.piso-row-prio{ background:#fde9e6; }
+  .fila-card .fornecedor{ display:flex; align-items:center; gap:9px; }
+  .fila-card .fornecedor .pc-logo{ width:32px; height:32px; border-radius:6px; font-size:.75rem; }
+  @media (max-width:560px){
+    .pc-main{ grid-template-columns:46px minmax(0,1fr) auto; }
+    .pc-status{ grid-column:1/-1; }
+  }
+  .piso-kpis .kpi:nth-child(1){ border-top-color:#3fb37f; }
+  .piso-kpis .kpi:nth-child(5){ border-top-color:#c9a227; }
 </style>
 </head>
 <body>
@@ -1447,7 +1497,7 @@
             <button class="btn btn-ghost btn-sm" onclick="imprimirProdutividade('todos')">Todos juntos</button>
           </div>
         </div>
-        <span class="hint" style="display:block; margin:0 0 4px;">Uma barra por dia, por turno: a altura é o volume distribuído (grade + estocado full/mix) e o número azul embaixo é o SKU do dia. Vem da Distribuição fechada de cada dia; o dia de hoje aparece mais claro (em andamento).</span>
+        <span class="hint" style="display:block; margin:0 0 4px;">Uma barra por dia, por turno: a altura é o volume distribuído (grade + estocado full/mix) e o número verde embaixo é o SKU do dia. Vem da Distribuição fechada de cada dia; o dia de hoje aparece mais claro (em andamento).</span>
         <div id="prod-print-area"><div id="prod-print-title"></div><div id="prod-container"></div></div>
       </div>
       <div class="panel-footer-actions fech-foto-bar no-print" id="fech-foto-actions">
@@ -2165,18 +2215,75 @@ function pisoTxt(v){
   return t ? escapeHtml(t) : '<span class="dash">—</span>';
 }
 
+/* ----- logo / símbolo do fornecedor ----- */
+let logosData = {};               // { CHAVE_DO_FORNECEDOR: dataURL }  (sincronizado no Firestore: painelCD/logos)
+const pisoEditando = new Set();   // cartões com o painel de edição aberto (só admin)
+
+function fornecedorKey(nome){
+  return String(nome || '').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/\bID\s*:?\s*[\d\/,\- ]*/g, ' ').replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+function fornecedorIniciais(key){
+  const ig = ['DE','DA','DO','DAS','DOS','E','S','A'];
+  const w = key.split(' ').filter(x => x && !ig.includes(x));
+  if(!w.length) return '?';
+  return (w.length === 1 ? w[0].slice(0,2) : w[0][0] + w[1][0]);
+}
+function logoHtml(nome, i){
+  const key = fornecedorKey(nome);
+  const url = key && logosData[key];
+  let h = 0; for(let k = 0; k < key.length; k++) h = (h * 31 + key.charCodeAt(k)) % 360;
+  const inner = url ? `<img src="${url}" alt="">` : escapeHtml(fornecedorIniciais(key));
+  const style = url ? '' : `style="background:hsl(${h} 38% 36%)"`;
+  const pode = i != null && currentUser && ehAdminLike(currentUser.role) && key;
+  return pode
+    ? `<button type="button" class="pc-logo" ${style} title="Clique para ${url ? 'trocar' : 'adicionar'} o logo deste fornecedor" onclick="escolherLogo(${i})">${inner}</button>`
+    : `<span class="pc-logo" ${style}>${inner}</span>`;
+}
+function escolherLogo(i){
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
+  if(typeof somenteLeitura === 'function' && somenteLeitura()){ showToast('Somente consulta neste horário.', true); return; }
+  const key = fornecedorKey(pisoData[i] && pisoData[i].fornecedor);
+  if(!key) return;
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = () => {
+    const f = inp.files && inp.files[0];
+    if(!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const S = 96, c = document.createElement('canvas');
+        c.width = c.height = S;
+        const x = c.getContext('2d');
+        x.fillStyle = '#fff'; x.fillRect(0, 0, S, S);
+        const k = Math.min(S / img.width, S / img.height), w = img.width * k, h = img.height * k;
+        x.drawImage(img, (S - w) / 2, (S - h) / 2, w, h);
+        let url = c.toDataURL('image/webp', .85);
+        if(url.indexOf('data:image/webp') !== 0) url = c.toDataURL('image/jpeg', .85);
+        logosData[key] = url;
+        if(window.salvarLogo) window.salvarLogo(key, url);
+        renderAll();
+      };
+      img.src = rd.result;
+    };
+    rd.readAsDataURL(f);
+  };
+  inp.click();
+}
+function togglePisoEdit(i){
+  if(pisoEditando.has(i)) pisoEditando.delete(i); else pisoEditando.add(i);
+  renderPiso();
+}
+
 function buildPisoRow(row, i, perm, maxVol){
   const ed = perm.editAll, canMarkStatus = perm.markStatus;
   const el = document.createElement('div');
-  el.className = 'pc ' + (row.prioridade ? 'piso-row-prio' : (row.status === 'CARGA ETIQUETADA' ? 'piso-row-ok' : 'piso-row-pend'));
+  const aberto = ed && pisoEditando.has(i);
+  el.className = 'pc ' + (row.prioridade ? 'piso-row-prio' : (row.status === 'CARGA ETIQUETADA' ? 'piso-row-ok' : 'piso-row-pend')) + (aberto ? ' editing' : '');
 
-  const inTxt = (field) => `<input type="text" value="${escapeHtml(row[field])}" onchange="updatePiso(${i},'${field}',this.value)">`;
-  const inNum = (field) => `<input type="number" value="${row[field]}" onchange="updatePiso(${i},'${field}',Number(this.value))">`;
-  const txt = (field) => ed ? inTxt(field) : `<span class="txt">${pisoTxt(row[field])}</span>`;
-  const num = (field) => ed ? inNum(field) : `<span class="txt">${row[field] == null ? 0 : row[field]}</span>`;
-  const campo = (rot, html, cls) => `<div class="pc-f ${cls || ''}"><label>${rot}</label>${html}</div>`;
-  const temTxt = (field) => String(row[field] == null ? '' : row[field]).trim() !== '';
-
+  const tem = (f) => String(row[f] == null ? '' : row[f]).trim() !== '';
   const vol = Number(row.volume || 0);
   let pct = maxVol > 0 ? (vol / maxVol) * 100 : 0;
   if(vol > 0 && pct < 2) pct = 2;
@@ -2189,33 +2296,53 @@ function buildPisoRow(row, i, perm, maxVol){
       </select>`
     : `<span class="pill ${slug}">${escapeHtml(STATUS_LABELS[row.status] || row.status || '')}</span>`;
 
+  const meta = [
+    `<span><i>Doca</i>${tem('doca') ? escapeHtml(row.doca) : '—'}</span>`,
+    `<span><i>Carga</i>${escapeHtml(row.carga)}</span>`,
+    `<span><i>Lib.</i>${escapeHtml(row.liberacao)}</span>`,
+    `<span class="${d1neg ? 'd1n' : ''}"><i>D-1</i>${row.d1 == null ? 0 : row.d1}</span>`,
+    tem('produtivo') ? `<span><i>Prod.</i>${escapeHtml(row.produtivo)}</span>` : '',
+    tem('departamento') ? `<span><i>Depto</i>${escapeHtml(row.departamento)}</span>` : ''
+  ].join('');
+
   const sin = buildSinalizacoesHtml(row, i, perm);
-  const rem = ed ? `<button class="btn btn-danger" onclick="removePisoRow(${i})">Remover</button>` : '';
+  const btnEdit = ed ? `<button class="btn btn-ghost btn-sm pc-editbtn" onclick="togglePisoEdit(${i})">${aberto ? '✕ Fechar edição' : '✎ Editar'}</button>` : '';
+
+  const inTxt = (f) => `<input type="text" value="${escapeHtml(row[f])}" onchange="updatePiso(${i},'${f}',this.value)">`;
+  const inNum = (f) => `<input type="number" value="${row[f]}" onchange="updatePiso(${i},'${f}',Number(this.value))">`;
+  const cp = (rot, h, cls) => `<div class="pc-ef ${cls || ''}"><label>${rot}</label>${h}</div>`;
+  const painel = aberto ? `
+    <div class="pc-edit">
+      ${cp('Fornecedor', inTxt('fornecedor'), 'span2')}
+      ${cp('Doca', inTxt('doca'))}
+      ${cp('Carga', inTxt('carga'))}
+      ${cp('Liberação', inTxt('liberacao'))}
+      ${cp('D-1', inNum('d1'))}
+      ${cp('Volume', inNum('volume'))}
+      ${cp('SKU', inNum('sku'))}
+      ${cp('Produtivo', inTxt('produtivo'))}
+      ${cp('Departamento', inTxt('departamento'))}
+      ${cp('Obs.', inTxt('obs'), 'span2')}
+      <div class="pc-ef"><label>&nbsp;</label><button class="btn btn-danger" onclick="removePisoRow(${i})">Remover carga</button></div>
+    </div>` : '';
 
   el.innerHTML = `
-    <div class="pc-top">
-      <div class="pc-title">
-        ${row.prioridade ? `<span class="pc-flag" title="${escapeHtml(row.prioridade.nota)}">${PISO_FLAG_SVG}</span>` : ''}
-        <div class="pc-forn">${ed ? inTxt('fornecedor') : pisoTxt(row.fornecedor)}</div>
+    <div class="pc-main">
+      ${logoHtml(row.fornecedor, i)}
+      <div class="pc-info">
+        <div class="pc-forn" title="${escapeHtml(row.fornecedor)}">
+          ${row.prioridade ? `<span class="pc-flag" title="${escapeHtml(row.prioridade.nota)}">${PISO_FLAG_SVG}</span>` : ''}
+          <span class="nm">${pisoTxt(row.fornecedor)}</span>
+        </div>
+        <div class="pc-meta">${meta}</div>
+        ${tem('obs') ? `<div class="pc-obs" title="${escapeHtml(row.obs)}">${escapeHtml(row.obs)}</div>` : ''}
       </div>
+      <div class="pc-nums"><div class="pc-vnum">${fmtInt(vol)}</div><div class="pc-sku">${row.sku == null ? 0 : row.sku} SKU</div></div>
       <div class="pc-status">${statusHtml}</div>
     </div>
-    <div class="pc-vol">
-      <span class="vlbl">Volume</span>
-      <div class="vbar"><i style="width:${pct.toFixed(1)}%"></i></div>
-      <div class="vnum">${ed ? inNum('volume') : fmtInt(vol)}</div>
-    </div>
-    <div class="pc-fields">
-      ${campo('Doca', txt('doca'), 'w-s')}
-      ${campo('Carga', txt('carga'), 'w-m')}
-      ${campo('Liberação', txt('liberacao'), 'w-m')}
-      ${campo('D-1', num('d1'), 'w-s ' + (d1neg ? 'd1-neg' : ''))}
-      ${campo('SKU', num('sku'), 'w-s')}
-      ${campo('Produtivo', txt('produtivo'), 'w-m')}
-      ${(ed || temTxt('departamento')) ? campo('Departamento', txt('departamento'), 'w-l') : ''}
-      ${(ed || temTxt('obs')) ? campo('Obs.', txt('obs'), 'wide') : ''}
-    </div>
-    ${(sin || rem) ? `<div class="pc-foot">${sin}${rem}</div>` : ''}
+    <div class="pc-bar"><i style="width:${pct.toFixed(1)}%"></i></div>
+    ${(sin || btnEdit) ? `<div class="pc-foot">${sin}${btnEdit}</div>` : ''}
+    ${painel}
   `;
   return el;
 }
@@ -2367,6 +2494,7 @@ function removePisoRow(i){
   if(!souAdmin()) return;
   if(!confirm('Remover esta carga do piso?')) return;
   pisoData.splice(i,1);
+  pisoEditando.clear();
   savePiso();
   renderAll();
 }
@@ -2415,7 +2543,7 @@ function renderFila(){
     card.innerHTML = `
       ${crit ? `<div class="crit-badge">⚠ CRÍTICO · ${Math.abs(Number(row.d1))} dias no D-1</div>` : ''}
       <div class="carga-num">Carga ${escapeHtml(row.carga)}${row.doca ? ' · Doca '+escapeHtml(row.doca) : ''}</div>
-      <div class="fornecedor">${escapeHtml(row.fornecedor)}</div>
+      <div class="fornecedor">${logoHtml(row.fornecedor, null)}<span>${escapeHtml(row.fornecedor)}</span></div>
       <div class="stats">
         <div class="stat"><div class="n">${fmtInt(row.volume)}</div><div class="l">Volume</div></div>
         <div class="stat"><div class="n">${row.sku}</div><div class="l">SKU</div></div>
@@ -2727,20 +2855,20 @@ function renderDistImage(turno, rows, extras, dia){
   };
 
   ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);
-  ctx.fillStyle = '#12151a'; ctx.fillRect(0,0,W,pad+titleH);
+  ctx.fillStyle = '#0b1d15'; ctx.fillRect(0,0,W,pad+titleH);
   ctx.fillStyle = '#e3b23c'; ctx.font = 'bold 24px Arial'; ctx.textBaseline = 'middle';
   ctx.fillText(`DISTRIBUIÇÃO ${turno}`, pad, pad+22);
-  ctx.fillStyle = '#eef1f5'; ctx.font = '14px Arial';
+  ctx.fillStyle = '#e9f3ed'; ctx.font = '14px Arial';
   ctx.fillText(`Fechamento do dia ${fmtDia(dia)} · ${rows.length} carga(s)`, pad, pad+48);
 
   let y = pad + titleH;
   ctx.fillStyle = '#f2f2f2'; ctx.fillRect(0,y,W,sumH);
-  ctx.fillStyle = '#12151a'; ctx.font = 'bold 14px Arial';
+  ctx.fillStyle = '#0b1d15'; ctx.font = 'bold 14px Arial';
   ctx.fillText(`Produtivos: ${prod}   ·   H/H: ${hh}   ·   Estocado full: ${fmtInt(extras.estocadoFull||0)}   ·   Estocado mix: ${fmtInt(extras.estocadoMix||0)}`, pad, y + sumH/2);
   y += sumH;
 
   ctx.fillStyle = '#e3b23c'; ctx.fillRect(0,y,W,headH);
-  ctx.fillStyle = '#12151a'; ctx.font = 'bold 12px Arial';
+  ctx.fillStyle = '#0b1d15'; ctx.font = 'bold 12px Arial';
   let x = pad;
   cols.forEach(c => { ctx.fillText(c[0].toUpperCase(), x+6, y + headH/2); x += c[1]; });
   y += headH;
@@ -2752,7 +2880,7 @@ function renderDistImage(turno, rows, extras, dia){
   }
   rows.forEach((r, idx) => {
     if(idx % 2 === 1){ ctx.fillStyle = '#f7f7f7'; ctx.fillRect(0,y,W,rowH); }
-    ctx.fillStyle = '#12151a';
+    ctx.fillStyle = '#0b1d15';
     const vals = [r.etiquetagem, r.doca, r.carga, r.descricao, r.liberacao, r.d1, fmtInt(r.volume||0), r.sku, r.horaDist, r.distribuidoPor || ''];
     let cx = pad;
     vals.forEach((v, ci) => { ctx.fillText(fit(v, cols[ci][1]-12), cx+6, y + rowH/2); cx += cols[ci][1]; });
@@ -2760,7 +2888,7 @@ function renderDistImage(turno, rows, extras, dia){
     y += rowH;
   });
 
-  ctx.fillStyle = '#12151a'; ctx.fillRect(0,y,W,footH);
+  ctx.fillStyle = '#0b1d15'; ctx.fillRect(0,y,W,footH);
   ctx.fillStyle = '#e3b23c'; ctx.font = 'bold 15px Arial';
   const xVol = pad + cols.slice(0,6).reduce((s,c)=>s+c[1],0);
   ctx.fillText(`TOTAL ${turno}`, pad+6, y + footH/2);
@@ -4277,7 +4405,7 @@ function openQrModal(){
       text: SITE_URL,
       width: 220,
       height: 220,
-      colorDark: '#12151a',
+      colorDark: '#0b1d15',
       colorLight: '#ffffff'
     });
     qrRendered = true;
@@ -4670,14 +4798,14 @@ function prodGraficoSvg(ym, turno, dias){
     }
     s += `<text x="${bx+bw/2}" y="${base+15}" text-anchor="middle" font-size="11" ${eHoje ? 'font-weight="700"' : ''} style="fill:${eHoje ? 'var(--band)' : 'var(--text-dim)'}">${v.d}</text>`;
     if(v.vol > 0){
-      s += `<rect x="${bx}" y="${base+24}" width="${bw}" height="22" rx="4" style="fill:#16384d"/>`;
-      s += `<text x="${bx+bw/2}" y="${base+39}" text-anchor="middle" font-size="13" font-weight="800" style="fill:#7cc7ec">${v.sku}</text>`;
+      s += `<rect x="${bx}" y="${base+24}" width="${bw}" height="22" rx="4" style="fill:#174a38"/>`;
+      s += `<text x="${bx+bw/2}" y="${base+39}" text-anchor="middle" font-size="13" font-weight="800" style="fill:#8ff0c0">${v.sku}</text>`;
     } else {
       s += `<text x="${bx+bw/2}" y="${base+39}" text-anchor="middle" font-size="11" style="fill:var(--line)">·</text>`;
     }
   });
   s += `<text x="${padL-10}" y="${base+15}" text-anchor="end" font-size="10" style="fill:var(--text-dim)">Dia</text>`;
-  s += `<text x="${padL-10}" y="${base+39}" text-anchor="end" font-size="11" font-weight="700" style="fill:#7cc7ec">SKU</text>`;
+  s += `<text x="${padL-10}" y="${base+39}" text-anchor="end" font-size="11" font-weight="700" style="fill:#8ff0c0">SKU</text>`;
   if(media > 0){
     const ym2 = base - media/max*ch;
     s += `<line x1="${padL-6}" x2="${W-padR}" y1="${ym2}" y2="${ym2}" stroke="#e2685f" stroke-width="1.5" stroke-dasharray="6 4"/>`;
@@ -4880,7 +5008,7 @@ function renderExpedicao(){
   const finalizados = rows.filter(r => expClasseStatus(r.status) === 'fin').length;
   const cubagem = finalizados > 0 ? volTot / finalizados : null;
 
-  const cores = { fin:'#4fbf7a', conj:'#f2b565', horti:'#7cc7ec', tela:'#e2685f', '':'#8f99a8' };
+  const cores = { fin:'#4fbf7a', conj:'#f2b565', horti:'#8ff0c0', tela:'#e2685f', '':'#8fb1a0' };
   const porStatus = {};
   rows.forEach(r => { const s = r.status || '—'; porStatus[s] = (porStatus[s]||0) + 1; });
   const tipoPorPlaca = {};
@@ -5189,6 +5317,16 @@ function renderDistClockOnly(){
     pisoReady = true; markReady();
     if(currentUser) renderAll();
   }, err => reportError('Erro ao ler cargas no piso:', err));
+
+  // ---------- logos dos fornecedores (compartilhados entre todos) ----------
+  const logosRef = doc(db, 'painelCD', 'logos');
+  window.salvarLogo = function(key, url){
+    setDoc(logosRef, { map: { [key]: url } }, { merge: true }).catch(err => reportError('Erro ao salvar o logo:', err));
+  };
+  onSnapshot(logosRef, snap => {
+    logosData = snap.exists() ? (snap.data().map || {}) : {};
+    if(currentUser) renderAll();
+  }, err => reportError('Erro ao ler os logos:', err));
 
   let distConhecidas = null;
   onSnapshot(distRef, snap => {
