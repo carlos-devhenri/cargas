@@ -812,6 +812,129 @@
   body.piso-view #tab-piso .status-banido{ background:#f8d7d4; }
   body.piso-view #tab-piso .tab-btn{ color:#4b5260; }
   body.piso-view #tab-piso .tab-btn.active{ color:#14171c; }
+
+  /* ============ V2: tela cheia, cartões em 2 colunas, cenário azul-marinho ============ */
+  body.piso-view{ background:linear-gradient(180deg,#0d1f3f 0,#12294f 45%,#0e2244 100%) fixed; min-height:100vh; }
+  body.piso-view main{ max-width:none; padding:28px 36px 80px; }
+  body.piso-view #topbar{ background:#071327; }
+  body.piso-view #tabnav{ background:#0b1a36; border-bottom:1px solid #1d3560; padding:0 36px; }
+  body.piso-view #tabnav .tab-btn{ color:#a9b8d4; }
+  body.piso-view #tabnav .tab-btn:hover{ color:#fff; }
+  body.piso-view #tabnav .tab-btn.active{ color:#fff; border-bottom-color:#e3b23c; }
+  .piso-head h2{ color:#fff; }
+  .piso-date{ color:#a9b8d4; }
+  .piso-print-btn{ background:#e3b23c; color:#0b1a36; }
+  .kpi{ border-top:4px solid #e3b23c; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+  .piso-kpis .kpi:nth-child(1){ border-top-color:#4a8fe8; }
+  .piso-kpis .kpi:nth-child(3){ border-top-color:#34b88a; }
+  .piso-kpis .kpi:nth-child(4){ border-top-color:#e2685f; }
+  .piso-kpis .kpi:nth-child(5){ border-top-color:#9a7be0; }
+  .piso-chip{ background:rgba(255,255,255,.07); border-color:#2a4678; color:#dbe6fa; }
+  .piso-chip b{ color:#8fa6cc; }
+  .piso-chip:hover{ border-color:#e3b23c; }
+  .piso-chip.on{ background:#e3b23c; border-color:#e3b23c; color:#0b1a36; }
+  .piso-chip.on b{ color:#0b1a36; }
+  .piso-search label{ color:#a9b8d4; }
+  body.piso-view #tab-piso .panel{ border-color:#27406d; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+  body.piso-view #tab-piso .panel-header{ background:#dfe8f7; border-bottom-color:#c5d3ea; }
+  body.piso-view #tab-piso .dist-tabnav{ border-bottom-color:#27406d; }
+  body.piso-view #tab-piso .dist-tabnav .tab-btn{ color:#a9b8d4; }
+  body.piso-view #tab-piso .dist-tabnav .tab-btn:hover{ color:#fff; }
+  body.piso-view #tab-piso .dist-tabnav .tab-btn.active{ color:#fff; border-bottom-color:#e3b23c; }
+  @media (max-width:720px){ body.piso-view main{ padding:16px; } body.piso-view #tabnav{ padding:0 12px; } }
+
+  /* cartões de carga — 2 por linha */
+  .piso-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; margin-bottom:18px; }
+  @media (max-width:1000px){ .piso-grid{ grid-template-columns:1fr; } }
+  .piso-grp{
+    grid-column:1/-1; margin-top:6px; padding:11px 16px; border-radius:4px; background:rgba(255,255,255,.07);
+    font-family:'Oswald',sans-serif; font-weight:700; font-size:.85rem; letter-spacing:.07em; text-transform:uppercase;
+  }
+  .piso-grp.grp-pend{ color:#f4cc63; border-left:5px solid #e3b23c; }
+  .piso-grp.grp-ok{ color:#82e3b0; border-left:5px solid #34b88a; }
+  .piso-empty{ grid-column:1/-1; text-align:center; padding:26px; color:#a9b8d4; font-style:italic; }
+  .pc{
+    background:#fff; border-radius:5px; border-left:5px solid #e3b23c; padding:14px 16px 12px;
+    display:flex; flex-direction:column; gap:11px; min-width:0; box-shadow:0 2px 6px rgba(0,0,0,.3); color:#1b1e24;
+  }
+  .pc.piso-row-ok{ border-left-color:#2fa066; }
+  .pc.piso-row-prio{ border-left-color:#d6453d; background:#fde9e6; }
+  .pc-top{ display:flex; align-items:flex-start; gap:10px; justify-content:space-between; }
+  .pc-title{ min-width:0; flex:1; display:flex; gap:8px; align-items:flex-start; }
+  .pc-flag{ color:#b3302a; flex:0 0 auto; margin-top:2px; }
+  .pc-flag svg{ width:18px; height:18px; display:block; }
+  .pc-forn{ font-weight:700; font-size:1.02rem; line-height:1.25; word-break:break-word; flex:1; min-width:0; }
+  .pc-forn input{ font-weight:700; font-size:1rem; }
+  .pc-status{ flex:0 0 auto; max-width:48%; }
+  .pc-vol{ display:flex; align-items:center; gap:12px; }
+  .pc-vol .vlbl{ font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#7a808b; }
+  .pc-vol .vbar{ flex:1; height:8px; background:#ebe5d4; border-radius:4px; overflow:hidden; }
+  .pc-vol .vbar i{ display:block; height:100%; background:#e3b23c; border-radius:4px; }
+  .pc-vol .vnum{ font-family:'Oswald',sans-serif; font-weight:700; font-size:1.5rem; min-width:72px; text-align:right; line-height:1; }
+  .pc-vol .vnum input[type=number]{ width:96px; text-align:right; font-family:'Oswald',sans-serif; font-weight:700; font-size:1.2rem; }
+  .pc-fields{ display:flex; flex-wrap:wrap; gap:9px 20px; }
+  .pc-f{ min-width:54px; }
+  .pc-f label{ display:block; font-size:.6rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:#7a808b; margin-bottom:2px; }
+  .pc-f .txt{ font-weight:600; font-size:.9rem; line-height:1.3; }
+  .pc-f .dash{ color:#9aa0aa; }
+  .pc-f.wide{ flex:1 1 100%; }
+  .pc-f.w-s{ width:78px; } .pc-f.w-m{ width:128px; } .pc-f.w-l{ width:170px; }
+  .pc-f.d1-neg .txt, .pc-f.d1-neg input{ color:#b3302a; font-weight:700; }
+  .pc input[type=text], .pc input[type=number]{
+    width:100%; background:#fff; border:1px solid #e0dacb; border-radius:3px; padding:5px 7px; font-size:.86rem;
+    font-family:'Inter',sans-serif; color:#1b1e24;
+  }
+  .pc input:focus{ outline:2px solid #e3b23c; outline-offset:0; }
+  .pc-foot{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; border-top:1px solid #ece7d9; padding-top:9px; }
+  .pc .pill, .pc select.status-select{
+    display:inline-block; padding:6px 11px; border-radius:3px; font-size:.76rem; font-weight:700; line-height:1.25;
+  }
+  .pc select.status-select{ border:none !important; padding:7px 8px; width:auto; cursor:pointer; font-family:'Inter',sans-serif; max-width:100%; }
+  .pc .st-aguardando{ background:#e4e6eb; color:#454c5a; }
+  .pc .st-pendente{ background:#fde6bd; color:#7a4f08; }
+  .pc .st-processo{ background:#d3e8f9; color:#14578a; }
+  .pc .st-parcial-etq{ background:#fcd9c6; color:#9a4421; }
+  .pc .st-etiquetada{ background:#d3f0de; color:#176339; }
+  .pc .st-parcial-dist{ background:#cdeeea; color:#0b6862; }
+  .pc .st-conferencia{ background:#e6d9f6; color:#6a34a8; }
+  .pc .st-nao-analisado{ background:#f8d7d4; color:#a42a24; }
+  .pc .prio-note{ margin-bottom:0; }
+
+  .piso-total{
+    display:flex; align-items:baseline; gap:10px; background:#071327; color:#fff; border-radius:5px; border:1px solid #1d3560;
+    padding:16px 22px; font-family:'Oswald',sans-serif; margin-bottom:28px; flex-wrap:wrap;
+  }
+  .piso-total .tl{ font-size:1.05rem; letter-spacing:.03em; margin-right:auto; }
+  .piso-total .t-num{ color:#e3b23c; font-size:1.55rem; font-weight:700; }
+  .piso-total .t-lbl{ font-size:.72rem; color:#a9b8d4; text-transform:uppercase; letter-spacing:.06em; margin-right:16px; }
+
+  /* aviso de média do turno */
+  .aviso-media{ padding:11px 20px; font-size:.86rem; font-weight:600; border-bottom:1px solid #e3ded1; line-height:1.4; }
+  .aviso-baixo{ background:#fde0dc; color:#a42a24; border-left:5px solid #d6453d; }
+  .aviso-atencao{ background:#fff0cf; color:#7a4f08; border-left:5px solid #e3a21c; }
+  .aviso-ok{ background:#dcf3e5; color:#176339; border-left:5px solid #2fa066; }
+
+  /* impressão dos gráficos de produtividade */
+  .prod-print{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .prod-print span{ font-size:.74rem; color:var(--text-dim); }
+  #prod-print-title{ display:none; }
+  @media print{
+    body[data-print-target="prod"] *{ visibility:hidden; }
+    body[data-print-target="prod"] #prod-print-area, body[data-print-target="prod"] #prod-print-area *{ visibility:visible; }
+    body[data-print-target="prod"] #prod-print-area{
+      position:absolute; left:0; top:0; width:100%; color:#000;
+      --line:#bbbbbb; --text:#000; --text-dim:#444; --band:#d49a00; --panel:#fff; --panel-header:#f1f1f1;
+      -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    }
+    body[data-print-target="prod"]{ background:#fff !important; }
+    body[data-print-target="prod"] #prod-print-title{ display:block; font:700 16px Arial,sans-serif; color:#000; margin:0 0 8px; }
+    body[data-print-turno="T1"] .prod-turno:not([data-turno="T1"]),
+    body[data-print-turno="T2"] .prod-turno:not([data-turno="T2"]),
+    body[data-print-turno="T3"] .prod-turno:not([data-turno="T3"]){ display:none !important; }
+    body[data-print-target="prod"] .prod-turno{ break-inside:avoid; border:1px solid #999; background:#fff; margin:0 0 10px; }
+    body[data-print-target="prod"] .prod-chart{ overflow:visible; }
+    body[data-print-target="prod"] .prod-chart svg{ width:100%; height:auto; }
+  }
 </style>
 </head>
 <body>
@@ -883,9 +1006,7 @@
   <div class="tabnav" id="tabnav">
     <button class="tab-btn active" id="tab-btn-piso" onclick="switchTab('piso')">Cargas no Piso</button>
     <button class="tab-btn" id="tab-btn-cross" onclick="switchTab('cross')">Pendências Relatório Cross</button>
-    <button class="tab-btn" id="tab-btn-plan" onclick="switchTab('plan')">Planejamento</button>
     <button class="tab-btn" id="tab-btn-fech" onclick="switchTab('fech')" style="display:none;">Fechamentos</button>
-    <button class="tab-btn" id="tab-btn-exp" onclick="switchTab('exp')">Expedição</button>
   </div>
 
   <main>
@@ -989,27 +1110,11 @@
         </div>
       </div>
 
-      <div class="piso-card">
-        <div class="table-scroll">
-          <table class="piso-table">
-            <thead>
-              <tr>
-                <th></th><th>Doca</th><th>Carga</th><th>Fornecedor</th><th>Liberação</th>
-                <th>D-1</th><th>Volume</th><th>SKU</th><th>Status</th><th>Produtivo</th><th>Obs.</th>
-                <th>Departamento</th><th>Sinalizações</th><th></th>
-              </tr>
-            </thead>
-            <tbody id="tbody-piso"></tbody>
-            <tfoot>
-              <tr>
-                <td colspan="6">VOLUME TOTAL</td>
-                <td id="ft-vol-total" class="t-num t-vol">0</td>
-                <td id="ft-sku-total" class="t-num">0</td>
-                <td colspan="6"></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+      <div class="piso-grid" id="tbody-piso"></div>
+      <div class="piso-total">
+        <span class="tl">VOLUME TOTAL</span>
+        <span class="t-num" id="ft-vol-total">0</span><span class="t-lbl">volumes</span>
+        <span class="t-num" id="ft-sku-total">0</span><span class="t-lbl">SKU</span>
       </div>
     </section>
 
@@ -1334,9 +1439,16 @@
         <div class="prod-head">
           <h3 class="label-font">PRODUTIVIDADE DO MÊS — VOLUME DISTRIBUÍDO</h3>
           <label>Mês <input type="month" id="prod-mes" data-ro-ok onchange="prodMes = this.value; renderProdutividade();"></label>
+          <div class="prod-print no-print">
+            <span>🖨 Imprimir gráficos:</span>
+            <button class="btn btn-ghost btn-sm" onclick="imprimirProdutividade('T1')">T1</button>
+            <button class="btn btn-ghost btn-sm" onclick="imprimirProdutividade('T2')">T2</button>
+            <button class="btn btn-ghost btn-sm" onclick="imprimirProdutividade('T3')">T3</button>
+            <button class="btn btn-ghost btn-sm" onclick="imprimirProdutividade('todos')">Todos juntos</button>
+          </div>
         </div>
         <span class="hint" style="display:block; margin:0 0 4px;">Uma barra por dia, por turno: a altura é o volume distribuído (grade + estocado full/mix) e o número azul embaixo é o SKU do dia. Vem da Distribuição fechada de cada dia; o dia de hoje aparece mais claro (em andamento).</span>
-        <div id="prod-container"></div>
+        <div id="prod-print-area"><div id="prod-print-title"></div><div id="prod-container"></div></div>
       </div>
       <div class="panel-footer-actions fech-foto-bar no-print" id="fech-foto-actions">
         <button class="btn btn-ghost btn-sm" onclick="openFechPhotoModal()">📷 Gravar distribuição por foto</button>
@@ -1934,14 +2046,13 @@ function podeVerFechamentos(){
 function switchTab(name){
   if(currentUser && currentUser.role === 'operador') name = 'piso'; // operador só tem a aba de cargas no piso
   if(name === 'fech' && !podeVerFechamentos()) name = 'piso';
+  if(name === 'plan' || name === 'exp') name = 'piso'; // guias Planejamento e Expedição removidas
   document.body.classList.toggle('piso-view', name === 'piso'); // novo visual (tema claro) só na aba Cargas no Piso
-  ['piso','cross','plan','fech','exp'].forEach(n => {
+  ['piso','cross','fech'].forEach(n => {
     document.getElementById('tab-'+n).style.display = name === n ? 'block' : 'none';
     document.getElementById('tab-btn-'+n).classList.toggle('active', name === n);
   });
-  if(name === 'plan') renderPlanejamento();
   if(name === 'fech') renderFechamentos();
-  if(name === 'exp') renderExpedicao();
 }
 
 function forceLogout(motivo){
@@ -2000,10 +2111,10 @@ function agoraCurto(){
 
 /* ===================== RENDER: PAINEL 1 - CARGAS NO PISO ===================== */
 function buildPisoGroupHeaderRow(label, kind){
-  const tr = document.createElement('tr');
-  tr.className = 'piso-group-header ' + (kind === 'ok' ? 'grp-ok' : 'grp-pend');
-  tr.innerHTML = `<td colspan="14">${label}</td>`;
-  return tr;
+  const el = document.createElement('div');
+  el.className = 'piso-grp ' + (kind === 'ok' ? 'grp-ok' : 'grp-pend');
+  el.textContent = label;
+  return el;
 }
 
 /* célula "Sinalizações": bilhete de prioridade (supervisor) + marcação de etiquetada (operador) */
@@ -2055,16 +2166,16 @@ function pisoTxt(v){
 }
 
 function buildPisoRow(row, i, perm, maxVol){
-  const canEditAll = perm.editAll, canMarkStatus = perm.markStatus;
-  const tr = document.createElement('tr');
-  tr.className = row.prioridade ? 'piso-row-prio' : (row.status === 'CARGA ETIQUETADA' ? 'piso-row-ok' : 'piso-row-pend');
+  const ed = perm.editAll, canMarkStatus = perm.markStatus;
+  const el = document.createElement('div');
+  el.className = 'pc ' + (row.prioridade ? 'piso-row-prio' : (row.status === 'CARGA ETIQUETADA' ? 'piso-row-ok' : 'piso-row-pend'));
 
-  const campoTxt = (field) => canEditAll
-    ? `<input type="text" value="${escapeHtml(row[field])}" onchange="updatePiso(${i},'${field}',this.value)">`
-    : `<span class="txt">${pisoTxt(row[field])}</span>`;
-  const campoNum = (field, cls, fmt) => canEditAll
-    ? `<input type="number" class="${cls}" value="${row[field]}" onchange="updatePiso(${i},'${field}',Number(this.value))">`
-    : `<span class="txt">${fmt ? fmtInt(row[field] || 0) : (row[field] == null ? 0 : row[field])}</span>`;
+  const inTxt = (field) => `<input type="text" value="${escapeHtml(row[field])}" onchange="updatePiso(${i},'${field}',this.value)">`;
+  const inNum = (field) => `<input type="number" value="${row[field]}" onchange="updatePiso(${i},'${field}',Number(this.value))">`;
+  const txt = (field) => ed ? inTxt(field) : `<span class="txt">${pisoTxt(row[field])}</span>`;
+  const num = (field) => ed ? inNum(field) : `<span class="txt">${row[field] == null ? 0 : row[field]}</span>`;
+  const campo = (rot, html, cls) => `<div class="pc-f ${cls || ''}"><label>${rot}</label>${html}</div>`;
+  const temTxt = (field) => String(row[field] == null ? '' : row[field]).trim() !== '';
 
   const vol = Number(row.volume || 0);
   let pct = maxVol > 0 ? (vol / maxVol) * 100 : 0;
@@ -2078,28 +2189,35 @@ function buildPisoRow(row, i, perm, maxVol){
       </select>`
     : `<span class="pill ${slug}">${escapeHtml(STATUS_LABELS[row.status] || row.status || '')}</span>`;
 
-  tr.innerHTML = `
-    <td class="c-flag">${row.prioridade ? `<span title="${escapeHtml(row.prioridade.nota)}">${PISO_FLAG_SVG}</span>` : ''}</td>
-    <td class="c-doca">${campoTxt('doca')}</td>
-    <td class="c-carga">${campoTxt('carga')}</td>
-    <td class="c-forn">${campoTxt('fornecedor')}</td>
-    <td class="c-lib">${campoTxt('liberacao')}</td>
-    <td class="c-d1 ${d1neg ? 'd1-neg' : ''}">${campoNum('d1', 'in-d1', false)}</td>
-    <td class="c-vol">
-      <div class="vol-wrap">
-        <div class="vbar"><i style="width:${pct.toFixed(1)}%"></i></div>
-        <div class="vol-num">${campoNum('volume', 'in-vol', true)}</div>
+  const sin = buildSinalizacoesHtml(row, i, perm);
+  const rem = ed ? `<button class="btn btn-danger" onclick="removePisoRow(${i})">Remover</button>` : '';
+
+  el.innerHTML = `
+    <div class="pc-top">
+      <div class="pc-title">
+        ${row.prioridade ? `<span class="pc-flag" title="${escapeHtml(row.prioridade.nota)}">${PISO_FLAG_SVG}</span>` : ''}
+        <div class="pc-forn">${ed ? inTxt('fornecedor') : pisoTxt(row.fornecedor)}</div>
       </div>
-    </td>
-    <td class="c-sku sku-num">${campoNum('sku', 'in-sku', false)}</td>
-    <td class="c-status">${statusHtml}</td>
-    <td class="c-prod">${campoTxt('produtivo')}</td>
-    <td class="c-obs">${campoTxt('obs')}</td>
-    <td class="c-dep">${campoTxt('departamento')}</td>
-    <td class="c-sin">${buildSinalizacoesHtml(row, i, perm)}</td>
-    <td>${canEditAll ? `<button class="btn btn-danger" onclick="removePisoRow(${i})">Remover</button>` : ''}</td>
+      <div class="pc-status">${statusHtml}</div>
+    </div>
+    <div class="pc-vol">
+      <span class="vlbl">Volume</span>
+      <div class="vbar"><i style="width:${pct.toFixed(1)}%"></i></div>
+      <div class="vnum">${ed ? inNum('volume') : fmtInt(vol)}</div>
+    </div>
+    <div class="pc-fields">
+      ${campo('Doca', txt('doca'), 'w-s')}
+      ${campo('Carga', txt('carga'), 'w-m')}
+      ${campo('Liberação', txt('liberacao'), 'w-m')}
+      ${campo('D-1', num('d1'), 'w-s ' + (d1neg ? 'd1-neg' : ''))}
+      ${campo('SKU', num('sku'), 'w-s')}
+      ${campo('Produtivo', txt('produtivo'), 'w-m')}
+      ${(ed || temTxt('departamento')) ? campo('Departamento', txt('departamento'), 'w-l') : ''}
+      ${(ed || temTxt('obs')) ? campo('Obs.', txt('obs'), 'wide') : ''}
+    </div>
+    ${(sin || rem) ? `<div class="pc-foot">${sin}${rem}</div>` : ''}
   `;
-  return tr;
+  return el;
 }
 
 function renderPiso(){
@@ -2133,7 +2251,7 @@ function renderPiso(){
     const msg = visiveis.length === 0
       ? (permitidos ? 'Nenhuma carga pendente no momento.' : 'Nenhuma carga no piso.')
       : 'Nenhuma carga encontrada para o filtro.';
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="14">${msg}</td></tr>`;
+    tbody.innerHTML = `<div class="piso-empty">${msg}</div>`;
   } else {
     const porPrio = (a, b) => (b.row.prioridade ? 1 : 0) - (a.row.prioridade ? 1 : 0); // prioridades no topo
     const naoEtq = [];
@@ -2373,6 +2491,41 @@ function handleDistRowClick(ev, i){
 }
 
 /* ===================== RENDER: PAINÉIS DE DISTRIBUIÇÃO (T1 / T2 / T3) + RESUMO ===================== */
+/* média diária do turno no mês (mesma base do gráfico de Fechamentos), sem contar o dia de hoje (em andamento) */
+function mediaHistoricaTurno(turno){
+  const hoje = diaOperacional();
+  const dias = prodColetar(hoje.slice(0,7));
+  const vs = Object.keys(dias)
+    .filter(id => id !== hoje && dias[id][turno] && dias[id][turno].vol > 0)
+    .map(id => dias[id][turno].vol);
+  if(!vs.length) return null;
+  return { media: vs.reduce((a,b) => a + b, 0) / vs.length, dias: vs.length };
+}
+function renderAvisoMedia(slot, painelId, turno, vol){
+  const painel = document.getElementById(painelId);
+  if(!painel) return;
+  let el = document.getElementById('aviso-media-' + slot);
+  if(!el){
+    const head = painel.querySelector('.panel-header');
+    if(!head) return;
+    el = document.createElement('div');
+    el.id = 'aviso-media-' + slot;
+    head.insertAdjacentElement('afterend', el);
+  }
+  const h = mediaHistoricaTurno(turno);
+  if(!h){ el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = 'block';
+  const pct = Math.round(vol / h.media * 100);
+  const base = `média do ${turno}: ${fmtInt(h.media)} por dia (${h.dias} dia${h.dias > 1 ? 's' : ''} fechado${h.dias > 1 ? 's' : ''} no mês)`;
+  if(vol < h.media){
+    el.className = 'aviso-media ' + (pct < 50 ? 'aviso-baixo' : 'aviso-atencao');
+    el.innerHTML = `⚠ Distribuição abaixo da média — ${fmtInt(vol)} distribuídos hoje (${pct}% da ${base}). Faltam ${fmtInt(h.media - vol)} para alcançar a média.`;
+  } else {
+    el.className = 'aviso-media aviso-ok';
+    el.innerHTML = `✔ Distribuição na média ou acima — ${fmtInt(vol)} distribuídos hoje (${pct}% da ${base}).`;
+  }
+}
+
 function renderDist(){
   const { role } = currentUser;
   const canEditHora = PERFIS_DISTRIBUICAO.includes(role);
@@ -2441,6 +2594,8 @@ function renderDist(){
     const qtdProdutivos = Number(extras.qtdProdutivos||0);
     const hh = qtdProdutivos > 0 ? (volTotal / qtdProdutivos / 7).toFixed(1) : '—';
 
+    renderAvisoMedia(turno, 'panel-dist-'+turno, turno, volTotal);
+    if(turno === turnoAtivo) renderAvisoMedia('fila', 'panel-fila', turno, volTotal);
     document.getElementById('ft-dist-vol-'+turno).textContent = fmtInt(volTotal);
     document.getElementById('ft-dist-sku-'+turno).textContent = skuTotal;
     document.getElementById('sm-cargas-'+turno).textContent = linhas.length;
@@ -4544,7 +4699,7 @@ function renderProdutividade(){
     const g = prodGraficoSvg(prodMes, t, dias);
     const volMes = g.comDado.reduce((s,v)=>s+v.vol,0);
     const skuMes = g.comDado.reduce((s,v)=>s+v.sku,0);
-    html += `<div class="prod-turno">
+    html += `<div class="prod-turno" data-turno="${t}">
       <div class="prod-turno-head">
         <div class="tt">${t}</div>
         <div class="prod-kpi"><span class="v vol">${fmtInt(volMes)}</span><span class="l">Volume distribuído no mês</span></div>
@@ -4559,7 +4714,26 @@ function renderProdutividade(){
   cont.innerHTML = html;
 }
 
-/* ===================== EXPEDIÇÃO (Status Expedição — só T2) ===================== */
+function imprimirProdutividade(alvo){
+  renderProdutividade();
+  const [a, m] = (prodMes || diaOperacional().slice(0,7)).split('-');
+  document.getElementById('prod-print-title').textContent =
+    `Produtividade do mês ${m}/${a} — volume distribuído — ${alvo === 'todos' ? 'T1, T2 e T3' : alvo}`;
+  document.body.setAttribute('data-print-target', 'prod');
+  document.body.setAttribute('data-print-turno', alvo);
+  const st = document.createElement('style');
+  st.id = 'prod-page-style';
+  st.textContent = '@page{ size:A4 landscape; margin:10mm; }';
+  document.head.appendChild(st);
+  window.print();
+}
+window.addEventListener('afterprint', () => {
+  document.body.removeAttribute('data-print-turno');
+  const st = document.getElementById('prod-page-style');
+  if(st) st.remove();
+});
+
+/* ===================== EXPEDIÇÃO (Status Expedição — só T2) =====================
 const EXP_TURNO = 'T2';
 let expedData = { rows: [], resumo: {}, por: '', em: '' };
 
