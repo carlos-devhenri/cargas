@@ -576,6 +576,26 @@
     font-family:'Oswald',sans-serif; font-weight:700; font-size:.8rem;
   }
   .plan-mini-table tfoot td.pm-vol, .plan-mini-table tfoot td.pm-sku{ color:var(--band); text-align:right; font-size:1rem; }
+  /* ---------- IMPRESSÃO: CARGAS NO PISO ---------- */
+  #piso-print-area{ display:none; }
+  @media print{
+    body[data-print-target="piso"] > *:not(#piso-print-area){ display:none !important; }
+    body[data-print-target="piso"]{ background:#fff !important; }
+    body[data-print-target="piso"] #piso-print-area{ display:block; color:#000; font-family:Arial,sans-serif; }
+    #piso-print-area h1{ font-family:Arial,sans-serif; font-size:18px; margin:0 0 2px; color:#000; letter-spacing:0; }
+    #piso-print-area .pp-sub{ font-size:11px; margin:0 0 6px; color:#333; }
+    #piso-print-area .pp-resumo{ font-size:12px; font-weight:700; margin:0 0 10px; }
+    #piso-print-area table{ width:100%; border-collapse:collapse; font-size:11px; }
+    #piso-print-area thead{ display:table-header-group; }
+    #piso-print-area tr{ page-break-inside:avoid; }
+    #piso-print-area th, #piso-print-area td{
+      border:1px solid #888; padding:4px 6px; text-align:left; color:#000; background:#fff;
+      -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    }
+    #piso-print-area th{ background:#e3b23c !important; font-size:10px; text-transform:uppercase; }
+    #piso-print-area tr.pp-grp td{ background:#ddd !important; font-weight:700; text-transform:uppercase; font-size:11px; }
+    #piso-print-area tfoot td{ background:#eee !important; font-weight:700; font-family:Arial,sans-serif; border-top:2px solid #000; }
+  }
 </style>
 </head>
 <body>
@@ -702,6 +722,7 @@
           <span class="sub" id="data-piso"></span>
         </div>
         <div class="stat-row">
+          <button class="btn btn-ghost btn-sm no-print" style="align-self:center;" onclick="imprimirCargasPiso()">🖨 Imprimir</button>
           <div class="stat"><div class="n" id="st-total-cargas">0</div><div class="l">Total de cargas</div></div>
           <div class="stat"><div class="n" id="st-cargas-etq">0</div><div class="l">Etiquetadas</div></div>
           <div class="stat"><div class="n" id="st-vol-etq">0</div><div class="l">Volumes (etiq.)</div></div>
@@ -768,6 +789,7 @@
           <h2>DISTRIBUIÇÃO T1</h2>
           <span class="sub" id="data-dist-T1"></span>
         </div>
+        <button class="btn btn-ghost btn-sm no-print" onclick="copiarDistribuicao('T1')">📋 Copiar para Excel</button>
       </div>
       <div class="summary-cards">
         <div class="card">
@@ -812,6 +834,7 @@
           <h2>DISTRIBUIÇÃO T2</h2>
           <span class="sub" id="data-dist-T2"></span>
         </div>
+        <button class="btn btn-ghost btn-sm no-print" onclick="copiarDistribuicao('T2')">📋 Copiar para Excel</button>
       </div>
       <div class="summary-cards">
         <div class="card">
@@ -856,6 +879,7 @@
           <h2>DISTRIBUIÇÃO T3</h2>
           <span class="sub" id="data-dist-T3"></span>
         </div>
+        <button class="btn btn-ghost btn-sm no-print" onclick="copiarDistribuicao('T3')">📋 Copiar para Excel</button>
       </div>
       <div class="summary-cards">
         <div class="card">
@@ -901,6 +925,7 @@
           <h2>RESUMO</h2>
           <span class="sub">Turnos que já têm alguma carga distribuída — cada um com sua própria grade e total</span>
         </div>
+        <button class="btn btn-ghost btn-sm no-print" onclick="copiarDistribuicao('TODOS')">📋 Copiar tudo para Excel</button>
       </div>
       <div id="resumo-turnos-container"></div>
     </section>
@@ -1317,6 +1342,31 @@
     </div>
   </div>
 </div>
+
+<!-- ===================== MODAL: QTD. DE PRODUTIVOS (1ª distribuição do turno) ===================== -->
+<div class="modal-overlay" id="produtivos-modal">
+  <div class="modal-box" style="max-width:440px;">
+    <div class="login-band">
+      <h1>Informe a qtd. de produtivos</h1>
+      <p>Obrigatório para distribuir a primeira carga do turno</p>
+    </div>
+    <div class="modal-body">
+      <p class="hint" style="margin:0 0 14px;">Carga <b id="produtivos-modal-carga"></b> · Turno <b id="produtivos-modal-turno"></b>. Sem a quantidade de produtivos a carga não pode ser distribuída.</p>
+      <div class="field">
+        <label for="produtivos-modal-input">Qtd. de produtivos</label>
+        <input type="number" id="produtivos-modal-input" min="1" step="1" inputmode="numeric" placeholder="Ex.: 7" onkeydown="if(event.key==='Enter') confirmarProdutivos()">
+      </div>
+      <div id="produtivos-modal-erro" style="color:var(--danger); font-size:.82rem; min-height:1em;"></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost btn-sm" onclick="fecharProdutivosModal()">Cancelar</button>
+        <button class="btn btn-primary" style="width:auto;" onclick="confirmarProdutivos()">Confirmar e distribuir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- área usada só na impressão de "Cargas no Piso" -->
+<div id="piso-print-area"></div>
 
 <!-- ===================== MODAL: CÓDIGO (QR) PRO SITE ===================== -->
 <div class="modal-overlay" id="qr-modal">
@@ -1919,12 +1969,16 @@ function renderFila(){
 }
 
 function marcarDistribuido(cardEl, idx){
+  // 1ª carga do turno sem qtd. de produtivos: pede a quantidade antes de distribuir
+  if(precisaProdutivos()){ abrirProdutivosModal(idx); return; }
   cardEl.classList.add('marcando');
   setTimeout(()=> distribuirCarga(idx), 350);
 }
 
 function distribuirCarga(idx){
+  if(precisaProdutivos()){ renderAll(); return; }
   const row = pisoData[idx];
+  if(!row) return;
   distData.push({
     etiquetagem: row.produtivo,
     doca: row.doca,
@@ -3739,6 +3793,169 @@ function copySiteLink(){
   }
 }
 
+/* ===================== QTD. DE PRODUTIVOS OBRIGATÓRIA NA 1ª DISTRIBUIÇÃO ===================== */
+let produtivosPendente = null; // número da carga que está esperando a qtd. de produtivos
+
+/* true quando o turno ativo ainda não tem nenhuma carga distribuída E a qtd. de produtivos está vazia/zero */
+function precisaProdutivos(){
+  const t = turnoAtivo;
+  const jaTemCarga = distData.some(r => turnoDaCarga(r) === t);
+  const qtd = Number((distExtras[t] || {}).qtdProdutivos) || 0;
+  return !jaTemCarga && qtd <= 0;
+}
+
+function abrirProdutivosModal(idx){
+  const row = pisoData[idx];
+  if(!row) return;
+  produtivosPendente = String(row.carga).trim();
+  document.getElementById('produtivos-modal-carga').textContent = row.carga;
+  document.getElementById('produtivos-modal-turno').textContent = turnoAtivo;
+  document.getElementById('produtivos-modal-erro').textContent = '';
+  const inp = document.getElementById('produtivos-modal-input');
+  inp.value = '';
+  document.getElementById('produtivos-modal').classList.add('open');
+  setTimeout(() => inp.focus(), 50);
+}
+
+function fecharProdutivosModal(){
+  produtivosPendente = null;
+  document.getElementById('produtivos-modal').classList.remove('open');
+}
+
+function confirmarProdutivos(){
+  if(!currentUser || !PERFIS_DISTRIBUICAO.includes(currentUser.role)) return;
+  const inp = document.getElementById('produtivos-modal-input');
+  const n = parseInt(inp.value, 10);
+  if(!(n >= 1)){
+    document.getElementById('produtivos-modal-erro').textContent = 'Informe a quantidade de produtivos (mínimo 1) para distribuir a carga.';
+    inp.focus();
+    return;
+  }
+  // reencontra a carga pelo número (a lista pode ter mudado com a janela aberta)
+  const idx = pisoData.findIndex(r => String(r.carga).trim() === produtivosPendente && r.status === 'CARGA ETIQUETADA');
+  if(idx === -1){
+    fecharProdutivosModal();
+    showToast('Essa carga não está mais disponível na fila.', true);
+    return;
+  }
+  const t = turnoAtivo;
+  if(!distExtras[t]) distExtras[t] = distExtrasVazio();
+  distExtras[t].qtdProdutivos = n;
+  fecharProdutivosModal();
+  distribuirCarga(idx); // já salva a distribuição junto com a qtd. de produtivos
+}
+
+/* ===================== IMPRIMIR CARGAS NO PISO ===================== */
+function imprimirCargasPiso(){
+  if(!currentUser) return;
+  // mesmas regras da tela: perfis restritos só imprimem os status que enxergam
+  const permitidos = STATUS_VISIVEL[currentUser.role];
+  const vis = pisoData.filter(r => !permitidos || permitidos.includes(r.status));
+  if(vis.length === 0){ showToast('Não há cargas no piso para imprimir.', true); return; }
+
+  const porPrio = (a, b) => (b.prioridade ? 1 : 0) - (a.prioridade ? 1 : 0); // prioridades no topo
+  const naoEtq = vis.filter(r => r.status !== 'CARGA ETIQUETADA').sort(porPrio);
+  const etq = vis.filter(r => r.status === 'CARGA ETIQUETADA').sort(porPrio);
+  const soma = (lista, campo) => lista.reduce((s, r) => s + Number(r[campo] || 0), 0);
+
+  const linha = r => {
+    const prio = r.prioridade ? '<b>⚑ PRIORIDADE</b> ' : '';
+    const marca = r.marcadoEtq ? `<br>✔ marcada por ${escapeHtml(r.marcadoEtq.por)}` : '';
+    return `<tr>
+      <td>${escapeHtml(r.produtivo)}</td>
+      <td>${escapeHtml(r.doca)}</td>
+      <td>${escapeHtml(r.carga)}</td>
+      <td>${escapeHtml(r.fornecedor)}</td>
+      <td>${escapeHtml(r.liberacao)}</td>
+      <td>${escapeHtml(r.d1)}</td>
+      <td>${fmtInt(r.volume || 0)}</td>
+      <td>${escapeHtml(r.sku)}</td>
+      <td>${escapeHtml(r.departamento)}</td>
+      <td>${escapeHtml(STATUS_LABELS[r.status] || r.status)}${marca}</td>
+      <td>${prio}${escapeHtml(r.obs)}</td>
+    </tr>`;
+  };
+  const grupo = (titulo, lista) => lista.length
+    ? `<tr class="pp-grp"><td colspan="11">${titulo} — ${lista.length}</td></tr>` + lista.map(linha).join('')
+    : '';
+
+  const { curto, extenso } = todayLabel();
+  const d = new Date();
+  const hora = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+
+  document.getElementById('piso-print-area').innerHTML = `
+    <h1>CARGAS NO PISO</h1>
+    <div class="pp-sub">${curto} · ${escapeHtml(extenso)} · impresso às ${hora} por ${escapeHtml(currentUser.nome)}</div>
+    <div class="pp-resumo">Total de cargas: ${vis.length} · Etiquetadas: ${etq.length} · Volumes (etiq.): ${fmtInt(soma(etq,'volume'))} · SKU (etiq.): ${soma(etq,'sku')}</div>
+    <table>
+      <thead>
+        <tr><th>Produtivo</th><th>Doca</th><th>Carga</th><th>Fornecedor</th><th>Liberação</th><th>D-1</th><th>Volume</th><th>SKU</th><th>Departamento</th><th>Status</th><th>Obs.</th></tr>
+      </thead>
+      <tbody>
+        ${grupo('NÃO ETIQUETADAS', naoEtq)}
+        ${grupo('ETIQUETADAS', etq)}
+      </tbody>
+      <tfoot>
+        <tr><td colspan="6">VOLUME TOTAL</td><td>${fmtInt(soma(vis,'volume'))}</td><td>${soma(vis,'sku')}</td><td colspan="3"></td></tr>
+      </tfoot>
+    </table>`;
+
+  // página deitada (paisagem) só durante esta impressão
+  const velho = document.getElementById('pp-page-style');
+  if(velho) velho.remove();
+  const st = document.createElement('style');
+  st.id = 'pp-page-style';
+  st.textContent = '@page{ size:A4 landscape; margin:10mm; }';
+  document.head.appendChild(st);
+
+  document.body.setAttribute('data-print-target', 'piso');
+  window.print();
+}
+window.addEventListener('afterprint', () => {
+  const s = document.getElementById('pp-page-style');
+  if(s) s.remove();
+});
+
+/* ===================== COPIAR DISTRIBUIÇÃO PARA O EXCEL ===================== */
+/* copia as linhas separadas por TAB — é só colar (Ctrl+V) numa célula do Excel */
+function copiarDistribuicao(turno){
+  const turnos = turno === 'TODOS' ? TURNOS : [turno];
+  const limpa = v => String(v === undefined || v === null ? '' : v).replace(/[\t\r\n]+/g, ' ').trim();
+
+  const linhas = [['Etiquetagem','Doca','Carga','Descrição','Liberação','D-1','Volume','SKU','Hora dist.','Turno','Distribuído por'].join('\t')];
+  let n = 0;
+  turnos.forEach(t => {
+    distData.filter(r => turnoDaCarga(r) === t).forEach(r => {
+      n++;
+      linhas.push([r.etiquetagem, r.doca, r.carga, r.descricao, r.liberacao, r.d1, r.volume, r.sku, r.horaDist, t, r.distribuidoPor || '']
+        .map(limpa).join('\t'));
+    });
+  });
+
+  const rotulo = turno === 'TODOS' ? 'de todos os turnos' : turno;
+  if(n === 0){ showToast(`Não há cargas distribuídas ${turno === 'TODOS' ? 'ainda' : 'no ' + turno} para copiar.`, true); return; }
+
+  const texto = linhas.join('\n');
+  const ok = () => showToast(`📋 ${n} carga(s) da Distribuição ${rotulo} copiada(s). Abra o Excel e cole com Ctrl+V.`, false);
+  const alternativa = () => {
+    const ta = document.createElement('textarea');
+    ta.value = texto;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    let copiou = false;
+    try{ copiou = document.execCommand('copy'); }catch(e){}
+    ta.remove();
+    if(copiou) ok(); else showToast('Não deu pra copiar automaticamente neste navegador.', true);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texto).then(ok).catch(alternativa);
+  } else {
+    alternativa();
+  }
+}
+
 /* ===================== UTIL ===================== */
 function escapeHtml(str){
   if(str === undefined || str === null) return '';
@@ -4263,7 +4480,7 @@ function renderExpProg(){
 }
 
 /* ===================== SOMENTE LEITURA (fora do horário do turno) ===================== */
-const RO_PERMITIDO_ONCLICK = /switchTab|switchDistTab|logout|openQrModal|closeQrModal|copySiteLink|imprimir|toggleMobilePreview|toggleSenhaVisibility|^document\./;
+const RO_PERMITIDO_ONCLICK = /switchTab|switchDistTab|logout|openQrModal|closeQrModal|copySiteLink|copiarDistribuicao|imprimir|toggleMobilePreview|toggleSenhaVisibility|^document\./;
 function roPermitido(el){
   if(!el) return true;
   if(el.closest('[data-ro-ok]') || el.closest('.tab-btn')) return true;
