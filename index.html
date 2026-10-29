@@ -306,9 +306,6 @@
 
   /* ---------- IMPRESSÃO (relatório Cross / Planejamento) ---------- */
   @media print{
-    body[data-print-target="cross"] *{ visibility:hidden; }
-    body[data-print-target="cross"] #panel-relatorio-cross, body[data-print-target="cross"] #panel-relatorio-cross *{ visibility:visible; }
-    body[data-print-target="cross"] #panel-relatorio-cross{ position:absolute; left:0; top:0; width:100%; margin:0; border:none; }
 
     body[data-print-target="plan"] *{ visibility:hidden; }
     body[data-print-target="plan"] #plan-print-area, body[data-print-target="plan"] #plan-print-area *{ visibility:visible; }
@@ -700,6 +697,54 @@
     #users-float{ bottom:54px; }
   }
   .fila-card, .pc{ scroll-margin-top:96px; }
+
+  /* ---------- RELATÓRIO MONTADO: células só do celular ficam ocultas no computador ---------- */
+  td.mc-only{ display:none; }
+  tr.grp-loja td{
+    background:#140c04; color:var(--band); font-family:'Oswald',sans-serif; font-weight:700; letter-spacing:.06em;
+    text-transform:uppercase; font-size:.76rem; border-bottom:2px solid var(--band-strong); padding:7px 10px;
+  }
+  tbody tr.grp-loja:hover{ background:transparent; }
+  .mobile-card-table tr.grp-loja{ background:transparent; border:none; padding:0; margin:12px 0 6px; }
+  .mobile-card-table tr.grp-loja td{ display:block; border-top:none; padding:7px 10px; }
+
+  /* ---------- PROGRAMAÇÃO EXPEDIÇÃO - DESTINO ---------- */
+  .prog-body{ padding:14px 20px 16px; }
+  .prog-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; margin-bottom:12px; }
+  .prog-chip{ display:flex; align-items:center; gap:8px; padding:9px 12px; border:1px solid var(--line); border-radius:4px;
+    background:var(--row-alt); cursor:pointer; font-weight:600; font-size:.85rem; user-select:none; }
+  .prog-chip:hover{ border-color:var(--band); }
+  .prog-chip.on{ background:var(--band); border-color:var(--band); color:#000; }
+  .prog-chip input{ accent-color:var(--band-strong); width:16px; height:16px; margin:0; }
+  .prog-chip b{ margin-left:auto; font-family:'Oswald',sans-serif; font-size:.78rem; opacity:.8; }
+  .prog-actions{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .prog-actions input[type=text]{ width:210px; background:var(--input-bg); border:1px solid var(--line); color:var(--text);
+    padding:7px 10px; border-radius:3px; font-size:.82rem; font-family:'Inter',sans-serif; }
+  .prog-vazio{ color:var(--text-dim); font-style:italic; padding:6px 0 10px; grid-column:1/-1; }
+  .btn-ghost.ativo{ background:var(--band); border-color:var(--band); color:#000; }
+  .btn-ghost.ativo:hover{ color:#000; filter:brightness(1.08); }
+
+  /* ---------- IMPRESSÃO: RELATÓRIO MONTADO (paisagem, compacto) ---------- */
+  #cross-print-area{ display:none; }
+  @media print{
+    body[data-print-target="cross"] > *:not(#cross-print-area){ display:none !important; }
+    body[data-print-target="cross"]{ background:#fff !important; }
+    body[data-print-target="cross"] #cross-print-area{ display:block; color:#000; font-family:Arial,sans-serif; }
+    #cross-print-area h1{ font-family:Arial,sans-serif; font-size:14px; margin:0 0 2px; color:#000; letter-spacing:0; }
+    #cross-print-area .pp-sub{ font-size:9px; margin:0 0 5px; color:#333; }
+    #cross-print-area table{ width:100%; border-collapse:collapse; table-layout:fixed; font-size:8px; }
+    #cross-print-area thead{ display:table-header-group; }
+    #cross-print-area tr{ page-break-inside:avoid; }
+    #cross-print-area th, #cross-print-area td{
+      border:1px solid #999; padding:1px 3px; line-height:1.3; text-align:left; color:#000; background:#fff;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    }
+    #cross-print-area th{ background:#FF8A1F !important; font-size:7.5px; text-transform:uppercase; }
+    #cross-print-area td.cp-n{ text-align:right; font-weight:700; }
+    #cross-print-area tr.cp-grp td{ background:#ddd !important; font-weight:700; text-transform:uppercase; font-size:8.5px; }
+    #cross-print-area tfoot td{ background:#eee !important; font-weight:700; border-top:2px solid #000; }
+  }
 </style>
 </head>
 <body>
@@ -1061,11 +1106,33 @@
 
   <div id="tab-cross" style="display:none;">
 
+    <section class="panel" id="panel-programacao">
+      <div class="panel-header">
+        <div class="title-block">
+          <h2>PROGRAMAÇÃO EXPEDIÇÃO - DESTINO</h2>
+          <span class="sub" id="prog-sub">Marque as lojas que serão expedidas no dia</span>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="n" id="st-prog-count">0</div><div class="l">Lojas programadas</div></div>
+        </div>
+      </div>
+      <div class="prog-body">
+        <div class="prog-grid" id="prog-grid"></div>
+        <div class="prog-actions no-print" id="prog-actions">
+          <button class="btn btn-ghost btn-sm" onclick="progMarcarTodas(true)">Marcar todas</button>
+          <button class="btn btn-ghost btn-sm" onclick="progMarcarTodas(false)">Limpar seleção</button>
+          <input type="text" id="prog-nova" maxlength="30" placeholder="Adicionar loja (ex.: LOJA 05)" onkeydown="if(event.key==='Enter') progAdicionarLoja()">
+          <button class="btn btn-ghost btn-sm" onclick="progAdicionarLoja()">+ Adicionar loja</button>
+        </div>
+        <span class="hint" style="display:block; margin-top:10px;">As lojas listadas vêm do relatório colado da planilha. Depois de marcar as que serão expedidas hoje, use o botão <b>Programação Expedição</b> no painel abaixo para ver só as cargas pendentes dessas lojas. A marcação vale para o dia e é a mesma para todos.</span>
+      </div>
+    </section>
+
     <section class="panel" id="panel-cross-pendencias">
       <div class="panel-header">
         <div class="title-block">
-          <h2>RELATÓRIO</h2>
-          <span class="sub">Cargas com % de agrupamento acima de 1% · Pedido: Cross-Docking</span>
+          <h2>PAINEL CARGAS MONTADAS - CD SECOS</h2>
+          <span class="sub" id="cross-pend-sub">Cargas com % de agrupamento acima de 1% · Pedido: Cross-Docking</span>
         </div>
         <div class="stat-row">
           <div class="stat"><div class="n" id="st-cross-pend-count">0</div><div class="l">Cargas pendentes</div></div>
@@ -1083,6 +1150,7 @@
       </div>
       <div class="panel-footer-actions no-print" id="cross-pend-actions" style="display:none;">
         <button class="btn btn-ghost btn-sm" onclick="openCrossImportModal()">Colar relatório da planilha (Excel)</button>
+        <button class="btn btn-ghost btn-sm" id="btn-prog-filtro" onclick="toggleProgramacaoFiltro()" title="Mostra só as cargas pendentes das lojas marcadas na Programação Expedição">Programação Expedição</button>
       </div>
     </section>
 
@@ -1100,7 +1168,7 @@
         <table>
           <thead>
             <tr>
-              <th>Master</th><th>Destino</th><th>Cód</th><th>Descrição</th><th>Embalagem</th><th>Qtd</th><th>Peso (kg)</th><th>Volume (m³)</th><th>Carga</th><th>Fornecedor</th><th>Recebimento</th><th>Aging</th>
+              <th>Master</th><th>Destino</th><th>Cód</th><th>Descrição</th><th>Embalagem</th><th>Qtd</th><th>Carga</th><th>Fornecedor</th><th>Recebimento</th><th>Aging</th>
             </tr>
           </thead>
           <tbody id="tbody-cross-relatorio"></tbody>
@@ -1111,7 +1179,7 @@
           <button class="btn btn-primary" style="width:auto; display:none;" id="btn-print-cross" onclick="imprimirRelatorioCross()">Imprimir relatório</button>
           <button class="btn btn-ghost btn-sm" id="btn-mobile-preview" onclick="toggleMobilePreview()">Visualizar como celular</button>
         </div>
-        <span class="hint" style="margin:0;">Na janela de impressão, selecione a impressora <b>1030-SUOP-001</b> (porta IP_10.30.2.235). Use o botão acima para ver, no computador, como o relatório fica no celular.</span>
+        <span class="hint" style="margin:0;">O relatório sai impresso em paisagem (deitado), agrupado por loja. Na janela de impressão, selecione a impressora <b>1030-SUOP-001</b> (porta IP_10.30.2.235). Use o botão acima para ver, no computador, como o relatório fica no celular.</span>
       </div>
     </section>
 
@@ -1139,9 +1207,14 @@
             <button class="btn btn-ghost btn-sm" onclick="imprimirProdutividade('T2')">T2</button>
             <button class="btn btn-ghost btn-sm" onclick="imprimirProdutividade('T3')">T3</button>
             <button class="btn btn-ghost btn-sm" onclick="imprimirProdutividade('todos')">Todos juntos</button>
+            <span style="margin-left:12px;">📋 Copiar como imagem:</span>
+            <button class="btn btn-ghost btn-sm" onclick="copiarGraficoImagem('T1')">T1</button>
+            <button class="btn btn-ghost btn-sm" onclick="copiarGraficoImagem('T2')">T2</button>
+            <button class="btn btn-ghost btn-sm" onclick="copiarGraficoImagem('T3')">T3</button>
+            <button class="btn btn-ghost btn-sm" onclick="copiarGraficoImagem('todos')">Todos juntos</button>
           </div>
         </div>
-        <span class="hint" style="display:block; margin:0 0 4px;">Uma barra por dia, por turno: a altura é o volume distribuído (grade + estocado full/mix) e o número verde embaixo é o SKU do dia. Vem da Distribuição fechada de cada dia; o dia de hoje aparece mais claro (em andamento).</span>
+        <span class="hint" style="display:block; margin:0 0 4px;">Uma barra por dia, por turno: a altura é o volume distribuído (grade + estocado full/mix) e o número verde embaixo é o SKU do dia. Vem da Distribuição fechada de cada dia; o dia de hoje aparece mais claro (em andamento). Os Domingos (sem operação) aparecem sombreados e marcados com DOM.</span>
         <div id="prod-print-area"><div id="prod-print-title"></div><div id="prod-container"></div></div>
       </div>
       <div class="panel-footer-actions fech-foto-bar no-print" id="fech-foto-actions">
@@ -1326,7 +1399,7 @@
   <div class="modal-box">
     <div class="login-band">
       <h1>Colar relatório Cross da planilha</h1>
-      <p>Cole as linhas copiadas do Excel (colunas: Agrupadora, Master, Status, Destino, Cód, Descrição, Embalagem, Qtd, Peso, Volume, Carga, Fornecedor, Recebimento, Coluna1, Pedido)</p>
+      <p>Cole as linhas copiadas do Excel (colunas: Agrupadora, Master, Status, Destino, Cód, Descrição, Embalagem, Qtd, Carga, Fornecedor, Recebimento, Coluna1, Pedido)</p>
     </div>
     <div class="modal-body">
       <textarea id="import-cross-textarea" placeholder="Cole aqui o intervalo copiado do Excel..."></textarea>
@@ -1420,6 +1493,7 @@
 
 <!-- área usada só na impressão de "Cargas no Piso" -->
 <div id="piso-print-area"></div>
+<div id="cross-print-area"></div>
 
 <!-- ===================== MODAL: CÓDIGO (QR) PRO SITE ===================== -->
 <div class="modal-overlay" id="qr-modal">
@@ -1584,6 +1658,10 @@ function switchDistTab(nome){
 
 let crossRawData = [];
 let crossMarcadas = {};
+/* Programação Expedição: lojas marcadas para expedir hoje (sincronizado na nuvem) + filtro local do painel */
+let progLojas = [];
+let progCatalogoExtra = [];   // lojas adicionadas à mão (as demais vêm do relatório colado)
+let progFiltroAtivo = false;
 
 const DEMO_DIST = [
   {etiquetagem:'', doca:'', carga:'446886', descricao:'VINICOLA ID:8594', liberacao:'10/09/2026', d1:0, volume:2064, sku:9, horaDist:'19:10'},
@@ -1607,6 +1685,7 @@ let fechSelecionado = null;
 function savePiso(){}
 function saveDist(){}
 function saveCross(){}
+function saveProgramacao(){}
 async function checkAndRegisterUser(nome, celular, role){ return { ok:true }; }
 function watchOwnUserStatus(){}
 function slugifyName(nome){
@@ -3309,8 +3388,10 @@ function toDecimalBR(v){
   return isNaN(n) ? 0 : n;
 }
 
-/* colunas da planilha: AGRUPADORA, MASTER, STATUS, DESTINO, CÓD, DESCRIÇÃO, EMBALAGEM, QTD, PESO,
-   VOLUME, CARGA, FORNECEDOR, RECEBIMENTO, (Coluna1), PEDIDO */
+/* colunas da base atual: AGRUPADORA, MASTER, STATUS, DESTINO, CÓD, DESCRIÇÃO, EMBALAGEM, QTD, CARGA,
+   FORNECEDOR, RECEBIMENTO, (Coluna1), PEDIDO. Bases antigas, com PESO e VOLUME antes da CARGA, também são aceitas. */
+const CROSS_LAYOUT_ATUAL  = ['agrupadora','master','status','destino','cod','descricao','embalagem','qtd','carga','fornecedor','recebimento',null,'pedido'];
+const CROSS_LAYOUT_ANTIGO = ['agrupadora','master','status','destino','cod','descricao','embalagem','qtd','peso','volume','carga','fornecedor','recebimento',null,'pedido'];
 function parseCrossPaste(raw){
   const lines = raw.split(/\r?\n/).filter(l => l.trim() !== '');
   if(lines.length === 0) return [];
@@ -3318,10 +3399,20 @@ function parseCrossPaste(raw){
   const headerCols = lines[0].split('\t').map(normalizeHeader);
   const hasHeader = headerCols.includes('AGRUPADORA') || headerCols.includes('CARGA');
   const dataLines = hasHeader ? lines.slice(1) : lines;
+  if(dataLines.length === 0) return [];
 
-  const colKeys = hasHeader
-    ? headerCols.map(h => CROSS_HEADER_MAP[h] || null)
-    : ['agrupadora','master','status','destino','cod','descricao','embalagem','qtd','peso','volume','carga','fornecedor','recebimento',null,'pedido'];
+  let colKeys;
+  if(hasHeader){
+    colKeys = headerCols.map(h => CROSS_HEADER_MAP[h] || null);
+  } else {
+    // sem cabeçalho: descobre o formato olhando onde está a carga (coluna 9 na base atual, coluna 11 na antiga)
+    const c0 = dataLines[0].split('\t').map(c => c.trim());
+    if(isCargaToken(c0[8] || '') && !isCargaToken(c0[10] || '')){
+      colKeys = /CROSS|ESTOC/i.test(c0[11] || '') ? CROSS_LAYOUT_ATUAL.slice(0, 11).concat(['pedido']) : CROSS_LAYOUT_ATUAL.slice();
+    } else {
+      colKeys = CROSS_LAYOUT_ANTIGO.slice();
+    }
+  }
 
   const rows = [];
   dataLines.forEach(line => {
@@ -3338,8 +3429,6 @@ function parseCrossPaste(raw){
         descricao: obj.descricao || '',
         embalagem: obj.embalagem || '',
         qtd: toNumberBR(obj.qtd),
-        peso: toDecimalBR(obj.peso),
-        volume: toDecimalBR(obj.volume),
         carga: obj.carga || '',
         fornecedor: obj.fornecedor || '',
         recebimento: obj.recebimento || '',
@@ -3374,9 +3463,19 @@ function agingLabel(r){
   return n + (Math.abs(n) === 1 ? ' dia' : ' dias');
 }
 
+function normLoja(s){ return String(s == null ? '' : s).trim().toUpperCase().replace(/\s+/g, ' '); }
+function cmpNat(a, b){ return String(a || '').localeCompare(String(b || ''), 'pt-BR', { numeric:true, sensitivity:'base' }); }
+
+/* com a Programação Expedição ligada, só contam as linhas das lojas marcadas */
+function crossRowsFiltradas(){
+  if(!progFiltroAtivo) return crossRawData;
+  const sel = new Set(progLojas.map(normLoja));
+  return crossRawData.filter(r => sel.has(normLoja(r.destino)));
+}
+
 function computePendenciasCross(){
   const grupos = {};
-  crossRawData
+  crossRowsFiltradas()
     .filter(ehCrossDocking)
     .forEach(r => {
       const key = r.carga;
@@ -3392,10 +3491,13 @@ function computePendenciasCross(){
     .sort((a,b) => b.pct - a.pct);
 }
 
+/* itens montados (Cross-Docking) das cargas marcadas, organizados por loja → descrição → carga */
 function computeRelatorioCross(){
-  const cargasMarcadas = Object.keys(crossMarcadas).filter(c => crossMarcadas[c]);
-  if(cargasMarcadas.length === 0) return [];
-  return crossRawData.filter(r => cargasMarcadas.includes(r.carga) && String(r.status||'').toUpperCase().includes('MONTAD'));
+  const marcadas = new Set(Object.keys(crossMarcadas).filter(c => crossMarcadas[c]));
+  if(marcadas.size === 0) return [];
+  return crossRowsFiltradas()
+    .filter(r => marcadas.has(r.carga) && ehCrossDocking(r) && String(r.status||'').toUpperCase().includes('MONTAD'))
+    .sort((a,b) => cmpNat(a.destino, b.destino) || cmpNat(a.descricao, b.descricao) || cmpNat(a.carga, b.carga));
 }
 
 /* O Firestore recusa documentos acima de 1MB — as linhas do Cross são quebradas em pedaços menores */
@@ -3429,12 +3531,27 @@ function renderCrossPendencias(){
   const canImport = ehAdminLike(currentUser.role);
   document.getElementById('cross-pend-actions').style.display = canImport ? 'flex' : 'none';
 
+  const btnProg = document.getElementById('btn-prog-filtro');
+  if(btnProg){
+    btnProg.classList.toggle('ativo', progFiltroAtivo);
+    btnProg.textContent = progFiltroAtivo
+      ? `Programação Expedição ✔ (${progLojas.length} loja${progLojas.length === 1 ? '' : 's'})`
+      : 'Programação Expedição';
+  }
+  const sub = document.getElementById('cross-pend-sub');
+  if(sub) sub.textContent = progFiltroAtivo
+    ? 'Filtrado pela Programação Expedição: ' + (progLojas.length ? progLojas.slice().sort(cmpNat).join(', ') : 'nenhuma loja marcada')
+    : 'Cargas com % de agrupamento acima de 1% · Pedido: Cross-Docking';
+
   const tbody = document.getElementById('tbody-cross-pend');
   tbody.innerHTML = '';
   const pendencias = computePendenciasCross();
 
   if(pendencias.length === 0){
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Nenhuma carga pendente no relatório Cross.</td></tr>';
+    const msg = progFiltroAtivo
+      ? (progLojas.length ? 'Nenhuma carga pendente para as lojas da Programação Expedição.' : 'Nenhuma loja marcada na Programação Expedição.')
+      : 'Nenhuma carga pendente no relatório Cross.';
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="8">${msg}</td></tr>`;
   }
 
   pendencias.forEach(p => {
@@ -3463,10 +3580,29 @@ function renderCrossRelatorio(){
   const itens = computeRelatorioCross();
 
   if(itens.length === 0){
-    tbody.innerHTML = '<tr class="empty-row"><td class="mc-only mc-show" style="display:block;" colspan="12">Nenhuma carga marcada para o relatório ainda.</td></tr>';
+    const msg = (progFiltroAtivo && progLojas.length === 0)
+      ? 'Nenhuma loja marcada na Programação Expedição.'
+      : 'Nenhuma carga marcada para o relatório ainda.';
+    tbody.innerHTML = `<tr class="empty-row"><td class="mc-only mc-show" style="display:block;" colspan="10">${msg}</td></tr>`;
   }
 
+  const contLoja = {}, qtdLoja = {};
   itens.forEach(r => {
+    const k = normLoja(r.destino) || 'SEM DESTINO';
+    contLoja[k] = (contLoja[k] || 0) + 1;
+    qtdLoja[k] = (qtdLoja[k] || 0) + Number(r.qtd || 0);
+  });
+
+  let lojaAtual = null;
+  itens.forEach(r => {
+    const k = normLoja(r.destino) || 'SEM DESTINO';
+    if(k !== lojaAtual){
+      lojaAtual = k;
+      const g = document.createElement('tr');
+      g.className = 'grp-loja';
+      g.innerHTML = `<td class="mc-show" colspan="10">${escapeHtml(k)} — ${contLoja[k]} item(ns) · Qtd ${fmtInt(qtdLoja[k])}</td>`;
+      tbody.appendChild(g);
+    }
     const tr = document.createElement('tr');
     const emb = r.embalagem || r.embl || '';
     const aging = agingLabel(r);
@@ -3480,8 +3616,6 @@ function renderCrossRelatorio(){
       <td data-label="Descrição">${escapeHtml(r.descricao)}</td>
       <td class="mc-show" data-label="Embalagem">${escapeHtml(emb)}</td>
       <td class="mc-show" data-label="Qtd">${fmtInt(r.qtd)}</td>
-      <td class="mc-show" data-label="Peso (kg)">${fmtDec(r.peso, 2)}</td>
-      <td class="mc-show" data-label="Volume (m³)">${fmtDec(r.volume, 5)}</td>
       <td data-label="Carga">${escapeHtml(r.carga)}</td>
       <td data-label="Fornecedor">${escapeHtml(r.fornecedor)}</td>
       <td data-label="Recebimento">${escapeHtml(r.recebimento || '')}</td>
@@ -3515,13 +3649,140 @@ window.addEventListener('resize', applyCrossReportLayout);
 window.addEventListener('afterprint', () => document.body.removeAttribute('data-print-target'));
 
 function renderCrossAll(){
+  renderProgramacao();
   renderCrossPendencias();
   renderCrossRelatorio();
 }
 
+/* Impressão do relatório montado: página deitada (paisagem), agrupada por loja, o mais compacta possível */
 function imprimirRelatorioCross(){
+  if(!currentUser) return;
+  const itens = computeRelatorioCross();
+  if(itens.length === 0){ showToast('Marque ao menos uma carga em "Imprimir?" para montar o relatório.', true); return; }
+
+  const contLoja = {}, qtdLoja = {};
+  itens.forEach(r => {
+    const k = normLoja(r.destino) || 'SEM DESTINO';
+    contLoja[k] = (contLoja[k] || 0) + 1;
+    qtdLoja[k] = (qtdLoja[k] || 0) + Number(r.qtd || 0);
+  });
+
+  const larg = [8, 6, 7, 27, 6, 5, 7, 22, 7, 5];
+  const cab = ['Master','Destino','Cód','Descrição','Embalagem','Qtd','Carga','Fornecedor','Recebimento','Aging'];
+  let corpo = '';
+  let lojaAtual = null;
+  itens.forEach(r => {
+    const k = normLoja(r.destino) || 'SEM DESTINO';
+    if(k !== lojaAtual){
+      lojaAtual = k;
+      corpo += `<tr class="cp-grp"><td colspan="10">${escapeHtml(k)} — ${contLoja[k]} item(ns) · Qtd ${fmtInt(qtdLoja[k])}</td></tr>`;
+    }
+    corpo += `<tr>
+      <td>${escapeHtml(r.master)}</td>
+      <td>${escapeHtml(r.destino)}</td>
+      <td>${escapeHtml(r.cod)}</td>
+      <td>${escapeHtml(r.descricao)}</td>
+      <td>${escapeHtml(r.embalagem || r.embl || '')}</td>
+      <td class="cp-n">${fmtInt(r.qtd)}</td>
+      <td>${escapeHtml(r.carga)}</td>
+      <td>${escapeHtml(r.fornecedor)}</td>
+      <td>${escapeHtml(r.recebimento || '')}</td>
+      <td>${escapeHtml(agingLabel(r))}</td>
+    </tr>`;
+  });
+  const totalQtd = itens.reduce((s, r) => s + Number(r.qtd || 0), 0);
+  const lojas = Object.keys(contLoja);
+  const { curto } = todayLabel();
+  const d = new Date();
+  const hora = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+
+  document.getElementById('cross-print-area').innerHTML = `
+    <h1>PAINEL CARGAS MONTADAS - CD SECOS</h1>
+    <div class="pp-sub">${curto} · ${hora} · impresso por ${escapeHtml(currentUser.nome)} · ${lojas.length} loja(s): ${escapeHtml(lojas.join(', '))} · ${itens.length} item(ns)</div>
+    <table>
+      <colgroup>${larg.map(w => `<col style="width:${w}%">`).join('')}</colgroup>
+      <thead><tr>${cab.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+      <tbody>${corpo}</tbody>
+      <tfoot><tr><td colspan="5">TOTAL</td><td class="cp-n">${fmtInt(totalQtd)}</td><td colspan="4"></td></tr></tfoot>
+    </table>`;
+
+  const velho = document.getElementById('pp-page-style');
+  if(velho) velho.remove();
+  const st = document.createElement('style');
+  st.id = 'pp-page-style';
+  st.textContent = '@page{ size:A4 landscape; margin:7mm; }';
+  document.head.appendChild(st);
+
   document.body.setAttribute('data-print-target', 'cross');
   window.print();
+}
+
+/* ===================== PROGRAMAÇÃO EXPEDIÇÃO - DESTINO ===================== */
+/* catálogo = destinos que aparecem no relatório colado + lojas adicionadas à mão + as já marcadas */
+function progCatalogo(){
+  const mapa = new Set();
+  const add = n => { const k = normLoja(n); if(k) mapa.add(k); };
+  crossRawData.forEach(r => add(r.destino));
+  progCatalogoExtra.forEach(add);
+  progLojas.forEach(add);
+  return Array.from(mapa).sort(cmpNat);
+}
+function renderProgramacao(){
+  const grid = document.getElementById('prog-grid');
+  if(!grid || !currentUser) return;
+  const canEdit = ehAdminLike(currentUser.role);
+  const cat = progCatalogo();
+  const sel = new Set(progLojas.map(normLoja));
+  const cont = {};
+  crossRawData
+    .filter(r => ehCrossDocking(r) && String(r.status || '').toUpperCase().includes('MONTAD'))
+    .forEach(r => { const k = normLoja(r.destino); cont[k] = (cont[k] || 0) + 1; });
+
+  grid.innerHTML = cat.length
+    ? cat.map(l => `<label class="prog-chip ${sel.has(l) ? 'on' : ''}">
+        <input type="checkbox" data-l="${escapeHtml(l)}" ${sel.has(l) ? 'checked' : ''} ${canEdit ? '' : 'disabled'} onchange="progToggleLoja(this.dataset.l, this.checked)">
+        ${escapeHtml(l)}<b title="Itens montados (Cross-Docking) nesta loja">${fmtInt(cont[l] || 0)}</b>
+      </label>`).join('')
+    : '<div class="prog-vazio">Nenhuma loja ainda — cole o relatório da planilha ou adicione uma loja abaixo.</div>';
+
+  document.getElementById('st-prog-count').textContent = sel.size;
+  const ac = document.getElementById('prog-actions');
+  if(ac) ac.style.display = canEdit ? 'flex' : 'none';
+  const sub = document.getElementById('prog-sub');
+  if(sub) sub.textContent = `Marque as lojas que serão expedidas no dia · ${todayLabel().curto}`;
+}
+function progToggleLoja(nome, marcado){
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
+  const k = normLoja(nome);
+  progLojas = progLojas.filter(l => normLoja(l) !== k);
+  if(marcado) progLojas.push(k);
+  saveProgramacao();
+  renderCrossAll();
+}
+function progMarcarTodas(sim){
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
+  progLojas = sim ? progCatalogo() : [];
+  saveProgramacao();
+  renderCrossAll();
+}
+function progAdicionarLoja(){
+  if(!currentUser || !ehAdminLike(currentUser.role)) return;
+  const inp = document.getElementById('prog-nova');
+  const k = normLoja(inp.value);
+  if(!k) return;
+  if(!progCatalogo().includes(k)) progCatalogoExtra.push(k);
+  if(!progLojas.some(l => normLoja(l) === k)) progLojas.push(k);
+  inp.value = '';
+  saveProgramacao();
+  renderCrossAll();
+}
+function toggleProgramacaoFiltro(){
+  if(!progFiltroAtivo && progLojas.length === 0){
+    showToast('Marque ao menos uma loja na Programação Expedição antes de filtrar.', true);
+    return;
+  }
+  progFiltroAtivo = !progFiltroAtivo;
+  renderCrossAll();
 }
 
 /* ===================== IMPORTAR RELATÓRIO CROSS (colar do Excel) ===================== */
@@ -3940,7 +4201,7 @@ function prodColetar(ym){
 function prodGraficoSvg(ym, turno, dias){
   const n = prodDiasNoMes(ym);
   const slot = 46, padL = 56, padR = 14, top = 34, ch = 170, base = top + ch;
-  const W = padL + n*slot + padR, H = base + 62;
+  const W = padL + n*slot + padR, H = base + 74;
   const vals = [];
   for(let d=1; d<=n; d++){
     const id = ym + '-' + String(d).padStart(2,'0');
@@ -3963,6 +4224,8 @@ function prodGraficoSvg(ym, turno, dias){
     const x = padL + i*slot, bw = slot - 12, bx = x + 6;
     const h = v.vol > 0 ? Math.max(3, v.vol/max*ch) : 0;
     const eHoje = v.id === hoje;
+    const dom = new Date(Number(ym.slice(0,4)), Number(ym.slice(5,7)) - 1, v.d).getDay() === 0;   // Domingo: não há operação
+    if(dom) s += `<rect x="${x+1}" y="${top-8}" width="${slot-2}" height="${base+48-(top-8)}" rx="3" style="fill:var(--line)" fill-opacity=".55"><title>${fmtDia(v.id)} · Domingo — sem operação</title></rect>`;
     if(h > 0){
       const top2 = base - h;
       const ehMelhor = melhor && melhor.id === v.id;
@@ -3970,7 +4233,8 @@ function prodGraficoSvg(ym, turno, dias){
       s += `<text x="${bx+bw/2}" y="${top2-5}" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--text)">${fmtInt(v.vol)}</text>`;
       if(ehMelhor) s += `<text x="${bx+bw/2}" y="${top2-18}" text-anchor="middle" font-size="12" style="fill:var(--band)">★</text>`;
     }
-    s += `<text x="${bx+bw/2}" y="${base+15}" text-anchor="middle" font-size="11" ${eHoje ? 'font-weight="700"' : ''} style="fill:${eHoje ? 'var(--band)' : 'var(--text-dim)'}">${v.d}</text>`;
+    s += `<text x="${bx+bw/2}" y="${base+15}" text-anchor="middle" font-size="11" ${eHoje ? 'font-weight="700"' : ''} style="fill:${dom ? '#ff7b6f' : (eHoje ? 'var(--band)' : 'var(--text-dim)')}">${v.d}</text>`;
+    if(dom) s += `<text x="${bx+bw/2}" y="${base+62}" text-anchor="middle" font-size="9" font-weight="700" style="fill:#ff7b6f">DOM</text>`;
     if(v.vol > 0){
       s += `<rect x="${bx}" y="${base+24}" width="${bw}" height="22" rx="4" style="fill:#174a38"/>`;
       s += `<text x="${bx+bw/2}" y="${base+39}" text-anchor="middle" font-size="13" font-weight="800" style="fill:#8ff0c0">${v.sku}</text>`;
@@ -3979,6 +4243,7 @@ function prodGraficoSvg(ym, turno, dias){
     }
   });
   s += `<text x="${padL-10}" y="${base+15}" text-anchor="end" font-size="10" style="fill:var(--text-dim)">Dia</text>`;
+  s += `<rect x="${W-padR-136}" y="3" width="12" height="12" rx="2" style="fill:var(--line)" fill-opacity=".9"/><text x="${W-padR}" y="13" text-anchor="end" font-size="10" style="fill:var(--text-dim)">Domingo — sem operação</text>`;
   s += `<text x="${padL-10}" y="${base+39}" text-anchor="end" font-size="11" font-weight="700" style="fill:#8ff0c0">SKU</text>`;
   if(media > 0){
     const ym2 = base - media/max*ch;
@@ -4034,6 +4299,99 @@ window.addEventListener('afterprint', () => {
   const st = document.getElementById('prod-page-style');
   if(st) st.remove();
 });
+
+/* ===== copiar os gráficos de produtividade como imagem (por turno ou todos juntos) ===== */
+function gerarImagemProdutividade(ym, turnos){
+  return new Promise((resolve, reject) => {
+    try{
+      const dias = prodColetar(ym);
+      const cs = getComputedStyle(document.documentElement);
+      const cor = n => (cs.getPropertyValue('--' + n) || '').trim();
+      const resolver = s => s.replace(/var\(--([\w-]+)\)/g, (m, n) => cor(n) || '#ffffff');
+      const [ano, mes] = ym.split('-');
+      const pad = 18, titleH = 46, headH = 64, gap = 14;
+      const W0 = 56 + prodDiasNoMes(ym) * 46 + 14;       // mesma largura do gráfico
+      const totalW = W0 + pad * 2;
+      let y = titleH;
+      let corpo = '';
+
+      turnos.forEach(t => {
+        const g = prodGraficoSvg(ym, t, dias);
+        const vb = g.svg.match(/viewBox="0 0 (\d+) (\d+)"/);
+        const h = Number(vb[2]);
+        const volMes = g.comDado.reduce((s, v) => s + v.vol, 0);
+        const skuMes = g.comDado.reduce((s, v) => s + v.sku, 0);
+        const alt = headH + (g.comDado.length ? h : 44);
+        corpo += `<rect x="${pad}" y="${y}" width="${W0}" height="${alt}" rx="4" fill="${cor('panel')}" stroke="${cor('line')}"/>`;
+        corpo += `<text x="${pad + 16}" y="${y + 40}" font-size="28" font-weight="700" fill="${cor('band')}">${t}</text>`;
+        const kp = [
+          [fmtInt(volMes), 'VOLUME DISTRIBUÍDO NO MÊS', cor('band')],
+          [fmtInt(skuMes), 'SKU NO MÊS', '#8ff0c0'],
+          [String(g.comDado.length), 'DIAS COM DISTRIBUIÇÃO', cor('text')],
+          [fmtInt(g.media), 'MÉDIA POR DIA', cor('text')],
+          [g.melhor ? 'dia ' + g.melhor.d + ' · ' + fmtInt(g.melhor.vol) : '—', 'MELHOR DIA ★', cor('text')]
+        ];
+        kp.forEach((k, i) => {
+          const kx = pad + 86 + i * 200;
+          corpo += `<text x="${kx}" y="${y + 32}" font-size="22" font-weight="700" fill="${k[2]}">${escapeHtml(k[0])}</text>`;
+          corpo += `<text x="${kx}" y="${y + 50}" font-size="10" fill="${cor('text-dim')}">${k[1]}</text>`;
+        });
+        if(g.comDado.length){
+          corpo += g.svg.replace('<svg ', `<svg x="${pad}" y="${y + headH}" `);
+        } else {
+          corpo += `<text x="${pad + 16}" y="${y + headH + 26}" font-size="13" font-style="italic" fill="${cor('text-dim')}">Sem distribuição registrada neste turno no mês.</text>`;
+        }
+        y += alt + gap;
+      });
+
+      const totalH = y - gap + pad;
+      const titulo = `Produtividade do mês ${mes}/${ano} — volume distribuído — ${turnos.length === 3 ? 'T1, T2 e T3' : turnos[0]}`;
+      const svg = resolver(`<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" font-family="Arial, Helvetica, sans-serif">
+        <rect width="100%" height="100%" fill="${cor('bg')}"/>
+        <text x="${pad}" y="30" font-size="18" font-weight="700" fill="${cor('text')}">${titulo}</text>
+        ${corpo}</svg>`);
+
+      const url = URL.createObjectURL(new Blob([svg], { type:'image/svg+xml;charset=utf-8' }));
+      const img = new Image();
+      img.onload = () => {
+        const esc = 2;
+        const canvas = document.createElement('canvas');
+        canvas.width = totalW * esc; canvas.height = totalH * esc;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(b => b ? resolve(b) : reject(new Error('Não consegui gerar a imagem.')), 'image/png');
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Não consegui montar a imagem do gráfico.')); };
+      img.src = url;
+    } catch(err){ reject(err); }
+  });
+}
+
+async function copiarGraficoImagem(alvo){
+  const ym = prodMes || diaOperacional().slice(0, 7);
+  const turnos = alvo === 'todos' ? TURNOS.slice() : [alvo];
+  const rotulo = alvo === 'todos' ? 'de todos os turnos' : alvo;
+  const blobPromise = gerarImagemProdutividade(ym, turnos);
+  blobPromise.catch(() => {});
+  try{
+    if(!(navigator.clipboard && window.ClipboardItem)) throw new Error('sem área de transferência de imagem');
+    await navigator.clipboard.write([ new ClipboardItem({ 'image/png': blobPromise }) ]);
+    showToast(`📋 Gráfico ${rotulo} copiado como imagem. Cole com Ctrl+V.`, false);
+  } catch(err){
+    try{
+      const blob = await blobPromise;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `produtividade-${ym}-${alvo === 'todos' ? 'todos' : alvo}.png`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      showToast('Este navegador não deixou copiar direto — a imagem foi baixada.', true);
+    } catch(e2){
+      showToast('⚠️ Não consegui gerar a imagem do gráfico.', true);
+    }
+  }
+}
 
 /* ===================== CARREGAMENTO SOB DEMANDA (bibliotecas pesadas) ===================== */
 const _scriptsCarregados = {};
@@ -4113,6 +4471,7 @@ let dockAlvos = [];
 function dockItens(){
   if(!currentUser) return [];
   if(abaAtual === 'cross') return [
+    { l:'Programação', t:'panel-programacao' },
     { l:'Pendências', t:'panel-cross-pendencias' },
     { l:'Relatório montado', t:'panel-relatorio-cross' }
   ];
@@ -4123,7 +4482,7 @@ function dockItens(){
   const it = [];
   const painelSol = document.getElementById('panel-solicitacoes');
   if(souAdmin() && painelSol && painelSol.style.display !== 'none') it.push({ l:'Solicitações', t:'panel-solicitacoes' });
-  it.push({ l:nomeAba('piso'), t:'panel-piso' }, { l:'Indicadores', t:'sec-indicadores' }, { l:'Lista de cargas', t:'tbody-piso' });
+  it.push({ l:nomeAba('piso'), t:'panel-piso' });
   if(currentUser.role !== 'operador'){
     it.push({ l:nomeAba('fila'), t:'panel-fila' });
     TURNOS.forEach(t => it.push({ l:nomeAba('dist-' + t), t:'panel-dist-' + t, d:t }));
@@ -4177,7 +4536,7 @@ window.addEventListener('scroll', () => {
 }, { passive:true });
 
 /* ===================== SOMENTE LEITURA (fora do horário do turno) ===================== */
-const RO_PERMITIDO_ONCLICK = /switchTab|switchDistTab|setBordas|irSecao|toggleDock|toggleUsersFloat|logout|openQrModal|closeQrModal|copySiteLink|copiarDistribuicao|imprimir|toggleMobilePreview|toggleSenhaVisibility|^document\./;
+const RO_PERMITIDO_ONCLICK = /switchTab|switchDistTab|setBordas|irSecao|toggleDock|toggleUsersFloat|logout|openQrModal|closeQrModal|copySiteLink|copiarDistribuicao|copiarGraficoImagem|toggleProgramacaoFiltro|imprimir|toggleMobilePreview|toggleSenhaVisibility|^document\./;
 function roPermitido(el){
   if(!el) return true;
   if(el.closest('[data-ro-ok]') || el.closest('.tab-btn')) return true;
@@ -4413,6 +4772,24 @@ function renderDistClockOnly(){
     markReady();
     if(currentUser) renderAllSoon();
   }, err => reportError('Erro ao ler os dados do relatório Cross:', err));
+
+  // ---------- PROGRAMAÇÃO EXPEDIÇÃO (lojas do dia) ----------
+  const progRef = doc(db, 'painelCD', 'programacao');
+  window.saveProgramacao = function(){
+    if(typeof somenteLeitura === 'function' && somenteLeitura()) return;
+    setDoc(progRef, { dia: diaOperacional(), lojas: progLojas, catalogo: progCatalogoExtra })
+      .catch(err => reportError('Erro ao salvar a Programação Expedição:', err));
+  };
+  onSnapshot(progRef, snap => {
+    if(snap.exists()){
+      const d = snap.data();
+      progLojas = d.dia === diaOperacional() ? (d.lojas || []) : [];   // a marcação vale só para o dia
+      progCatalogoExtra = d.catalogo || [];
+    } else {
+      progLojas = []; progCatalogoExtra = [];
+    }
+    if(currentUser) renderAllSoon();
+  }, err => reportError('Erro ao ler a Programação Expedição:', err));
 
   // ---------- FECHAMENTOS ----------
   onSnapshot(fechCol, snap => {
