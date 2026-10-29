@@ -529,35 +529,43 @@
   .piso-grp.grp-pend{ color:var(--band); border-left:4px solid var(--band-strong); }
   .piso-grp.grp-ok{ color:var(--ok-text); border-left:4px solid var(--ok-text); }
   .piso-empty{ text-align:center; padding:22px; color:var(--text-dim); font-style:italic; }
-  .pc-head, .pc{ display:grid; grid-template-columns:84px minmax(0,2fr) 54px 92px 48px minmax(0,1fr) 96px 52px 180px 210px; align-items:center; column-gap:12px; }
-  .pc-head{ padding:6px 14px 6px 17px; font-size:.6rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--text-dim); border-bottom:1px solid var(--line); }
-  .pc-head span:nth-child(n+3):nth-child(-n+8){ text-align:center; }
-  .pc{ row-gap:3px; min-width:0; background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--band-strong); border-radius:4px; padding:var(--row-pad) 14px; color:var(--text); }
+  #tbody-piso{ overflow-x:auto; padding-bottom:2px; }
+  .pc-head, .pc{ display:grid; min-width:1260px;
+    grid-template-columns:22px 46px 72px minmax(160px,1.5fr) 90px 42px 140px 42px 205px minmax(80px,.8fr) minmax(110px,1.2fr) 150px;
+    align-items:center; column-gap:10px; }
+  .pc-head{ padding:9px 14px 9px 17px; font-size:.6rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--text-dim); background:#000; border:1px solid var(--line); border-radius:4px 4px 0 0; }
+  .pc-head span:nth-child(2), .pc-head span:nth-child(5), .pc-head span:nth-child(6), .pc-head span:nth-child(8){ text-align:center; }
+  .pc{ row-gap:3px; background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--band-strong); border-radius:4px; padding:var(--row-pad) 14px; color:var(--text); }
   .pc:hover{ border-color:#5a3a1a; border-left-color:var(--band-strong); }
   .pc.piso-row-ok{ border-left-color:var(--ok-text); }
   .pc.piso-row-prio{ border-left-color:var(--danger); background:#1d0f0d; }
-  .pc .c{ min-width:0; font-size:.84rem; }
-  .pc .c-carga{ font-family:'Oswald',sans-serif; font-weight:600; font-size:.95rem; color:var(--band); letter-spacing:.02em; }
-  .pc .c-forn{ font-weight:700; font-size:.9rem; display:flex; gap:6px; align-items:center; }
-  .pc .c-forn .nm{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
-  .pc-flag{ color:var(--danger); flex:0 0 auto; display:flex; }
-  .pc-flag svg{ width:15px; height:15px; }
-  .pc .c-doca, .pc .c-lib, .pc .c-d1, .pc .c-sku{ text-align:center; }
-  .pc .c-prod{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text-dim); }
-  .pc .dash{ color:#6a5f52; }
+  .pc .c{ min-width:0; font-size:.84rem; overflow-wrap:anywhere; }
+  .pc .c-flag{ color:var(--danger); display:flex; }
+  .pc .c-flag svg{ width:16px; height:16px; }
+  .pc .c-doca{ text-align:center; font-weight:700; }
+  .pc .c-carga{ font-family:'Oswald',sans-serif; font-weight:600; font-size:.92rem; color:var(--band); letter-spacing:.02em; }
+  .pc .c-forn{ font-weight:700; font-size:.88rem; line-height:1.25; }
+  .pc .c-forn small{ display:block; font-weight:500; font-size:.68rem; color:var(--text-dim); margin-top:1px; }
+  .pc .c-lib, .pc .c-d1, .pc .c-sku{ text-align:center; }
   .pc .c-d1{ font-weight:700; }
   .pc .c-d1.d1n{ color:var(--danger); }
-  .pc .c-vol b{ display:block; text-align:right; font-family:'Oswald',sans-serif; font-weight:700; font-size:1.1rem; color:var(--band); line-height:1.1; }
   .pc .c-sku{ font-family:'Oswald',sans-serif; font-weight:600; }
-  .pc-bar{ height:3px; background:#1f160d; border-radius:2px; overflow:hidden; margin-top:3px; }
-  .pc-bar i{ display:block; height:100%; background:var(--band-strong); border-radius:2px; }
-  .pc .c-act{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:flex-end; }
-  .pc-act .btn, .c-act .btn{ padding:3px 9px; font-size:.68rem; }
+  .pc .c-vol{ display:flex; align-items:center; gap:8px; }
+  .pc .c-vol b{ font-family:'Oswald',sans-serif; font-weight:700; font-size:1.05rem; color:var(--band); line-height:1.1; min-width:46px; text-align:right; }
+  .pc-bar{ flex:1; min-width:30px; height:6px; background:#2a1d10; border-radius:3px; overflow:hidden; }
+  .pc-bar i{ display:block; height:100%; background:var(--band-strong); border-radius:3px; }
+  .pc .c-st select.status-select{ width:100%; font-size:.74rem; padding-right:4px; text-overflow:clip; }
+  .pc .c-st .pill{ white-space:normal; width:100%; }
+  .pc .c-prod, .pc .c-obs{ color:var(--text); }
+  .pc .c-obs{ font-size:.78rem; color:var(--text-dim); }
+  .pc .dash{ color:#6a5f52; }
+  .pc .c-act{ display:flex; flex-wrap:wrap; gap:5px 8px; align-items:center; justify-content:flex-start; }
+  .c-act .btn{ padding:3px 9px; font-size:.68rem; }
   .c-act .marca-label{ margin:0; font-size:.72rem; }
   .c-act .marca-ok{ margin:0; font-size:.66rem; }
-  .pc-sub{ grid-column:1/-1; display:flex; flex-wrap:wrap; gap:4px 18px; align-items:center; padding-top:4px; border-top:1px dashed #3a2a1a; font-size:.74rem; color:var(--text); }
-  .pc-sub i{ font-style:normal; color:var(--text-dim); font-size:.58rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-right:5px; }
-  .pc-sub .prio-note{ margin:0; padding:2px 8px; }
+  .pc-sub{ grid-column:1/-1; padding-top:4px; border-top:1px dashed #3a2a1a; }
+  .pc-sub .prio-note{ display:inline-block; margin:0; padding:2px 8px; font-size:.72rem; }
+  .pc > .pc-edit{ grid-column:1/-1; }
   .pc > .pc-edit{ grid-column:1/-1; }
   .pc-edit{ display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:8px 12px; padding-top:8px; border-top:1px dashed #4a3320; }
   .pc-ef label{ display:block; font-size:.6rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--text-dim); margin-bottom:2px; }
@@ -581,15 +589,18 @@
   .pc .st-nao-analisado{ background:#3d1815; color:#ff9a90; }
   .prio-note{ background:#2a1210; color:#ffb4ae; border:1px solid var(--danger); }
   @media (max-width:1100px){
+    #tbody-piso{ overflow-x:visible; }
     .pc-head{ display:none; }
-    .pc{ grid-template-columns:repeat(3, minmax(0,1fr)); row-gap:8px; }
+    .pc{ min-width:0; grid-template-columns:repeat(3, minmax(0,1fr)); row-gap:8px; }
     .pc .c::before{ content:attr(data-l); display:block; font-size:.56rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); margin-bottom:1px; font-family:'Inter',sans-serif; }
+    .pc .c-flag{ display:none; }
+    .pc.piso-row-prio .c-flag{ display:none; }
     .pc .c-forn{ grid-column:1/-1; order:-1; }
     .pc .c-forn::before, .pc .c-act::before{ display:none; }
-    .pc .c-forn{ flex-wrap:wrap; }
     .pc .c-doca, .pc .c-lib, .pc .c-d1, .pc .c-sku{ text-align:left; }
-    .pc .c-vol b{ text-align:left; }
-    .pc .c-st, .pc .c-act{ grid-column:1/-1; justify-content:flex-start; }
+    .pc .c-vol, .pc .c-st, .pc .c-obs, .pc .c-act{ grid-column:1/-1; }
+    .pc .c-vol{ flex-wrap:wrap; }
+    .pc .c-vol::before{ width:100%; }
   }
   .piso-total{ display:flex; align-items:baseline; gap:10px; background:#000; color:var(--text); border-radius:4px; border:1px solid var(--line);
     border-top:2px solid var(--band-strong); padding:12px 18px; font-family:'Oswald',sans-serif; margin-bottom:var(--sec-gap); flex-wrap:wrap; }
@@ -1853,7 +1864,7 @@ function togglePisoEdit(i){
 function pisoHeadRow(){
   const h = document.createElement('div');
   h.className = 'pc-head';
-  h.innerHTML = ['Carga','Fornecedor','Doca','Liberação','D-1','Produtivo','Volume','SKU','Status',''].map(t => `<span>${t}</span>`).join('');
+  h.innerHTML = ['','Doca','Carga','Fornecedor','Liberação','D-1','Volume','SKU','Status','Produtivo','Obs.','Ações'].map(t => `<span>${t}</span>`).join('');
   return h;
 }
 function buildPisoRow(row, i, perm, maxVol){
@@ -1879,10 +1890,6 @@ function buildPisoRow(row, i, perm, maxVol){
   const sin = buildSinalizacoesHtml(row, i, perm, true);
   const btnEdit = ed ? `<button class="btn btn-ghost btn-sm" onclick="togglePisoEdit(${i})">${aberto ? '✕ Fechar' : '✎ Editar'}</button>` : '';
 
-  const sub = [];
-  if(row.prioridade) sub.push(`<span class="prio-note">⚑ ${escapeHtml(row.prioridade.nota)}</span>`);
-  if(tem('departamento')) sub.push(`<span class="sb"><i>Depto</i>${escapeHtml(row.departamento)}</span>`);
-  if(tem('obs')) sub.push(`<span class="sb"><i>Obs.</i>${escapeHtml(row.obs)}</span>`);
 
   const inTxt = (f) => `<input type="text" value="${escapeHtml(row[f])}" onchange="updatePiso(${i},'${f}',this.value)">`;
   const inNum = (f) => `<input type="number" value="${row[f]}" onchange="updatePiso(${i},'${f}',Number(this.value))">`;
@@ -1903,17 +1910,19 @@ function buildPisoRow(row, i, perm, maxVol){
     </div>` : '';
 
   el.innerHTML = `
-    <div class="c c-carga" data-l="Carga">${txt('carga')}</div>
-    <div class="c c-forn" data-l="Fornecedor" title="${escapeHtml(row.fornecedor)}">${row.prioridade ? `<span class="pc-flag" title="${escapeHtml(row.prioridade.nota)}">${PISO_FLAG_SVG}</span>` : ''}<span class="nm">${txt('fornecedor')}</span></div>
+    <div class="c c-flag" data-l="" title="${row.prioridade ? escapeHtml(row.prioridade.nota) : ''}">${row.prioridade ? PISO_FLAG_SVG : ''}</div>
     <div class="c c-doca" data-l="Doca">${txt('doca')}</div>
+    <div class="c c-carga" data-l="Carga">${txt('carga')}</div>
+    <div class="c c-forn" data-l="Fornecedor">${txt('fornecedor')}${tem('departamento') ? `<small>${escapeHtml(row.departamento)}</small>` : ''}</div>
     <div class="c c-lib" data-l="Liberação">${txt('liberacao')}</div>
     <div class="c c-d1 ${d1neg ? 'd1n' : ''}" data-l="D-1">${row.d1 == null ? 0 : row.d1}</div>
-    <div class="c c-prod" data-l="Produtivo">${txt('produtivo')}</div>
-    <div class="c c-vol" data-l="Volume"><b>${fmtInt(vol)}</b><div class="pc-bar"><i style="width:${pct.toFixed(1)}%"></i></div></div>
+    <div class="c c-vol" data-l="Volume"><div class="pc-bar"><i style="width:${pct.toFixed(1)}%"></i></div><b>${fmtInt(vol)}</b></div>
     <div class="c c-sku" data-l="SKU">${row.sku == null ? 0 : row.sku}</div>
     <div class="c c-st" data-l="Status">${statusHtml}</div>
-    <div class="c c-act">${sin}${btnEdit}</div>
-    ${sub.length ? `<div class="pc-sub">${sub.join('')}</div>` : ''}
+    <div class="c c-prod" data-l="Produtivo">${txt('produtivo')}</div>
+    <div class="c c-obs" data-l="Obs.">${txt('obs')}</div>
+    <div class="c c-act" data-l="">${sin}${btnEdit}</div>
+    ${row.prioridade ? `<div class="pc-sub"><span class="prio-note">⚑ ${escapeHtml(row.prioridade.nota)}</span></div>` : ''}
     ${painel}
   `;
   return el;
